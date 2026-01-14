@@ -1,0 +1,24 @@
+<div class="modal__head">
+    <h3 class="modal__title text__label">{{'Quora-Parent-Post' | translate}}</h3>
+    <span class="modal__action">
+        <mat-icon mat-button mat-dialog-close fontSet="material-icons-outlined">close</mat-icon>
+    </span>
+</div>
+<div class="modal__body parentpost__wrapper">
+    <div class="first">
+        <app-post class="post__crm"></app-post>
+    </div>
+    <div class="post__quora--treeDot position-relative">
+        <div class="pl-20">
+            <app-post class="post__crm"></app-post>
+        </div>
+    </div>
+    <div class="noDataFound block-center" *ngIf="false">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{'No-Data-Found' | translate}}</p>
+    </div>
+    <!-- <app-component-loader *ngIf="parentPostLoading" [postCountTotal]="3" [loaderType]="loaderTypeEnum.post">
+    </app-component-loader>
+    <app-component-loader *ngIf="commentsLoader" [postCountTotal]="3" [loaderType]="loaderTypeEnum.post">
+    </app-component-loader> -->
+</div>

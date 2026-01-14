@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "incoming-call.component.scss"
+    ],
+    "names": [],
+    "file": "incoming-call.component.css"
+}

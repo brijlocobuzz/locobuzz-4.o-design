@@ -1,0 +1,64 @@
+.unlink-profile {
+    max-width: 45vw;
+    min-width: 45vw;
+    padding: 15px 30px 30px;
+
+    &__head {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        & .close-icon {
+            font-size: 28px;
+            width: 28px;
+            min-width: 28px;
+            max-width: 28px;
+            height: 28px;
+            min-height: 28px;
+            max-height: 28px;
+            line-height: 50px;
+        }
+    }
+
+    &__body {
+        display: flex;
+
+        &--title {
+            font-size: 2.4rem !important;
+        }
+
+        &--subtitle {
+            margin-top: 9px;
+            font-size: 1.6rem;
+        }
+
+        & .help-icon {
+            font-size: 50px;
+            width: 50px;
+            min-width: 50px;
+            max-width: 50px;
+            height: 50px;
+            min-height: 50px;
+            max-height: 50px;
+            line-height: 40px;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-top: 25px;
+
+        & .buttton {
+            font-weight: 400;
+        }
+    }
+}
+
+@media (max-width: 1399px) {
+    .unlink-profile {
+        max-width: 50vw;
+        min-width: 50vw;
+    }
+}

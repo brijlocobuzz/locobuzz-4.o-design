@@ -1,0 +1,536 @@
+{
+  "_meta": {
+    "models": {
+      "insights": "AI-detected patterns in brand conversations, including trending topics, emerging themes, common questions, and conversation summaries. Each insight aggregates multiple mentions sharing a common pattern.",
+      "mentions": "Incoming conversations about a brand captured from social media, web, or surveys. Enriched with sentiment, intent, and custom classifications.",
+      "users": "Team members using the platform such as agents, managers, or marketers. Can bookmark and share insights."
+    },
+    "relationships": [
+      "Each Insight aggregates multiple Mentions that share a common pattern",
+      "Insights track which Channels the underlying Mentions come from",
+      "Insights include sentiment distribution calculated from aggregated Mentions",
+      "Users can bookmark Insights for later reference and share them with team members"
+    ]
+  },
+  "insights": [
+    {
+      "id": "insight-001",
+      "type": "trending_topic",
+      "title": "Delivery Delays",
+      "summary": "Significant spike in mentions about delivery delays, particularly for orders placed during the holiday sale. Customers reporting 5-7 day delays beyond estimated delivery dates.",
+      "mentionCount": 247,
+      "sentiment": {
+        "positive": 8,
+        "neutral": 22,
+        "negative": 70
+      },
+      "trend": {
+        "direction": "up",
+        "percentage": 156
+      },
+      "topChannels": ["Twitter", "Instagram", "Facebook"],
+      "channelDistribution": {
+        "Twitter": 112,
+        "Instagram": 78,
+        "Facebook": 45,
+        "LinkedIn": 12
+      },
+      "sparklineData": [12, 18, 25, 34, 58, 89, 142, 198, 247],
+      "timeframe": "today",
+      "detectedAt": "2025-02-01T08:30:00Z",
+      "relatedMentionIds": ["mention-001", "mention-002", "mention-003", "mention-004", "mention-005"],
+      "isBookmarked": false,
+      "keywords": ["delivery", "delayed", "shipping", "late", "tracking"]
+    },
+    {
+      "id": "insight-002",
+      "type": "audience_question",
+      "title": "Product Compatibility Questions",
+      "summary": "Recurring question about whether the new wireless charger works with older phone models (iPhone 12/13). Multiple customers asking for compatibility confirmation before purchase.",
+      "mentionCount": 89,
+      "sentiment": {
+        "positive": 15,
+        "neutral": 75,
+        "negative": 10
+      },
+      "trend": {
+        "direction": "up",
+        "percentage": 34
+      },
+      "topChannels": ["Facebook", "Instagram", "Twitter"],
+      "channelDistribution": {
+        "Facebook": 45,
+        "Instagram": 28,
+        "Twitter": 16
+      },
+      "sparklineData": [8, 12, 15, 22, 31, 42, 58, 71, 89],
+      "timeframe": "today",
+      "detectedAt": "2025-02-01T10:15:00Z",
+      "relatedMentionIds": ["mention-006", "mention-007", "mention-008"],
+      "isBookmarked": true,
+      "keywords": ["compatible", "works with", "iPhone 12", "iPhone 13", "wireless charger"]
+    },
+    {
+      "id": "insight-003",
+      "type": "emerging_theme",
+      "title": "Sustainability Concerns",
+      "summary": "New pattern emerging where customers are asking about eco-friendly packaging and carbon footprint. Theme appeared suddenly in the last 48 hours with no prior history.",
+      "mentionCount": 56,
+      "sentiment": {
+        "positive": 45,
+        "neutral": 50,
+        "negative": 5
+      },
+      "trend": {
+        "direction": "up",
+        "percentage": 412
+      },
+      "topChannels": ["Instagram", "Twitter"],
+      "channelDistribution": {
+        "Instagram": 34,
+        "Twitter": 22
+      },
+      "sparklineData": [0, 0, 2, 5, 12, 23, 38, 47, 56],
+      "timeframe": "today",
+      "detectedAt": "2025-02-01T14:20:00Z",
+      "relatedMentionIds": ["mention-009", "mention-010", "mention-011"],
+      "isBookmarked": false,
+      "keywords": ["eco-friendly", "sustainable", "packaging", "carbon footprint", "environment"]
+    },
+    {
+      "id": "insight-004",
+      "type": "ai_summary",
+      "title": "Holiday Sale Feedback Cluster",
+      "summary": "Overall holiday sale reception is mixed. Positive sentiment around product quality and pricing (65% positive), but significant frustration with website performance during peak hours and delivery delays offsetting the good experience.",
+      "mentionCount": 342,
+      "sentiment": {
+        "positive": 52,
+        "neutral": 18,
+        "negative": 30
+      },
+      "trend": {
+        "direction": "down",
+        "percentage": -23
+      },
+      "topChannels": ["Twitter", "Facebook", "Instagram", "Google Reviews"],
+      "channelDistribution": {
+        "Twitter": 128,
+        "Facebook": 98,
+        "Instagram": 76,
+        "Google Reviews": 40
+      },
+      "sparklineData": [445, 420, 398, 385, 370, 358, 348, 342, 342],
+      "timeframe": "today",
+      "detectedAt": "2025-02-01T16:00:00Z",
+      "relatedMentionIds": ["mention-001", "mention-012", "mention-013", "mention-014"],
+      "isBookmarked": true,
+      "keywords": ["holiday sale", "discount", "deals", "shopping", "checkout"]
+    },
+    {
+      "id": "insight-005",
+      "type": "trending_topic",
+      "title": "App Crashes on Android",
+      "summary": "Increased reports of mobile app crashes specifically on Android devices running version 13. Users report crash occurs when trying to access order history.",
+      "mentionCount": 134,
+      "sentiment": {
+        "positive": 3,
+        "neutral": 12,
+        "negative": 85
+      },
+      "trend": {
+        "direction": "up",
+        "percentage": 89
+      },
+      "topChannels": ["Twitter", "Google Reviews", "Instagram"],
+      "channelDistribution": {
+        "Twitter": 78,
+        "Google Reviews": 42,
+        "Instagram": 14
+      },
+      "sparklineData": [18, 25, 34, 45, 62, 78, 95, 112, 134],
+      "timeframe": "week",
+      "detectedAt": "2025-01-30T11:00:00Z",
+      "relatedMentionIds": ["mention-015", "mention-016", "mention-017"],
+      "isBookmarked": false,
+      "keywords": ["app crash", "Android", "order history", "bug", "freezing"]
+    },
+    {
+      "id": "insight-006",
+      "type": "audience_question",
+      "title": "Return Policy Duration",
+      "summary": "Common question about return window duration. Many customers confused whether the 30-day return policy starts from order date or delivery date.",
+      "mentionCount": 67,
+      "sentiment": {
+        "positive": 10,
+        "neutral": 80,
+        "negative": 10
+      },
+      "trend": {
+        "direction": "stable",
+        "percentage": 5
+      },
+      "topChannels": ["Facebook", "Instagram"],
+      "channelDistribution": {
+        "Facebook": 38,
+        "Instagram": 29
+      },
+      "sparklineData": [62, 63, 65, 64, 66, 67, 68, 67, 67],
+      "timeframe": "week",
+      "detectedAt": "2025-01-28T09:30:00Z",
+      "relatedMentionIds": ["mention-018", "mention-019"],
+      "isBookmarked": false,
+      "keywords": ["return policy", "30 days", "refund", "return window", "exchange"]
+    },
+    {
+      "id": "insight-007",
+      "type": "emerging_theme",
+      "title": "Gift Card Requests",
+      "summary": "New pattern of customers requesting digital gift card options. Theme emerged after competitor launched their gift card program last week.",
+      "mentionCount": 43,
+      "sentiment": {
+        "positive": 65,
+        "neutral": 30,
+        "negative": 5
+      },
+      "trend": {
+        "direction": "up",
+        "percentage": 287
+      },
+      "topChannels": ["Instagram", "Facebook", "Twitter"],
+      "channelDistribution": {
+        "Instagram": 22,
+        "Facebook": 14,
+        "Twitter": 7
+      },
+      "sparklineData": [3, 5, 8, 12, 18, 25, 32, 38, 43],
+      "timeframe": "week",
+      "detectedAt": "2025-01-29T15:45:00Z",
+      "relatedMentionIds": ["mention-020", "mention-021"],
+      "isBookmarked": true,
+      "keywords": ["gift card", "digital gift", "e-gift", "gifting", "present"]
+    },
+    {
+      "id": "insight-008",
+      "type": "trending_topic",
+      "title": "Color Availability Issues",
+      "summary": "Spike in mentions about limited color options for the bestselling sneaker line. Navy blue and forest green are most requested out-of-stock colors.",
+      "mentionCount": 156,
+      "sentiment": {
+        "positive": 12,
+        "neutral": 25,
+        "negative": 63
+      },
+      "trend": {
+        "direction": "up",
+        "percentage": 67
+      },
+      "topChannels": ["Instagram", "Twitter", "Facebook"],
+      "channelDistribution": {
+        "Instagram": 89,
+        "Twitter": 45,
+        "Facebook": 22
+      },
+      "sparklineData": [78, 85, 92, 98, 108, 122, 138, 147, 156],
+      "timeframe": "week",
+      "detectedAt": "2025-01-27T13:20:00Z",
+      "relatedMentionIds": ["mention-022", "mention-023", "mention-024"],
+      "isBookmarked": false,
+      "keywords": ["navy blue", "forest green", "out of stock", "color", "restock"]
+    },
+    {
+      "id": "insight-009",
+      "type": "ai_summary",
+      "title": "Customer Service Response Time Sentiment",
+      "summary": "Analysis of 450+ mentions about customer service shows improving sentiment trend. Average response time decreased from 4 hours to 90 minutes over the past week, leading to 40% increase in positive service mentions.",
+      "mentionCount": 478,
+      "sentiment": {
+        "positive": 68,
+        "neutral": 22,
+        "negative": 10
+      },
+      "trend": {
+        "direction": "up",
+        "percentage": 42
+      },
+      "topChannels": ["Twitter", "Facebook", "Instagram"],
+      "channelDistribution": {
+        "Twitter": 198,
+        "Facebook": 165,
+        "Instagram": 115
+      },
+      "sparklineData": [312, 338, 362, 385, 408, 428, 445, 462, 478],
+      "timeframe": "week",
+      "detectedAt": "2025-01-31T17:00:00Z",
+      "relatedMentionIds": ["mention-025", "mention-026", "mention-027"],
+      "isBookmarked": true,
+      "keywords": ["customer service", "support", "response time", "help", "agent"]
+    },
+    {
+      "id": "insight-010",
+      "type": "trending_topic",
+      "title": "Influencer Collaboration Buzz",
+      "summary": "Significant conversation volume about the new influencer collaboration product launch. High engagement but mixed sentiment - excitement about the product vs concerns about pricing.",
+      "mentionCount": 892,
+      "sentiment": {
+        "positive": 58,
+        "neutral": 22,
+        "negative": 20
+      },
+      "trend": {
+        "direction": "up",
+        "percentage": 234
+      },
+      "topChannels": ["Instagram", "Twitter", "TikTok", "Facebook"],
+      "channelDistribution": {
+        "Instagram": 445,
+        "Twitter": 267,
+        "TikTok": 122,
+        "Facebook": 58
+      },
+      "sparklineData": [89, 156, 267, 398, 523, 645, 734, 812, 892],
+      "timeframe": "month",
+      "detectedAt": "2025-01-15T10:00:00Z",
+      "relatedMentionIds": ["mention-028", "mention-029", "mention-030"],
+      "isBookmarked": false,
+      "keywords": ["influencer", "collaboration", "limited edition", "collection", "collab"]
+    },
+    {
+      "id": "insight-011",
+      "type": "audience_question",
+      "title": "Loyalty Program Benefits",
+      "summary": "Recurring questions about loyalty program tiers and benefits. Customers asking how points convert to rewards and what perks come with each tier level.",
+      "mentionCount": 234,
+      "sentiment": {
+        "positive": 35,
+        "neutral": 60,
+        "negative": 5
+      },
+      "trend": {
+        "direction": "up",
+        "percentage": 18
+      },
+      "topChannels": ["Facebook", "Instagram", "Twitter"],
+      "channelDistribution": {
+        "Facebook": 112,
+        "Instagram": 78,
+        "Twitter": 44
+      },
+      "sparklineData": [189, 195, 201, 208, 215, 220, 225, 230, 234],
+      "timeframe": "month",
+      "detectedAt": "2025-01-12T14:30:00Z",
+      "relatedMentionIds": ["mention-031", "mention-032"],
+      "isBookmarked": false,
+      "keywords": ["loyalty program", "points", "rewards", "tier", "benefits"]
+    },
+    {
+      "id": "insight-012",
+      "type": "emerging_theme",
+      "title": "Size Chart Accuracy Concerns",
+      "summary": "Emerging pattern of customers reporting size chart inaccuracies, particularly for athletic wear. Many mentions suggest items run smaller than the size guide indicates.",
+      "mentionCount": 178,
+      "sentiment": {
+        "positive": 5,
+        "neutral": 25,
+        "negative": 70
+      },
+      "trend": {
+        "direction": "up",
+        "percentage": 145
+      },
+      "topChannels": ["Instagram", "Google Reviews", "Facebook"],
+      "channelDistribution": {
+        "Instagram": 89,
+        "Google Reviews": 56,
+        "Facebook": 33
+      },
+      "sparklineData": [45, 58, 72, 89, 105, 128, 145, 162, 178],
+      "timeframe": "month",
+      "detectedAt": "2025-01-18T11:15:00Z",
+      "relatedMentionIds": ["mention-033", "mention-034", "mention-035"],
+      "isBookmarked": true,
+      "keywords": ["size chart", "sizing", "too small", "runs small", "fit"]
+    }
+  ],
+  "mentions": [
+    {
+      "id": "mention-001",
+      "content": "Still waiting for my order from the holiday sale. It's been 12 days and tracking hasn't updated in a week. This is ridiculous! #disappointed",
+      "authorName": "Sarah Mitchell",
+      "authorHandle": "@sarahmitch",
+      "channel": "Twitter",
+      "publishedAt": "2025-02-01T07:45:00Z",
+      "sentiment": "negative",
+      "intent": "complaint"
+    },
+    {
+      "id": "mention-002",
+      "content": "Order delayed again? Third time this month. Really frustrated with the shipping situation.",
+      "authorName": "Mike Chen",
+      "authorHandle": "@mikechen89",
+      "channel": "Twitter",
+      "publishedAt": "2025-02-01T08:12:00Z",
+      "sentiment": "negative",
+      "intent": "complaint"
+    },
+    {
+      "id": "mention-003",
+      "content": "Anyone else experiencing delivery delays? My package was supposed to arrive yesterday but tracking shows it's still in transit.",
+      "authorName": "Jessica Park",
+      "authorHandle": "@jesspark",
+      "channel": "Instagram",
+      "publishedAt": "2025-02-01T09:20:00Z",
+      "sentiment": "negative",
+      "intent": "question"
+    },
+    {
+      "id": "mention-004",
+      "content": "Delivery was supposed to be today but got pushed back another 5 days. Not happy about this.",
+      "authorName": "David Kumar",
+      "authorHandle": "@dkumar",
+      "channel": "Facebook",
+      "publishedAt": "2025-02-01T10:05:00Z",
+      "sentiment": "negative",
+      "intent": "complaint"
+    },
+    {
+      "id": "mention-005",
+      "content": "My holiday order is now 8 days late. Customer service says 'in transit' but no real update. Getting worried it's lost.",
+      "authorName": "Emily Rodriguez",
+      "authorHandle": "@emilyrod",
+      "channel": "Twitter",
+      "publishedAt": "2025-02-01T11:30:00Z",
+      "sentiment": "negative",
+      "intent": "complaint"
+    },
+    {
+      "id": "mention-006",
+      "content": "Does the new wireless charger work with iPhone 12? Can't find this info on the product page.",
+      "authorName": "Tom Anderson",
+      "authorHandle": "@tomanderson",
+      "channel": "Facebook",
+      "publishedAt": "2025-02-01T09:15:00Z",
+      "sentiment": "neutral",
+      "intent": "question"
+    },
+    {
+      "id": "mention-007",
+      "content": "Thinking of buying your wireless charger but I have an iPhone 13. Will it work?",
+      "authorName": "Lisa Wang",
+      "authorHandle": "@lisawang",
+      "channel": "Instagram",
+      "publishedAt": "2025-02-01T10:40:00Z",
+      "sentiment": "neutral",
+      "intent": "question"
+    },
+    {
+      "id": "mention-008",
+      "content": "Quick question - is this compatible with older iPhone models like the 12?",
+      "authorName": "Chris Johnson",
+      "authorHandle": "@chrisjohnson",
+      "channel": "Twitter",
+      "publishedAt": "2025-02-01T12:05:00Z",
+      "sentiment": "neutral",
+      "intent": "question"
+    },
+    {
+      "id": "mention-009",
+      "content": "Love your products but really hoping you'll switch to eco-friendly packaging soon. The plastic is excessive.",
+      "authorName": "Rachel Green",
+      "authorHandle": "@rachelgreen",
+      "channel": "Instagram",
+      "publishedAt": "2025-02-01T13:20:00Z",
+      "sentiment": "positive",
+      "intent": "feedback"
+    },
+    {
+      "id": "mention-010",
+      "content": "Has your company considered carbon-neutral shipping options? Would love to see more sustainability initiatives.",
+      "authorName": "Alex Martinez",
+      "authorHandle": "@alexmartinez",
+      "channel": "Twitter",
+      "publishedAt": "2025-02-01T14:10:00Z",
+      "sentiment": "positive",
+      "intent": "feedback"
+    },
+    {
+      "id": "mention-011",
+      "content": "Really appreciate the quality products but the packaging waste is concerning. Any plans for sustainable alternatives?",
+      "authorName": "Sophia Lee",
+      "authorHandle": "@sophialee",
+      "channel": "Instagram",
+      "publishedAt": "2025-02-01T15:00:00Z",
+      "sentiment": "neutral",
+      "intent": "question"
+    },
+    {
+      "id": "mention-012",
+      "content": "Got my holiday sale order and I'm so happy with the quality! The sweater is even better than expected.",
+      "authorName": "Maria Santos",
+      "authorHandle": "@mariasantos",
+      "channel": "Facebook",
+      "publishedAt": "2025-02-01T08:30:00Z",
+      "sentiment": "positive",
+      "intent": "feedback"
+    },
+    {
+      "id": "mention-013",
+      "content": "Holiday sale prices were amazing but the website kept crashing during checkout. Really frustrating experience.",
+      "authorName": "Kevin Brown",
+      "authorHandle": "@kevinbrown",
+      "channel": "Twitter",
+      "publishedAt": "2025-02-01T09:45:00Z",
+      "sentiment": "negative",
+      "intent": "complaint"
+    },
+    {
+      "id": "mention-014",
+      "content": "Great deals during the holiday sale! Product quality is top notch. Only issue was shipping took longer than expected.",
+      "authorName": "Nicole Taylor",
+      "authorHandle": "@nicoletaylor",
+      "channel": "Instagram",
+      "publishedAt": "2025-02-01T11:15:00Z",
+      "sentiment": "positive",
+      "intent": "feedback"
+    },
+    {
+      "id": "mention-015",
+      "content": "Your app keeps crashing when I try to check my order history. I'm on Android 13. Please fix this!",
+      "authorName": "James Wilson",
+      "authorHandle": "@jameswilson",
+      "channel": "Twitter",
+      "publishedAt": "2025-01-30T10:20:00Z",
+      "sentiment": "negative",
+      "intent": "complaint"
+    }
+  ],
+  "users": [
+    {
+      "id": "user-001",
+      "name": "Emma Richardson",
+      "email": "emma.richardson@company.com",
+      "role": "Social Media Manager",
+      "avatar": "https://i.pravatar.cc/150?img=1"
+    },
+    {
+      "id": "user-002",
+      "name": "Marcus Chen",
+      "email": "marcus.chen@company.com",
+      "role": "Customer Insights Analyst",
+      "avatar": "https://i.pravatar.cc/150?img=2"
+    },
+    {
+      "id": "user-003",
+      "name": "Priya Patel",
+      "email": "priya.patel@company.com",
+      "role": "Brand Manager",
+      "avatar": "https://i.pravatar.cc/150?img=3"
+    },
+    {
+      "id": "user-004",
+      "name": "Jordan Taylor",
+      "email": "jordan.taylor@company.com",
+      "role": "Marketing Director",
+      "avatar": "https://i.pravatar.cc/150?img=4"
+    }
+  ]
+}

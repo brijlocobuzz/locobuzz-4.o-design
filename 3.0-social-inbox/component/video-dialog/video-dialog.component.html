@@ -1,0 +1,207 @@
+<div class="modal__head p-0" *ngIf="attachmentData[0].mediaType == MediaEnum.PDF || attachmentData[0].mediaType == MediaEnum.DOC || attachmentData[0].mediaType == MediaEnum.EXCEL">
+    <span class="modal__action modal--close close-right">
+        <mat-icon mat-button mat-dialog-close fontSet="material-icons-outlined">close</mat-icon>
+    </span>
+</div>
+
+<div class="modal__body">
+  <span class="modal--close" mat-dialog-close *ngIf="attachmentData[0].mediaType != MediaEnum.PDF && attachmentData[0].mediaType != MediaEnum.DOC && attachmentData[0].mediaType != MediaEnum.EXCEL">
+    <mat-icon fontSet="material-icons-outlined">close</mat-icon>
+  </span>
+  <!-- <div class="video__block">
+        <video layout-fill  autoplay="autoplay" control="control" preload="auto" class="video__block--player">
+            <source src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" type="video/mp4"/>
+            </video>
+    </div> -->
+
+  <div class="image__block image__block--single" [ngStyle]="{'width': attachmentData[0].mediaType == MediaEnum.PDF || attachmentData[0].mediaType == MediaEnum.DOC || attachmentData[0].mediaType == MediaEnum.EXCEL ? '80vw' : '', 'height': attachmentData[0].mediaType == MediaEnum.PDF || attachmentData[0].mediaType == MediaEnum.DOC || attachmentData[0].mediaType == MediaEnum.EXCEL ? '93vh' : ''}">
+    <ng-container *ngIf="attachmentData && attachmentData.length === 1; else slider">
+        <div class="position-relative h-100-p hideScroll">
+          <img #image *ngIf="
+                    attachmentData[0].mediaType == MediaEnum.IMAGE ||
+                    attachmentData[0].mediaType == MediaEnum.ANIMATEDGIF || (attachmentData[0].mediaType ===MediaEnum.URL && attachmentData[0].mediaUrl.includes('gif'))
+                  " [src]="
+                    attachmentData[0].mediaUrl
+                      ? attachmentData[0].mediaUrl
+                      : attachmentData[0].name
+                  " [alt]="attachmentData[0].name" class="image__block--image" (error)="onImgError(attachmentData[0], attachmentData[0]?.mediaUrl || attachmentData[0]?.thumbUrl)" />
+          <mat-icon *ngIf="attachmentData[0]?.taglist && attachmentData[0]?.taglist[0]!=''" class="tag__icon"
+            fontSet="material-icons-outlined">local_offer</mat-icon>
+          <div class="tag__user user-list">
+            <ul class="tag__user--list">
+              <li *ngFor="let item of attachmentData[0]?.taglist">{{item}}</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- <div class="video__play"> -->
+      <video id='vid' class="modal-video" controls *ngIf="
+          attachmentData[0].mediaType == MediaEnum.VIDEO" style="border-radius: 10px">
+        <source [src]="
+            attachmentData[0].mediaUrl
+              ? attachmentData[0].mediaUrl
+              : attachmentData[0].name
+          " [alt]="attachmentData[0].name" type="video/mp4" />
+        <source [src]="
+            attachmentData[0].mediaUrl
+              ? attachmentData[0].mediaUrl
+              : attachmentData[0].name
+          " [alt]="attachmentData[0].name" type="video/ogg" />
+        {{'Your-browser-does-not-support-HTML-video' | translate}}
+      </video>
+      <div class="video__play--error" *ngIf="videoErrorMessage">
+        <mat-icon class="icon">error_outline</mat-icon>
+        <p class="text">{{'This-video-is-not-compatible-with-this-platform' | translate}}</p>
+        <a href="{{attachmentData[0].mediaUrl}}" class="download" id="download" download>{{'Download' | translate}}</a>
+      </div>
+      <!-- </div> -->
+      <audio controls class="modal-video" controls *ngIf="
+          attachmentData[0].mediaType == MediaEnum.AUDIO
+        " style="border-radius: 10px">
+        <source [src]="
+            attachmentData[0].mediaUrl
+              ? attachmentData[0].mediaUrl
+              : attachmentData[0].name
+          " type="audio/ogg">
+        <source [src]="
+            attachmentData[0].mediaUrl
+              ? attachmentData[0].mediaUrl
+              : attachmentData[0].name
+          " type="audio/mpeg">
+      </audio>
+
+      <img #image *ngIf="
+          attachmentData[0].mediaType == MediaEnum.OTHER && (attachmentData[0].mediaUrl.includes('.png') ||
+                  attachmentData[0].mediaUrl.includes('.jpeg') ||
+                  attachmentData[0].mediaUrl.includes('.jpg') ||
+                  attachmentData[0].mediaUrl.includes('.gif'))
+        " (error)="onImgError(attachmentData[0],attachmentData[0]?.mediaUrl || attachmentData[0]?.thumbUrl)" [src]="
+          attachmentData[0].mediaUrl
+            ? attachmentData[0].mediaUrl
+            : attachmentData[0].name
+        " [alt]="attachmentData[0].name" class="image__block--image" />
+      <video class="modal-video" controls *ngIf="
+          attachmentData[0].mediaType == MediaEnum.OTHER  && attachmentData[0].mediaUrl.includes('.mp4')
+
+        " style="border-radius: 10px">
+        <source [src]="
+            attachmentData[0].mediaUrl
+              ? attachmentData[0].mediaUrl
+              : attachmentData[0].name
+          " [alt]="attachmentData[0].name" type="video/mp4" />
+        <source [src]="
+            attachmentData[0].mediaUrl
+              ? attachmentData[0].mediaUrl
+              : attachmentData[0].name
+          " [alt]="attachmentData[0].name" type="video/ogg" />
+        {{'Your-browser-does-not-support-HTML-video' | translate}}
+      </video>
+      <audio controls class="modal-video" controls *ngIf="
+                attachmentData[0].mediaType == MediaEnum.OTHER  && attachmentData[0].mediaUrl.includes('.mp3')
+              " style="border-radius: 10px">
+        <source [src]="
+            attachmentData[0].mediaUrl
+              ? attachmentData[0].mediaUrl
+              : attachmentData[0].name
+          " type="audio/ogg">
+        <source [src]="
+            attachmentData[0].mediaUrl
+              ? attachmentData[0].mediaUrl
+              : attachmentData[0].name
+          " type="audio/mpeg">
+      </audio>
+
+      <ng-container *ngIf="attachmentData[0].mediaType == MediaEnum.PDF || attachmentData[0].mediaType == MediaEnum.DOC || attachmentData[0].mediaType == MediaEnum.EXCEL">
+        <ngx-doc-viewer [url]="attachmentData[0]?.mediaUrl" viewer="google" style="width:100%;height:100%; overflow: hidden;"></ngx-doc-viewer>
+      </ng-container>
+    </ng-container>
+    <ng-template #slider>
+      <mat-tab-group (selectedTabChange)="onTabChanged($event);" [(selectedIndex)]="selectedIndex" headerPosition="below" class="image__block--tab--header">
+        <mat-tab class="image__block--tab--label" *ngFor="let attachmentitem of attachmentData; let i=index">
+          <ng-template mat-tab-label>
+            <div class="image__block--tab--images">
+              <img #image class="img__fluid" (error)="onImgError(attachmentitem, attachmentitem.mediaType == MediaEnum.IMAGE ? attachmentitem.mediaUrl : attachmentitem.thumbUrl)" *ngIf="
+                  attachmentitem.mediaType == MediaEnum.IMAGE ||
+                  ((attachmentitem.mediaType == MediaEnum.OTHER ||
+                  attachmentitem.mediaType == MediaEnum.VIDEO ||
+                  attachmentitem.mediaType == MediaEnum.ANIMATEDGIF || (attachmentitem.mediaType == MediaEnum.URL && attachmentitem.mediaUrl.includes('gif')) ||
+                  attachmentData[0].mediaType == MediaEnum.AUDIO) && attachmentitem.thumbUrl)
+                " [src]="attachmentitem.mediaType == MediaEnum.IMAGE?attachmentitem.mediaUrl:attachmentitem.thumbUrl"
+                [alt]="attachmentitem.name" />
+              <video class="w-100-p"  *ngIf="
+                  (attachmentitem.mediaType === MediaEnum.VIDEO ||
+                  attachmentitem.mediaType === MediaEnum.ANIMATEDGIF ||
+                  attachmentData[0].mediaType === MediaEnum.AUDIO) && !attachmentitem.thumbUrl
+                " style="border-radius: 10px">
+                <source [src]="attachmentitem.mediaUrl" type="video/mp4" />
+                <source [src]="attachmentitem.mediaUrl" type="video/ogg" />
+                {{'Your-browser-does-not-support-HTML-video' | translate}}
+              </video>
+            </div>
+          </ng-template>
+          <div class="image__block--tab--preview hideScroll">
+            <div class="position-relative h-100-p" *ngIf="attachmentitem.mediaType == MediaEnum.IMAGE">
+              <img #image class="img__fluid image__block--image" 
+                (error)="onImgError(attachmentitem, attachmentitem.mediaUrl ||attachmentitem.thumbUrl)" [src]="
+                             attachmentitem.mediaUrl
+                            " [alt]="attachmentitem.name" />
+                <mat-icon *ngIf="attachmentitem?.taglist && attachmentitem?.taglist[0]!=''" class="tag__icon" fontSet="material-icons-outlined">local_offer</mat-icon>
+                <div class="tag__user user-list">
+                  <ul class="tag__user--list">
+                    <li *ngFor="let item of attachmentitem?.taglist">{{item}}</li>
+                  </ul>
+                </div>
+            </div>
+            <div class="position-relative h-100-p" *ngIf="
+                                  attachmentitem.mediaType == MediaEnum.VIDEO ||
+                                  attachmentitem.mediaType == MediaEnum.ANIMATEDGI
+                                " >
+                <video class="w-100-p" controls style="border-radius: 10px" *ngIf=" !(attachmentitem?.channel === channelGroupEnum.Facebook && attachmentitem?.isFacebookUrl )">
+                  <source [src]="attachmentitem.mediaUrl" type="video/mp4" />
+                  <source [src]="attachmentitem.mediaUrl" type="video/ogg" />
+                  {{'Your-browser-does-not-support-HTML-video' | translate}}
+                </video>
+               <div *ngIf="attachmentitem?.channel === channelGroupEnum.Facebook && attachmentitem.mediaType == MediaEnum.VIDEO && attachmentitem?.isFacebookUrl " >
+                <img class="img__fluid image__block--image" (error)="onImgError(attachmentitem,attachmentitem.thumbUrl)" 
+                [src]="attachmentitem.thumbUrl" [alt]="attachmentitem.name"  (click)=" facebookRedirecturl(attachmentitem)" />
+                <mat-icon class="video__play--icon s-70" (click)=" facebookRedirecturl(attachmentitem)" >play_circle_outline</mat-icon>
+               </div>
+                <div
+                  *ngIf="attachmentitem?.channel === channelGroupEnum.Twitter && attachmentitem.mediaType == MediaEnum.VIDEO">
+                  <img class="img__fluid image__block--image" (error)="onImgError(attachmentitem,attachmentitem.thumbUrl)"
+                    [src]="attachmentitem.thumbUrl" [alt]="attachmentitem.name" />
+                  <mat-icon class="video__play--icon s-70" >play_circle_outline</mat-icon>
+                </div>
+                <mat-icon *ngIf="attachmentitem?.taglist && attachmentitem?.taglist[0]!=''" class="tag__icon" fontSet="material-icons-outlined">local_offer</mat-icon>
+                <div class="tag__user user-list">
+                  <ul class="tag__user--list">
+                    <li *ngFor="let item of attachmentitem?.taglist">{{item}}</li>
+                  </ul>
+                </div>
+            </div>
+
+            <audio controls class="modal-video" controls *ngIf="
+                attachmentData.mediaType == MediaEnum.AUDIO
+              " style="border-radius: 10px">
+              <source [src]="attachmentitem.mediaUrl" type="audio/ogg">
+              <source [src]="attachmentitem.mediaUrl" type="audio/mpeg">
+            </audio>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </ng-template>
+  </div>
+</div>
+<!-- <ng-container *ngIf="
+                    attachmentData[0].mediaType == MediaEnum.IMAGE ||
+                    attachmentData[0].mediaType == MediaEnum.ANIMATEDGIF
+                  ">
+  <span class="modal--close image__block--zoomin" (click)="mediaZoomIn()" matTooltip="Zoom In"
+    matTooltipPosition="after" matTooltipClass="custom-tooltip">
+    <mat-icon fontSet="material-icons-outlined">zoom_in</mat-icon>
+  </span>
+  <span class="modal--close image__block--zoomout" (click)="mediaZoomOut()" matTooltip="Zoom Out"
+    matTooltipPosition="after" matTooltipClass="custom-tooltip">
+    <mat-icon fontSet="material-icons-outlined">zoom_out</mat-icon>
+  </span>
+</ng-container> -->

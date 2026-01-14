@@ -1,0 +1,72 @@
+.calling-note {
+  padding: 15px;
+}
+
+.calling-note__head {
+  margin-bottom: 12px;
+}
+
+.calling-note__head p {
+  font-weight: 600;
+}
+
+.calling-note__foot {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.calling-note__foot--attachment {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.calling-note__foot--attachment p {
+  font-weight: 600;
+}
+
+.calling-note__foot--attachment span {
+  border-radius: 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-left: 8px;
+  padding: 2px 7px;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.calling-note__foot--button {
+  margin-left: auto;
+}
+
+.calling-note__dropdown {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-column-gap: 20px;
+  column-gap: 20px;
+}
+
+.calling-note__dropdown .reply {
+  width: 50%;
+}
+
+.calling-note__dropdown .assign-dropdown {
+  width: 50%;
+}

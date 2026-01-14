@@ -1,0 +1,70 @@
+<div class="modal__head">
+  <h3 class="modal__title text__label text-capitalize">{{ 'Copy-move-mention' | translate }}</h3>
+  <span class="modal__action">
+    <mat-icon mat-button mat-dialog-close fontSet="material-icons-outlined"
+      >close</mat-icon
+    >
+  </span>
+</div>
+<div class="modal__body">
+  <div class="create__body">
+    <div
+      class="create__body__summary block-center"
+      style="flex-direction: column"
+    >
+      <div class="action text-capitalize mt-30">
+        <div class="action__1">
+          <p class="text__label">{{ 'Action' | translate }}</p>
+          <mat-radio-group [(ngModel)]="actionModel" aria-label="Select an option">
+            <mat-radio-button value="1" [checked]="true">{{ 'Move' | translate }}</mat-radio-button>
+            <mat-radio-button value="2">{{ 'Copy' | translate }}</mat-radio-button>
+          </mat-radio-group>
+        </div>
+        <div class="action__2">
+          <p class="text__label">{{ 'Source-Brand' | translate }}</p>
+          <img src="assets/social-mention/post/default_brand.svg" alt="" />
+          <span>{{ 'State-Bank-of-India' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="target__brand m-40">
+        <mat-form-field
+          fxFlex="100%"
+          appearance="outline"
+          class="outline--none material__select material__select--adaptive"
+        >
+          <mat-label>{{ 'Target-Brand' | translate }}</mat-label>
+          <mat-select [value]="selected">
+            <mat-option
+              class="text-uppercase"
+              *ngFor="let brand of brands"
+              value="{{ brand.option }}"
+            >
+              <img
+                class="brand_selected_logo mr-5"
+                src="{{ brand.img }}"
+                alt=""
+              />
+              {{ brand.option }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <p class="mt-30">
+          <span class="colored__yellow">{{ 'Note' | translate }} :</span>{{ 'This-Mention-will-copy-or-move-in-all-mentions-as-a-non-actionable-mention' | translate }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal__foot">
+  <button
+    mat-stroked-button
+    mat-dialog-close
+    color="primary"
+    class="colored__blue ml-auto mr-9"
+  >
+    {{ 'Cancel' | translate }}
+  </button>
+  <button mat-raised-button color="accent">{{ 'Copy' | translate }}</button>
+</div>

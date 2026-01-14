@@ -1,0 +1,179 @@
+<!-- <p>tag-mention-campaign works!</p> -->
+<div class="modal__head">
+    <h3 class="modal__title" [ngClass]="{'small_font-size': !defaultLayout}">{{'Select-campaign-to-add-post' | translate}}</h3>
+    <span class="modal__action">
+        <mat-icon mat-button mat-dialog-close [ngClass]="{'small-icon-font-size': !defaultLayout}" fontSet="material-icons-outlined">close</mat-icon>
+    </span>
+</div>
+
+<!-- <div class="modal__head"  *ngIf="disableCheckAll">
+    <h3 class="modal__title">All campaigns are already selected.</h3>
+</div> -->
+<div class="modal__body bg__grey--lighter pt-12">
+    <p class="alertnote" *ngIf="disableCheckAll">
+        <span class="text-bold colored__yellow--dark" [ngClass]="{'small_font-size': !defaultLayout}">{{'All-campaigns-are-already-selected' | translate}}</span>
+    </p>
+    <div class="tag-filter">
+        <div class="tag-filter__search account-profile__brandsearchinput">
+            <mat-form-field appearance="outline" class="material__select w-308 h-48 p-0">
+                <input type="text" [ngClass]="{'small_font-size': !defaultLayout}" placeholder="{{'Search-by-Campaign-Name' | translate}}" matInput class="
+                                                        material-icons-outlined
+                                                      " autocomplete="off" #input (keyup)="searchCampaign($event)" />
+                <button  matSuffix mat-icon-button>
+                    <mat-icon class="material-icons-outlined" [ngClass]="{'small-icon-font-size': !defaultLayout}">search</mat-icon>
+                </button>
+            </mat-form-field>
+            <!-- <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Search campaign name" #input>
+            </mat-form-field> -->
+        </div>
+        <div class="tag-filter__filter">
+            <mat-icon fontSet="material-icons-outlined" class="cursor-pointer" [matMenuTriggerFor]="sortmenu">sort</mat-icon>
+            <mat-menu #sortmenu="matMenu" xPosition="before">
+                <ul class="sort-dropdown" (click)="$event.stopPropagation()">
+                    <li class="sort-dropdown__item">
+                        <span class="text__label" [ngClass]="{'small_font-size': !defaultLayout}">{{'Sort-By' | translate}}</span>
+                        <mat-radio-group aria-label="Select an option">
+                            <div class="sort-dropdown__item--input">
+                                <mat-radio-button value="createdDate" [ngClass]="{'small_font-size': !defaultLayout}" (click)="sortTemplateList('createdDate', 'sortBy')"
+                                    [checked]="sortByValue === 'createdDate' ? true : false">{{'Created-Date' | translate}}</mat-radio-button>
+                            </div>
+                            <div class="sort-dropdown__item--input">
+                                <mat-radio-button value="stopDate" [ngClass]="{'small_font-size': !defaultLayout}" (click)="sortTemplateList('stopDate', 'sortBy')"
+                                    [checked]="sortByValue === 'stopDate' ? true : false">
+                                    {{'Stop-Date' | translate}}</mat-radio-button>
+                            </div>
+                            <div class="sort-dropdown__item--input">
+                                <mat-radio-button value="campaignName" [ngClass]="{'small_font-size': !defaultLayout}" (click)="sortTemplateList('campaignName', 'sortBy')"
+                                    [checked]="sortByValue === 'campaignName' ? true : false">
+                                    {{'Campaign-Name' | translate}}</mat-radio-button>
+                            </div>
+                        </mat-radio-group>
+                    </li>
+                    <li class="sort-dropdown__item">
+                        <span class="text__label">{{'Sort-Order' | translate}}</span>
+                        <mat-radio-group aria-label="Select an option">
+                            <div class="sort-dropdown__item--input">
+                                <mat-radio-button value="ascending" [ngClass]="{'small_font-size': !defaultLayout}" (click)="sortTemplateList('ascending', 'sortOrder')"
+                                    [checked]="sortOrderValue === 'ascending' ? true : false">{{'Ascending' | translate}}</mat-radio-button>
+                            </div>
+                            <div class="sort-dropdown__item--input">
+                                <mat-radio-button value="descending" [ngClass]="{'small_font-size': !defaultLayout}" (click)="sortTemplateList('descending', 'sortOrder')"
+                                    [checked]="sortOrderValue === 'descending' ? true : false">{{'Descending' | translate}}</mat-radio-button>
+                            </div>
+                        </mat-radio-group>
+                    </li>
+                </ul>
+            </mat-menu>
+        </div>
+    </div>
+    <div fxLayout="row" class="grid pb-0">
+        <div fxFlex="0 1 calc(100%)" class="grid__body grid__body--scrollfull">
+
+            <div class="bg__white mr-10" *ngIf="spinner">
+                <app-component-loader [loaderType]="loaderTypeEnum.gridloader">
+                </app-component-loader>
+            </div>
+
+            <table [hidden]="spinner || dataSource.data.length === 0 || !dataSource.data" mat-table matSort
+                [dataSource]="dataSource" #TableSort="matSort" matSortDisableClear class="grid__table campaign__table w-100-p">
+
+                <ng-container matColumnDef="checkAll">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (change)="handleCheckAll($event)" [ngClass]="{'small_font-size': !defaultLayout}" [checked]="selectAll"
+                        (click)="$event.stopPropagation()">
+                        </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                        <!-- <span class="font-weight-500">{{element.campaignName}}</span> -->
+                        <mat-checkbox [ngClass]="{'small_font-size': !defaultLayout}" [checked]="element.checked || element.disableCheck" [disabled]="element.disableCheck" (change)="handleCheck($event, element)">
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="CampaignName">
+                    <th mat-header-cell *matHeaderCellDef class="w-25-p" [ngClass]="{'small_font-size': !defaultLayout}">{{'Campaign-Name' | translate}}</th>
+                    <td mat-cell *matCellDef="let element">
+                        <!-- <span class="font-weight-500">{{element.campaignName}}</span> -->
+                        <span class="font-weight-500" [ngClass]="{'small_font-size': !defaultLayout}"
+                            *ngIf="element.campaignName.length <= 15">{{element.campaignName}}</span>
+                        <span class="font-weight-500" *ngIf="element.campaignName.length > 15"
+                            matTooltip="{{element.campaignName}}" [ngClass]="{'small_font-size': !defaultLayout}"
+                            matTooltipClass="custom__tooltip-normal">{{element.campaignName.substring(0, 15)}}...</span>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="Keywords/Topic">
+                    <th mat-header-cell *matHeaderCellDef class="w-30-p" [ngClass]="{'small_font-size': !defaultLayout}">{{'Keywords' | translate}}</th>
+                    <td mat-cell *matCellDef="let element">
+                        <span class="font-weight-500" [ngClass]="{'small_font-size': !defaultLayout}" *ngIf="element.keyWords.length <= 25">{{element.keyWords}}</span>
+                        <span class="font-weight-500" [ngClass]="{'small_font-size': !defaultLayout}" *ngIf="element.keyWords.length > 25" matTooltip="{{element.keyWords}}"
+                            matTooltipClass="custom__tooltip-normal">{{element.keyWords.substring(0, 25)}}...</span>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Duration">
+                    <th mat-header-cell *matHeaderCellDef class="w-45-p" [ngClass]="{'small_font-size': !defaultLayout}">{{'Duration' | translate}}</th>
+                    <td mat-cell *matCellDef="let element">
+                        <span class="font-weight-500" [ngClass]="{'small_font-size': !defaultLayout}">{{removeHoursToDate(element.startDate, element.timeZoneOffset) | date: 'EEE, MMM d, y, HH:mm a'}}
+                            <span [ngClass]="{'small_font-size': !defaultLayout}" *ngIf="element.endDate != '1900-01-01T00:00:00' && element.endDate != null">{{'to' | translate}}
+                                {{removeHoursToDate(element.endDate, element.timeZoneOffset) | date: 'EEE, MMM d, y, HH:mm a'}}
+                            </span>
+                        </span>
+                    </td>
+                </ng-container>
+
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+            <!-- <div [hidden]="spinner" *ngIf="campaignList && campaignList?.length > 5 && paginatorInit">
+                <div fxLayout="row">
+                    <div fxFlex="0 1 calc(25%)" class="h-60 bg__white pl-15 d-flex-items-center grid-row-size-dropdown">
+                        <p class="text__light mb-0" [ngClass]="{'small_font-size': !defaultLayout}">Rows per page</p>
+                        <mat-form-field appearance="outline" class="material__select w-62 ml-10" [ngClass]="{'small_font-size': !defaultLayout}">
+                            <mat-select [ngClass]="{'small_font-size': !defaultLayout}" [(value)]="pageSize" (selectionChange)="rowChangeAction($event.value)"
+                                disableOptionCentering>
+                                <mat-option [ngClass]="{'small_font-size': !defaultLayout}" value='5'>5</mat-option>
+                                <mat-option [ngClass]="{'small_font-size': !defaultLayout}" value='10'>10</mat-option>
+                                <mat-option [ngClass]="{'small_font-size': !defaultLayout}" value='15'>15</mat-option>
+                                <mat-option [ngClass]="{'small_font-size': !defaultLayout}" value='20'>20</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div fxFlex="0 1 calc(75%)" class="bg__white show-count">
+                        <mat-paginator class="grid__pagination" [ngClass]="{'small_font-size': !defaultLayout}" showFirstLastButtons appLocobuzzPaginator #tablePaginator
+                            [length]="campaignList?.length" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 150]"
+                            (page)="OnPageChange($event)">
+                        </mat-paginator>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- Pagination End -->
+
+            <!-- No Result Found Start -->
+            <div class="grid__noresultfound" *ngIf="!spinner && (campaignList?.length === 0 || !campaignList)">
+                <img src="assets/images/account-profile/no_result_found.svg" [ngClass]="{'small-image-width': !defaultLayout}"/>
+                <p class="font-weight-700 mb-6 mt-12" [ngClass]="{'small_font-size': !defaultLayout}">{{'No-Result-Found' | translate}}</p>
+                <p class="font-weight-500 line-height-1.5" [ngClass]="{'small_font-size': !defaultLayout}">{{'Sorry-we-could-not-find-what-you-were-looking-for' | translate}}<br>
+                    {{'Please-try-again' | translate}}</p>
+            </div>
+            <!-- No Result Found End  -->
+        </div>
+    </div>
+</div>
+<div class="modal__foot">
+    <button mat-stroked-button [ngClass]="{'small_font-size': !defaultLayout}" class="textarea-featured__foot--item mr-15 ml-auto w-82 h-41" color="accent"
+        [mat-dialog-close]="true">
+        {{'Cancel' | translate}}
+    </button>
+    <button mat-flat-button class="account-profile__spinner w-105 h-41" color="accent" (click)="save()" *ngIf="!saveButtonSpinner" 
+        [ngClass]="{'element__disable': saveButtonDisable, 'small_font-size': !defaultLayout}">
+        {{'Submit' | translate}}
+    </button>
+    <button mat-flat-button class="account-profile__spinner block-center  w-105 h-41" [ngClass]="{'small_font-size': !defaultLayout}" color="accent" type="submit"
+        *ngIf="saveButtonSpinner">
+        <mat-spinner [diameter]="25"></mat-spinner>
+    </button>
+</div>

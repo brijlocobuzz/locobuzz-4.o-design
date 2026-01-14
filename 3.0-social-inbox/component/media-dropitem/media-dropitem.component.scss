@@ -1,0 +1,73 @@
+.dropzone {
+  &__item {
+    &--wrapper {
+      display: flex;
+      &:hover .dropzone__item--overlay {
+        transform: translateY(0px);
+      }
+    }
+
+    & > div {
+      flex: 0 0 50%;
+    }
+
+    &--content {
+      display: flex;
+      flex-direction: column;
+      padding: 0 20px;
+      flex: 0 0 50%;
+
+      .modal__body & {
+        padding: 20px;
+        max-height: 298px;
+      }
+    }
+
+    &--image {
+      position: relative;
+      overflow: hidden;
+      flex: 0 0 50%;
+      & > img {
+        object-fit: cover;
+        object-position: center center;
+        height: 100%;
+      }
+
+      .modal__body & {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        max-height: 298px;
+      }
+    }
+
+    &--overlay {
+      position: absolute;
+      background: rgba(#000000, 0.5);
+      width: 100%;
+      text-align: center;
+      bottom: 0;
+      transform: translateY(25px);
+      transition: 0.2s all;
+      cursor: pointer;
+
+      & mat-icon {
+        color: var(--color-white);
+      }
+    }
+
+    &--tags {
+      // overflow-y: auto;
+      flex: 1;
+      & .material__select{
+        ::ng-deep .mat-mdc-chip-grid .mat-mdc-chip-input{
+          height: 4rem!important;
+        }
+        ::ng-deep .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex{
+          min-height: 3rem!important;
+        }
+      }
+    }
+  }
+}

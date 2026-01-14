@@ -1,0 +1,45 @@
+<div class="modal__head">
+    <h3 class="modal__title">
+       {{ 'Do-you-want-to-add-a-Caption' | translate }}
+    </h3>
+    <span class="modal__action">
+        <mat-icon fontSet="material-icons-outlined" [mat-dialog-close]="false">close</mat-icon>
+    </span>
+</div>
+<div class="modal__body addchannel__body escemail__header">
+    <!-- <mat-form-field appearance="outline" class="outline--none material__select material__select--adaptive">
+        <mat-label class="num-label text-capitalize">Caption</mat-label>
+        <input type="text" matInput autocomplete="off" placeholder="Add Caption" [(ngModel)]="caption" />
+    </mat-form-field> -->
+    <mat-form-field appearance="outline" class="
+                                        outline--none
+                                        material__select material__select--adaptive">
+        <mat-label>{{ 'Caption' | translate }}</mat-label>
+        <textarea [placeholder]="'Add-a-caption' | translate" [(ngModel)]="caption" maxlength="200" matInput class="textarea h-100"></textarea>
+    </mat-form-field>
+    <a class="emoji_icon" [matMenuTriggerFor]="emojiMenu" mat-icon-button href="javascript:void(0)">
+        <mat-icon class="font-size-20">sentiment_satisfied_alt</mat-icon>
+    </a>
+    <span class="max-length">{{caption.length}} / 200</span>
+
+    <mat-menu #emojiMenu="matMenu" class="custom__matmenu" xPosition="after" yPosition="above">
+        <div (click)="
+                            $event.stopPropagation(); $event.preventDefault()
+                            ">
+            <emoji-mart [set]="emojiSet" [enableSearch]="false" [darkMode]="false"
+                [emojisToShowFilter]="filteredEmojis" [showPreview]="false"
+                (emojiSelect)="selectEmoji($event)"></emoji-mart>
+        </div>
+    </mat-menu>
+    <!-- <div class="text-left font-size-12 mt-2 colored__locobuzz cursor-pointer" (click)="helpToFindBot()">
+        Where to find bot token ID?
+    </div> -->
+</div>
+<div class="modal__foot">
+    <button mat-stroked-button class="ml-auto mr-15" color="accent" (click)="proceedWithoutCaption()">
+        {{ 'Proceed-without-Caption' | translate }}
+    </button>
+    <button [disabled]="!caption" (click)="saveCaption()" mat-flat-button color="accent">
+        {{ 'Add-Caption' | translate }}
+    </button>
+</div>

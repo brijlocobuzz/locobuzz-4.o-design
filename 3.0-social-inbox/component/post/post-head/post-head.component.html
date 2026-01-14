@@ -1,0 +1,2263 @@
+<!-- Post Old UI for Ticket Header July 2025 -->
+<div class="post__head conversations__post--head" *ngIf ="defaultLayout" [ngClass]="{'close--postBG':clickhouseEnabled &&ticketHistoryData?.isMarkUnseen, 'minimal-view' : minimalViewHead}" [ngStyle]="{'background':mentionBackGround }">
+  <!-- <div class="responsive__tab"> -->
+    <!-- <div class="arrow arrow-left" #leftBtn (click)="leftButton($event)"
+          [ngClass]="{'element__disable': leftArrowSlideDisable}">
+      <mat-icon>keyboard_arrow_left</mat-icon>
+    </div> -->
+    <!-- <div class="responsive__tab responsive__tab--scroll" #mainNav [ngStyle]="{'left': scrollLeft ? '0px' : '', 'right': scrollRight ? '45px' : ''}"> -->
+      <div class="post__head--profile conversations__post--head--profile">
+      <div class="post__head--channel nowrap conversations__post--head--channel">
+        <div class="channel">
+          <img class="channel__image" [src]="post?.channelImage" alt="channel image" />
+          <span [matTooltip]="postData?.channelGroup == channelGroupEnum.Twitter && postData?.instagramPostType == 3 ? ('quote-tweet' | translate) : (post?.channelNameTooltip | translate)" matTooltipPosition="above" matTooltipClass="custom-tooltip"
+            class="channel__label conversations__post--head--channel-label" [ngClass]="{'post__minimal--channel' : minimalViewHead}">
+            <span *ngIf ="postData?.channelGroup == channelGroupEnum.Twitter && postData?.instagramPostType == 3; else elseChannelName">
+              {{ 'quote-tweet' | translate }}
+            </span>
+            <ng-template #elseChannelName>
+              {{post?.channelName | translate}}
+            </ng-template>
+           </span>
+            <span class="pl-5" *ngIf = "postData?.locationName && (postData?.channelGroup == channelGroupEnum.GoogleBusinessMessages)" [matTooltip]="postData?.locationName.length > 20 ? postData?.locationName : ''" matTooltipPosition="above" matTooltipClass="custom-tooltip">
+                <mat-icon class="colored__locobuzz">location_on</mat-icon>{{postData?.locationName.substr(0,20)}}<span *ngIf="postData?.locationName.length > 20">...</span>
+            </span>
+        </div>
+      </div>
+      <!-- FB page name -->
+      <ng-container *ngIf="postData?.fbPageName">
+        <div class="post__head--location" (mouseover)="getFbLocation()">
+          <div class="
+            post__head--channel
+            nowrap
+            conversations__post--head--channel
+            location
+          ">
+            <img class="channel__image" onError="this.src='assets/images/agentimages/sample-image.svg'"
+              [src]="post?.FbPageImageUrl" alt="channel image" />
+            <span class="channel__label conversations__post--head--channel-label ml-1" [matTooltip]="postData?.fbPageName" matTooltipPosition="above" matTooltipClass="custom-tooltip">{{ postData?.fbPageName }}</span>
+            <mat-icon class="material-icons colored__locobuzz">fmd_good</mat-icon>
+          </div>
+          <div class="post__head--location-hover">
+            <div class="d-flex-items-center">
+              <mat-icon class="material-icons colored__locobuzz">fmd_good</mat-icon>
+              <span class="text__label ml-6">{{ postData?.fbPageName }}</span>
+            </div>
+            <div class="text__light ml-28 address">{{ fblocationdetail }}</div>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="postData?.pageName">
+        <div class="post__head--location">
+          <div class="
+                      post__head--channel
+                      nowrap
+                      conversations__post--head--channel
+                      location
+                    ">
+            <img class="channel__image" onError="this.src='assets/images/agentimages/sample-image.svg'"
+              [src]="post?.LinkedInPageImageUrl" alt="channel image" />
+            <span class="channel__label conversations__post--head--channel-label ml-1" [matTooltip]="postData?.pageName"
+              matTooltipPosition="above" matTooltipClass="custom-tooltip">{{ postData?.pageName }}</span>
+            <mat-icon class="material-icons colored__locobuzz">fmd_good</mat-icon>
+          </div>
+          <div class="post__head--location-hover">
+            <div class="d-flex">
+              <mat-icon class="material-icons colored__locobuzz">fmd_good</mat-icon>
+              <span class="text__label ml-6">{{postData?.pageName}}</span>
+            </div>
+            <!-- <div class="text__light ml-28 address">{{ fblocationdetail }}</div> -->
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="postData?.groupname && postData?.channelGroup == channelGroupEnum.Facebook && clickhouseEnabled">
+        <div class="post__head--location">
+          <div class="
+                  post__head--channel
+                  nowrap
+                  conversations__post--head--channel
+                  location
+                ">
+            <img class="channel__image" 
+              src="assets/images/fBGroup.svg" alt="channel image" />
+            <span class="channel__label conversations__post--head--channel-label ml-1" [matTooltip]="postData?.groupname"
+              matTooltipPosition="above" matTooltipClass="custom-tooltip">{{ postData?.groupname }}</span>
+            <!-- <mat-icon class="material-icons colored__locobuzz">fmd_good</mat-icon> -->
+          </div>
+          <!-- <div class="post__head--location-hover">
+            <div class="d-flex">
+              <mat-icon class="material-icons colored__locobuzz">fmd_good</mat-icon>
+              <span class="text__label ml-6">{{ postData?.fbPageName }}</span>
+            </div>
+            <div class="text__light ml-28 address">{{ fblocationdetail }}</div>
+          </div> -->
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="postData?.channelGroup == channelGroupEnum.GlassDoor && postData?.accountName">
+        <div class="post__head--location">
+          <div matTooltip={{postData?.accountName}} matTooltipPosition="above" matTooltipClass="custom-tooltip" class="
+                        post__head--channel
+                        nowrap
+                        conversations__post--head--channel
+                        location
+                      ">
+            <img class="channel__image" src="assets/images/channelicons/Company.svg" alt="channel image" />
+            <span class="channel__label conversations__post--head--channel-label ml-1">{{ postData?.accountName }}</span>
+            <!-- <mat-icon class="material-icons colored__locobuzz">fmd_good</mat-icon> -->
+            <!-- </div> -->
+            <!-- <div class="post__head--location-hover">
+                              <div class="d-flex"> -->
+            <!-- <mat-icon class="material-icons colored__locobuzz">fmd_good</mat-icon> -->
+            <!-- <span class="text__label ml-6">{{ postData?.appFriendlyName }}</span>
+                              </div> -->
+            <!-- <div class="text__light ml-28 address">{{ fblocationdetail }}</div> -->
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="postData?.channelGroup == channelGroupEnum.GooglePlayStore && postData?.appFriendlyName">
+        <div class="post__head--location">
+          <div matTooltip="{{postData?.appFriendlyName | translate}}" matTooltipPosition="above" matTooltipClass="custom-tooltip" class="
+                  post__head--channel
+                  nowrap
+                  conversations__post--head--channel
+                  location
+                ">
+            <img class="channel__image" src="assets/images/channelicons/Apps.svg"
+               alt="channel image" />
+            <span class="channel__label conversations__post--head--channel-label ml-1" >{{ postData?.appFriendlyName }}</span>
+            <!-- <mat-icon class="material-icons colored__locobuzz">fmd_good</mat-icon> -->
+            <!-- </div> -->
+            <!-- <div class="post__head--location-hover">
+                        <div class="d-flex"> -->
+            <!-- <mat-icon class="material-icons colored__locobuzz">fmd_good</mat-icon> -->
+            <!-- <span class="text__label ml-6">{{ postData?.appFriendlyName }}</span>
+                        </div> -->
+            <!-- <div class="text__light ml-28 address">{{ fblocationdetail }}</div> -->
+          </div>
+         </div>
+      </ng-container>
+      <!-- ends FB page name -->
+
+
+      <div class="post__head--channel nowrap conversations__post--head--channel" *ngIf = "postData?.channelGroup == channelGroupEnum.Survey && postData?.locationName">
+        <div class="channel">
+          <img alt="channel image" class="channel__image"
+            src="assets/images/Globe_Location.png">
+            <span [matTooltip]="postData?.locationName.length > 20 ? postData?.locationName : ''" matTooltipPosition="above"
+              matTooltipClass="custom-tooltip" class="mat-tooltip-trigger channel__label conversations__post--head--channel-label" style="max-width:32.2rem">
+            {{postData?.locationName.substr(0,20)}}<span *ngIf="postData?.locationName.length > 20">...</span>
+            </span>
+          </div>
+      </div>
+      
+      <ng-container
+        *ngIf="post?.Userinfo?.name ==='Anonymous' && postData?.channelGroup == channelGroupEnum.GooglePlayStore else genralway">
+      </ng-container>
+      <ng-template #genralway>
+      <div class="profile post__dropdown conversations__post--profile conversations__post--head--channel">
+        <div class="profile__img">
+          <ng-container *ngIf="userProfileImg == 'initials'; else showImage">
+            <span [ngStyle]="{'background': colorCode?colorCode:''}" class="initial">{{ initials }}</span>
+          </ng-container>
+          <ng-template #showImage>
+            <img [src]="userProfileImg" onError="this.src='assets/images/agentimages/sample-image.svg'" 
+            alt="user image" />
+          </ng-template>
+        </div>
+        <!-- <div class="
+            profile__name
+            conversations__post--profile--name
+            conversations__post--head--channel-label responsive__detail--infoitem
+          ">
+          <a [matTooltip]="post?.Userinfo.name" matTooltipPosition="above" matTooltipClass="custom-tooltip" *ngIf="post?.Userinfo?.name!='Anonymous' && this.ticketHistoryData?.profileurl && postData?.channelGroup !== channelGroupEnum.Facebook" [href]="this.ticketHistoryData?.profileurl" class="text__light" target="_blank">
+            <span>{{post?.Userinfo.name}}</span></a>
+            <span [matTooltip]="post?.Userinfo.name" matTooltipPosition="above" matTooltipClass="custom-tooltip" class="text__light" *ngIf="post?.Userinfo?.name=='Anonymous' || this.ticketHistoryData?.profileurl==null || this.ticketHistoryData?.profileurl=='' || postData?.channelGroup === channelGroupEnum.Facebook">
+              {{post?.Userinfo.name}}
+            </span>
+        </div>
+        <div class="profile__handle profile__handle--none" *ngIf="socialHandle">
+          <a [href]="this.ticketHistoryData?.profileurl" target="_blank">
+            (<span *ngIf = "postData?.channelGroup != channelGroupEnum.Yotpo">@</span>{{ post?.Userinfo.screenName }})</a>
+        </div> -->
+        <!-- UI update post profile name -->
+           <div class="profile__handle--columnView">
+            <div class="
+                                  profile__name
+                                  conversations__post--profile--name
+                                  conversations__post--head--channel-label responsive__detail--infoitem
+                                ">
+              <a [matTooltip]="post?.Userinfo.name" matTooltipPosition="above" matTooltipClass="custom-tooltip"
+                *ngIf="post?.Userinfo?.name!='Anonymous' && this.ticketHistoryData?.profileurl && postData?.channelGroup !== channelGroupEnum.Facebook"
+                [href]="this.ticketHistoryData?.profileurl" class="text__light" target="_blank">
+                <span>{{post?.Userinfo.name}}</span></a>
+              <span [matTooltip]="post?.Userinfo.name" matTooltipPosition="above" matTooltipClass="custom-tooltip"
+                class="text__light"
+                *ngIf="post?.Userinfo?.name=='Anonymous' || this.ticketHistoryData?.profileurl==null || this.ticketHistoryData?.profileurl=='' || postData?.channelGroup === channelGroupEnum.Facebook">
+                {{post?.Userinfo.name}}
+              </span>
+            </div>
+            <div class="profile__handle profile__handle--none emailid-below" *ngIf="socialHandle">
+              <a [href]="this.ticketHistoryData?.profileurl" target="_blank">
+                (<span *ngIf="postData?.channelGroup != channelGroupEnum.Yotpo">&#64;</span>{{ post?.Userinfo.screenName }})</a>
+            </div>
+          
+          <div class="profile__handle profile__handle--none emailid-below" *ngIf="postData?.channelGroup == channelGroupEnum.Email">
+            <span> ({{ post?.Userinfo.socialid }}) </span>
+          </div>
+        </div>
+        <!-- Ends UI update post profile name -->
+        <!-- <div class="profile__isverified" *ngIf="this.post?.Userinfo.isVerified">
+          <img class="img__fluid vertical-sub mb-3" src="/assets/social-mention/post/isVerified.svg" />
+        </div> -->
+        <div class="profile__isverified" *ngIf="postData?.channelGroup == channelGroupEnum.Yotpo && postData?.authorType == '2'">
+          <mat-icon class="mr-7 colored__green" style="margin-top: -0.5rem;" matTooltip= "{{'Verified-Reviewer' | translate}}" matTooltipPosition="above"
+            matTooltipClass="custom-tooltip">check_circle</mat-icon>
+        </div>
+        <div class="
+            post__dropdown--list post__dropdown--listprofile
+            profile__dropdown
+          " *ngIf="(clickhouseEnabled && postData?.channelGroup!= channelGroupEnum.TikTok) || !clickhouseEnabled">
+          <div class="profile__dropdown--head g-10">
+            <div class="profile__img m-0">
+              <ng-container *ngIf="userProfileImg == 'initials'; else showImage">
+                <span [ngStyle]="{'background': colorCode?colorCode:''}" class="initial">{{ initials }}</span>
+              </ng-container>
+              <ng-template #showImage>
+                <img class="img__fluid" [src]="userProfileImg"
+                onError="this.src='assets/images/agentimages/sample-image.svg'" alt="user image" />
+              </ng-template>
+            </div>
+            <div class="profile__dropdowninfo">
+              <a *ngIf="post?.Userinfo?.name!='Anonymous' && this.ticketHistoryData?.profileurl && postData?.channelGroup !== channelGroupEnum.Facebook" [href]="this.ticketHistoryData?.profileurl" class="profile__name" target="_blank">{{
+                post?.Userinfo.name
+                }}</a>
+                <span class="profile__name" *ngIf="post?.Userinfo?.name=='Anonymous' || this.ticketHistoryData?.profileurl==null || this.ticketHistoryData?.profileurl=='' || postData?.channelGroup === channelGroupEnum.Facebook">
+                  {{post?.Userinfo.name}}
+                </span>
+              <div class="profile__handle" *ngIf="socialHandle" style="width: 20rem;">
+                <span *ngIf="postData?.channelGroup != channelGroupEnum.Yotpo">&#64;</span>{{ post?.Userinfo.screenName }}
+              </div>
+              <div class="profile__handle" *ngIf="postData?.channelGroup == channelGroupEnum.Email">
+                {{ post?.Userinfo.socialid }}
+              </div>
+            </div>
+            <!-- <a mat-icon-button href="javascript:void(0)" class="profile__dropdown--action ml-auto"
+              (click)="openUserProfile(1)" *ngIf="post?.ticketId > 0 && pageType !== PostsType.TicketHistory">
+              <mat-icon>account_box</mat-icon>
+            </a> -->
+          </div>
+          <div class="profile__dropdown--body">
+            <div class="profile__dropdown--summary" *ngIf="post?.Userinfo.bio">
+              {{ post?.Userinfo.bio }}
+            </div>
+            <div class="profile__dropdown--stats">
+              <div class="profile__dropdown--stats-item"
+                *ngIf="((post?.Userinfo.followers != null || post?.Userinfo.followers != undefined) || post?.Userinfo.followers > 0) && post?.channelgroup != channelGroupEnum.Voice">
+                <ng-container *ngIf="(post?.channelgroup == channelGroupEnum.Twitter || post?.channelgroup == channelGroupEnum.Youtube)">
+                  <span class="text__label--sm">{{ post?.Userinfo.followers | followerNumberFormat }}</span>
+                  <span class="text__regular--sm"> {{'followers' | translate}}</span>
+                </ng-container>
+                
+                <ng-container
+                  *ngIf="(post?.channelgroup == channelGroupEnum.Instagram || (post?.channelgroup == channelGroupEnum.LinkedIn && post?.channeltype != channelType.LinkedInComments)) && postData?.isBrandPost">
+                  <span class="text__label--sm">{{ post?.Userinfo.followers | followerNumberFormat }}</span>
+                  <span class="text__regular--sm"> {{'followers' | translate}}</span>
+                </ng-container>
+              </div>
+              <div class="profile__dropdown--stats-item" *ngIf="
+                  (post?.Userinfo.following != null ||
+                  post?.Userinfo.following != undefined) && (post?.channelgroup == channelGroupEnum.Twitter || post?.channelgroup == channelGroupEnum.Instagram || post?.channelgroup == channelGroupEnum.LinkedIn  || post?.channelgroup == channelGroupEnum.Youtube) && post?.channelgroup != channelGroupEnum.Voice
+                ">
+                <span class="text__label--sm">{{ post?.Userinfo.following }}</span>
+                <span class="text__regular--sm"> {{'Following' | translate}}</span>
+              </div>
+            </div>
+            <div class="profile__dropdown--location" *ngIf="post?.Userinfo.location">
+              <mat-icon>location_on</mat-icon>
+              <span>{{ post?.Userinfo.location }}</span>
+            </div>
+            <div class="profile__dropdown--score">
+              <ul>
+                <li class="d-flex-items-center mb-4" *ngIf="
+                    post?.Userinfo.sentimentUpliftScore != null ||
+                    post?.Userinfo.sentimentUpliftScore != undefined
+                  ">
+                  <span class="text__label--sm">{{ 'Sentiment-Uplift-Score' | translate }}</span>
+                  <span class="colored__yellow--dark text-semibold ml-auto right-auto">{{
+                    post?.Userinfo.sentimentUpliftScore
+                    }}</span>
+                </li>
+                <li class="d-flex-items-center mb-4" *ngIf="
+                    post?.Userinfo.npsScore != null ||
+                    post?.Userinfo.npsScore != undefined
+                  ">
+                  <span class="text__label--sm">{{ 'NPS-Score' | translate }}</span>
+                  <span class="colored__green text-semibold ml-auto right-auto">{{
+                    post?.Userinfo.npsScore
+                    }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- start profile dropdown tiktok -->
+          <div *ngIf="postData?.channelGroup== channelGroupEnum.TikTok && clickhouseEnabled" class="
+                      post__dropdown--list post__dropdown--listprofile
+                      profile__dropdown
+                    ">
+            <div class="profile__dropdown--head g-10">
+              <div class="profile__img m-0">
+                <img class="img__fluid" [src]="post?.Userinfo.image"
+                  onError="this.src='assets/images/agentimages/sample-image.svg'" alt="user image" />
+              </div>
+              <div class="profile__dropdowninfo">
+                <a *ngIf="post?.Userinfo?.name!='Anonymous' && this.ticketHistoryData?.profileurl"
+                  [href]="this.ticketHistoryData?.profileurl" class="profile__name" target="_blank">{{
+                  post?.Userinfo.name
+                  }}</a>
+                <span class="profile__name"
+                  *ngIf="post?.Userinfo?.name=='Anonymous' || this.ticketHistoryData?.profileurl==null || this.ticketHistoryData?.profileurl==''">
+                  {{post?.Userinfo.name}}
+                </span>
+                <div class="profile__handle" *ngIf="post?.Userinfo.screenName" style="width: 20rem;">
+                  <span *ngIf="postData?.channelGroup != channelGroupEnum.Yotpo">&#64;</span>{{ post?.Userinfo.screenName }}
+                </div>
+                <div class="profile__handle" *ngIf="postData?.channelGroup == channelGroupEnum.Email">
+                  {{ post?.Userinfo.socialid }}
+                </div>
+              </div>
+            </div>
+            <p class="profile__dropdown--fetch" *ngIf="tikTokAuthorDetails?.isUpdated==false" (click)="!spinner?getTiktokDetailedView():''">
+              <mat-icon *ngIf="!spinner" fontSet="material-icons-outlined">download</mat-icon>
+              <mat-spinner *ngIf="spinner" color="accent" class="ml-10" [diameter]="20"></mat-spinner>
+              {{'Fetch-Details' | translate}}
+            </p>
+            <ng-container *ngIf="tikTokAuthorDetails?.isUpdated">
+            <div class="profile__dropdown--body">
+              <div class="profile__dropdown--summary" *ngIf="tikTokAuthorDetails.bio">
+                {{ tikTokAuthorDetails.bio?tikTokAuthorDetails.bio:'NA' }}
+              </div>
+              <div class="profile__dropdown--stats pt-0">
+                <div class="profile__dropdown--stats-item"
+                  *ngIf="
+                          ((tikTokAuthorDetails.followersCount != null ||
+                            tikTokAuthorDetails.followersCount != undefined) || tikTokAuthorDetails.followersCount > 0)">
+                  <span class="text__label--sm colored__locobuzz">{{ tikTokAuthorDetails.followersCount | followerNumberFormat }}</span>
+                  <span class="text__regular--sm"> {{ 'followers' | translate }}</span>
+                </div>
+                <div class="profile__dropdown--stats-item" *ngIf="
+                            (tikTokAuthorDetails.followingCount != null ||
+                            tikTokAuthorDetails.followingCount != undefined) 
+                          ">
+                  <span class="text__label--sm colored__purple--dark">{{ tikTokAuthorDetails.followingCount | followerNumberFormat}}</span>
+                  <span class="text__regular--sm"> {{ 'following' | translate }}</span>
+                </div>
+              </div>
+              <div *ngIf="tikTokAuthorDetails?.locationName" class="profile__dropdown--location">
+                <mat-icon>location_on</mat-icon>
+                <span>{{tikTokAuthorDetails?.locationName}}</span>
+              </div>
+              <div *ngIf="tikTokAuthorDetails?.channelMappings?.length>0" class="profile__dropdown--score">
+                <p class="font-weight-600">{{ 'associate-channels' | translate }}</p>
+                <ul class="mt-4">
+                  <li *ngFor="let item of tikTokAuthorDetails?.channelMappings" class="d-flex-items-center mb-4">
+                    <img [src]="channelImageEnum[channelGroupEnum[item.channelGroup]]" alt="" class="mr-5 w-16 h-16">
+                    <!-- <img src="assets/images/agentimages/sample-image.svg" alt="" class="mr-5 w-16 h-16"> -->
+                    <span (click)="redirectToUrl(item.redirectUrl)" class="text__label--sm">{{item.handle}}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            </ng-container>
+          </div>
+        <!-- ends profile dropdown tiktok -->
+        <!-- <div class="profile__handle profile__handle--none" *ngIf="postData?.channelGroup == channelGroupEnum.Email">
+          <span> ({{ post?.Userinfo.socialid }}) </span>
+        </div> -->
+      </div>
+      <div class="profile__isverified" *ngIf="this.post?.Userinfo.isVerified">
+        <img class="img__fluid vertical-sub mb-3" src="/assets/social-mention/post/isVerified.svg" />
+      </div>
+      </ng-template>
+
+      <ng-container *ngIf="(post?.channelgroup == channelGroupEnum.Twitter || post?.channelgroup == channelGroupEnum.Youtube)">
+        <div class="d-flex-items-center mr-7 followers" matTooltip="{{ 'followers' | translate }}" matTooltipPosition="above"
+          matTooltipClass="custom-tooltip">
+          <img class="vertical-sub" src="/assets/social-mention/post/followers.svg" />
+          <span class="pl-7 colored__main--text"><b>{{ post?.Userinfo.followers | followerNumberFormat }}</b></span>
+        </div>
+      </ng-container>
+      <ng-container
+        *ngIf="(post?.channelgroup == channelGroupEnum.Instagram || (post?.channelgroup == channelGroupEnum.LinkedIn && post?.channeltype != channelType.LinkedInComments)) && postData?.isBrandPost">
+        <div class="d-flex-items-center mr-7 followers" matTooltip="{{ 'followers' | translate }}" matTooltipPosition="above"
+          matTooltipClass="custom-tooltip">
+          <img class="vertical-sub" src="/assets/social-mention/post/followers.svg" />
+          <span class="pl-7 colored__main--text"><b>{{ post?.Userinfo.followers | followerNumberFormat }}</b></span>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="post?.channelgroup == channelGroupEnum.Reddit">
+        <div *ngIf="post?.subRedditName" class="post__pill bg__reddit nowrap"
+          [ngClass]="{'post__head--minimal' : minimalViewHead}" [matTooltip]=" 'SubReddit : ' + post?.subRedditName"
+          matTooltipPosition="above" matTooltipClass="custom__tooltip-normal">
+          <span class="brand-name">
+            {{ post?.subRedditName?.substr(0,30) }}
+            <span *ngIf="post?.subRedditName?.length > 30">...</span>
+          </span>
+        </div>
+        
+        <div *ngIf="post?.flair" class="post__pill bg__reddit--flyer nowrap mx-2"
+          [ngClass]="{'post__head--minimal' : minimalViewHead}" [matTooltip]="'Flair :' + post?.flair" matTooltipPosition="above"
+          matTooltipClass="custom__tooltip-normal">
+          <span class="brand-name">
+            {{ post?.flair?.substr(0,25) }}
+            <span *ngIf="post?.flair?.length > 25">...</span>
+          </span>
+        </div>
+      </ng-container>
+    
+    </div>
+    <!-- <div class="d-flex-items-center cursor-pointer" (click)="openUserProfile(1)"
+      *ngIf="post?.ticketId > 0 && pageType !== PostsType.TicketHistory">
+      <mat-icon>account_box</mat-icon>
+    </div> -->
+    <span class="pl-5" *ngIf="postData?.locationName && postData?.channelGroup == channelGroupEnum.AppStoreReviews"
+      [matTooltip]="postData?.locationName.length > 20 ? postData?.locationName : ''" matTooltipPosition="above"
+      matTooltipClass="custom-tooltip">
+      <mat-icon class="colored__locobuzz">location_on</mat-icon>{{postData?.locationName.substr(0,20)}}<span
+        *ngIf="postData?.locationName.length > 20">...</span>
+    </span>
+    <div class="ml-5 mr-10 w-20" *ngIf="ticketHistoryData?.isInfluencermarked && (pageType === PostsType.Tickets || pageType === PostsType.Mentions)" 
+    [matTooltip]="postData?.author?.markedInfluencerCategoryName ? (postData?.author?.markedInfluencerCategoryName) + ' Influencer': 'Influencer'" matTooltipPosition="above" matTooltipClass="custom-tooltip" >
+      <img class="img__fluid vertical-sub" src="/assets/social-mention/post/Influencer.svg" />
+    </div>
+    <ng-container *ngIf="isVOIPAgent && contactData && isVOIPBrand && ticketHistoryData?.currentticketstatus != 'Closed'">
+    <ng-container>
+      <!-- *ngIf="showDialPad" -->
+      <div class="post__call mr-10"  [matMenuTriggerFor]="call">
+        <mat-icon>local_phone</mat-icon>
+      </div>
+      <!-- <div class="post__call mr-10" *ngIf="!showDialPad" (click)="makeCall(contactData)">
+        <mat-icon>local_phone</mat-icon>
+      </div> -->
+    </ng-container>
+    <mat-menu #call="matMenu">
+      <!-- *ngFor="let contactNumber of contactNumberList" -->
+      <!-- showDialPad ? dialPadPopup(contactData) : -->
+      <div class="dialpad">
+        <ng-container >
+          <a class="dialpad-popup border-bottom__light-grey"  (click)="makeCall(contactData)">{{contactData}}
+          </a>
+        </ng-container>
+        <!-- <a class="dialpad-popup"  *ngIf="showDialPad" #padToggle (click)="dialPadPopup()">
+          <mat-icon class="mr-0 s-18">call</mat-icon>
+          Dial New Number
+        </a> -->
+      </div>
+    </mat-menu>
+    <ng-container *ngIf="dialPad">
+      <div class="dialpad-block">
+        <app-dial-pad #dial [number]="contactNo" (makeCallEvent)="makeCall($event)" (closeEvent)="closeEventRes($event)"></app-dial-pad>
+      </div>
+    </ng-container>
+  </ng-container>
+      <div class="responsive__info">
+        <div class="post__head--info">  
+          <div class="post__head--infoitem" *ngIf="pageType === PostsType.Tickets || pageType === PostsType.Mentions">
+            <div class="post__pill bg__grey--lighter nowrap currentStatus__yellow" *ngIf="
+                ticketHistoryData?.currentassignTo &&
+                ticketHistoryData?.isCurrentAssignToVisible
+              ">
+              <mat-icon class="post__head--icon post__pill--icon" fontSet="material-icons-outlined" aria-hidden="false"
+                aria-label="how_to_reg icon" matTooltip="{{ 'escalator-warning' | translate }}">{{'escalator_warning'}}</mat-icon>
+              <span>{{ ticketHistoryData?.currentassignTo }}</span>
+            </div>
+          </div>
+
+          <div class="post__head--infoitem conversation--crm"
+            *ngIf="ticketHistoryData?.salesForceCrm && postData?.ticketInfo.srid == null || postData?.ticketInfo.srid === ''"
+            [matMenuTriggerFor]="salesForceCrm">
+            <div class="post__pill bg__grey--lighter nowrap cursor-pointer">
+              <span class="post__foot--label">{{'crm' | translate}}</span>
+              <mat-spinner color="accent" class="ml-4" [diameter]="20" *ngIf="salesForceLoader"></mat-spinner>
+            </div>
+            <mat-menu #salesForceCrm="matMenu" yPosition="above" class="matmenu-md" >
+              <button *ngIf="ticketHistoryData?.createSR" mat-menu-item (click)="createSalesForceCrm(1)">
+                <span>{{'SR' | translate}}</span>
+              </button>
+              <button *ngIf="ticketHistoryData?.createLead" mat-menu-item (click)="createSalesForceCrm(2)">
+                <span>{{'Lead' | translate}}</span>
+              </button>
+            </mat-menu>
+          </div>
+          <div class="post__head--infoitem conversation--crm" *ngIf="ticketHistoryData?.salesForceCrm && postData?.ticketInfo.srid">
+            <div class="post__pill bg__grey--lighter nowrap cursor-pointer" [ngClass]="{
+                                                'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''
+                                              }">
+              <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''" class="post__foot--icon mr-3"
+                fontSet="material-icons-outlined" aria-hidden="false" aria-label="done" matTooltip="{{ 'done' | translate }}">
+                done</mat-icon>
+              <span class="post__foot--label">{{'crm' | translate}}</span>
+            </div>
+          </div>
+          <div class="post__head--infoitem conversation--crm" (click)="getRequestPopup()"
+            *ngIf="ticketHistoryData?.crmcreatereqpop ; else showmobilenopopup">
+            <div class="post__pill bg__grey--lighter nowrap cursor-pointer" [ngClass]="{
+                'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '', 'post__head--minimal' : minimalViewHead
+              }">
+              <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''"
+                class="post__foot--icon mr-3" fontSet="material-icons-outlined" aria-hidden="false" aria-label="done">
+                done</mat-icon>
+              <span class="post__foot--label">{{'crm' | translate}}</span>
+            </div>
+          </div>
+          <ng-template #showmobilenopopup>
+            <div class="post__head--infoitem conversation--crm" (click)="getRequestPopup()"
+              *ngIf="ticketHistoryData?.crmmobilenopopup">
+              <div class="post__pill bg__grey--lighter cursor-pointer" [ngClass]="{
+                  'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '', 'post__head--minimal' : minimalViewHead
+                }">
+                <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''"
+                  class="post__foot--icon mr-3" fontSet="material-icons-outlined" aria-hidden="false" aria-label="done">
+                  done</mat-icon>
+                <span class="post__foot--label">{{'crm' | translate}}</span>
+              </div>
+            </div>
+          </ng-template>
+          <div class="post__head--infoitem conversation--crm" (click)="openAnimalWildfare()"
+            *ngIf="ticketHistoryData?.animalWelfare">
+            <div class="post__pill bg__grey--lighter nowrap cursor-pointer" [ngClass]="{
+                          'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''
+                        }">
+              <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''" class="post__foot--icon mr-3"
+                fontSet="material-icons-outlined" aria-hidden="false" aria-label="done">
+                done</mat-icon>
+              <span class="post__foot--label">{{crmLable}}</span>
+            </div>
+          </div>
+          <div class="post__head--infoitem" *ngIf="pageType === PostsType.Tickets || pageType === PostsType.Mentions">
+            <div class="post__pill bg__grey--lighter nowrap cursor-pointer"
+              *ngIf="post?.assignTo && !ticketHistoryData?.isCurrentAssignToVisible" (click)="assignTicket()" [ngClass]="{
+                'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed', 'post__head--minimal' : minimalViewHead
+              }">
+              <mat-icon class="post__head--icon post__pill--icon 12" fontSet="material-icons-outlined" aria-hidden="false"
+                aria-label="how_to_reg icon">how_to_reg</mat-icon>
+                
+              <!-- <span>{{(postData?.brandInfo?.isBrandworkFlowEnabled && (postData?.ticketInfo?.status == 9 || postData?.ticketInfo?.status == 15)) ?
+              postData?.ticketInfo?.escalatedTotUserName ? postData?.ticketInfo?.escalatedTotUserName +' ('+
+              postData?.ticketInfo?.escalatedToCSDTeamName + ')' : postData?.ticketInfo?.escalatedToCSDTeamName
+              : post?.assignTo}}</span> -->
+              <span [matTooltip]="getAssignedToText().length > 10 ? getAssignedToText() : ''"
+                matTooltipPosition="above">
+                {{ getAssignedToText().substr(0, 10) }}<span *ngIf="getAssignedToText().length > 10">...</span>
+              </span>
+            </div>
+          </div>
+          <div class="post__head--infoitem">
+            <div class="post__pill bg__grey--lighter nowrap" [ngClass]="{
+                'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed', 'post__head--minimal' : minimalViewHead
+              }" [matTooltip]="post?.brandFriendlyName" matTooltipPosition="above" matTooltipClass="custom__tooltip-normal">
+              <img class="img__fluid w-20 mr-3 brand__img--circle" [src]="post?.brandLogo"
+                onError="this.src='assets/social-mention/post/default_brand.svg'" alt="brand image" />
+              <span class="brand-name">{{ post?.brandFriendlyName.substr(0,10) }}<span *ngIf="post?.brandFriendlyName.length > 10">...</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="ticketHistoryData?.locationName">
+        <div class="post__head--GMBlocation" >
+          <div class="
+                  post__head--channel
+                  nowrap
+                  conversations__post--head--channel
+                ">
+                      <mat-icon class="material-icons channel__image colored__locobuzz" matTooltip="{{ 'gmb-location' | translate }}">fmd_good</mat-icon>
+            <span class="channel__label conversations__post--head--channel-label ml-1">{{ ticketHistoryData?.locationName }}</span>
+          </div>
+          <div *ngIf="ticketHistoryData?.StoreCode || ticketHistoryData?.locality || ticketHistoryData?.locationName" class="post__head--GMBlocation-hover GMBlocation">
+            <div *ngIf="ticketHistoryData?.locationName" class="d-flex">
+              <span class="text__label">{{ 'Location-Name' | translate }}:</span>
+              <span class="ml-7">{{ ticketHistoryData?.locationName ? ticketHistoryData?.locationName : 'NA' }}</span>
+            </div>
+            <div *ngIf="ticketHistoryData?.StoreCode" class="d-flex">
+              <span class="text__label">{{ 'Store-Code' | translate }}:</span>
+              <span class="ml-7">{{ ticketHistoryData?.StoreCode ? ticketHistoryData?.StoreCode : 'NA' }}</span>
+            </div>
+            <div *ngIf="ticketHistoryData?.locality" class="d-flex">
+              <span class="text__label">{{ 'Locality' | translate }}:</span>
+              <span class="ml-7">{{ ticketHistoryData?.locality ? ticketHistoryData?.locality : 'NA' }}</span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    <!-- </div> -->
+    <!-- <div class="arrow arrow-right" #rightBtn (click)="rightButton($event)">
+      <mat-icon>keyboard_arrow_right</mat-icon>
+    </div> -->
+  <!-- </div> -->
+
+  <div class="post__head--info">
+    <div class="d-flex-items-center cursor-pointer mr-5" (click)="openUserProfile(1)"
+      *ngIf="post?.ticketId > 0 && pageType !== PostsType.TicketHistory">
+      <mat-icon>account_box</mat-icon>
+    </div>
+    <div class="responsive__info--right">
+
+      <div class="post__head--infoitem" >
+        <div *ngIf="unseenCountFlag"
+           matTooltip="{{ 'new-note-added-via-crm' | translate }}" matTooltipPosition="above"
+          matTooltipClass="custom-tooltip" class="post__pill workflow-pill bg__grey--lighter cursor-pointer">
+          <img src="/assets/social-mention/post/ring_icon.svg" class="w-16">
+        </div>
+      </div>
+      <!-- workflow -->
+      <div class="post__head--infoitem" *ngIf="postData?.ticketInfoWorkflow?.workflowName">
+        <div [matMenuTriggerFor]="workflow" (click)="workflowActionShow(postData?.ticketInfoWorkflow)" [ngClass]="{'active' : activeWorkflow}" matTooltip="{{ 'workflow-automation' | translate }}" matTooltipPosition="above" matTooltipClass="custom-tooltip" class="post__pill workflow-pill bg__grey--lighter cursor-pointer">
+          <img src="assets/account/menu/WorkFlow_Active.svg" class="w-16">
+        </div>
+      </div>
+      <mat-menu #workflow="matMenu" class="fit-content-min">
+        <div class="workflow-ticket__menu">
+          <div class="workflow-ticket__wrapper">
+            <p class="text__label">{{ 'workflow-name' | translate }}</p>
+            <p class="colored__locobuzz">{{postData?.ticketInfoWorkflow?.workflowName}}</p>
+            <p class="text__label mt-6">{{ 'Action-Type' | translate }}</p>
+            <mat-spinner [diameter]="25" *ngIf="workflowActionShowFlag"></mat-spinner>
+            <div class="workflow-ticket__action" *ngIf="!workflowActionShowFlag">
+              <span class="d-flex-items-center position-relative" *ngFor="let item of workflowAction;let i=index;">
+                <span class="p-3 border-radius-8 h-22 w-22 block-center" [ngClass]="{'bg__green':item?.isSuccess,'bg__red':!item?.isSuccess}">
+                  <img matTooltip="{{'Respond' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14" *ngIf="item?.actionName?.includes('Respond')" src="assets/images/workflow/Respond_white.svg" alt="">
+                  <img matTooltip="{{'Sending-Feedback' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14" *ngIf="item?.actionName?.includes('Sending Feedback')" src="assets/images/workflow/Sending-Feedback_white.svg" alt="">
+                  <img matTooltip="{{'Ticket-Disposition' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14" *ngIf="item?.actionName?.includes('Ticket Disposition')" src="assets/images/workflow/Ticket-Dispositions_white.svg" alt="">
+                  <img matTooltip="{{'Make-Actionable' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14" *ngIf="item?.actionName?.includes('Make Actionable')" src="assets/images/workflow/make-actionable_White.svg" alt="">
+                  <img matTooltip="{{'Change-Ticket-Status' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14" *ngIf="item?.actionName?.includes('TicketStatusChange')" src="assets/images/workflow/Change-Ticket-Status_white.svg" alt="">
+                  <img matTooltip="{{'Escalate' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14" *ngIf="item?.actionName?.includes('Escalate')" src="assets/images/workflow/Escalate-To_white.svg" alt="">
+                  <img matTooltip="{{'Change-Priority' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14" *ngIf="item?.actionName?.includes('Change Priority') || item?.actionName?.includes('Set Priority')" src="assets/images/workflow/Set_priority_white.svg" alt="">
+                  <!-- <img matTooltip="Assign" matTooltipClass="custom-tooltip" class="w-14 h-14" *ngIf="item?.actionName?.includes('Assign')" src="assets/images/workflow/Assign-To_white.svg"  alt=""> -->
+                  <img matTooltip="{{'Set-Category' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14" *ngIf="item?.actionName?.includes('Set Category')"
+                    src="assets/images/workflow/set-category_white.svg" alt="">
+                    <img matTooltip="{{'Create-Case' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                      *ngIf="item?.actionName?.includes('Create Case')" src="assets/images/workflow/create-case_white.svg" alt="">
+                      <img matTooltip="{{'Create-Lead' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                        *ngIf="item?.actionName?.includes('Create Lead')" src="assets/images/workflow/create-lead_white.svg" alt="">
+                        <img matTooltip="{{'Send-Alert' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                          *ngIf="item?.actionName?.includes('Send Alert')" src="assets/images/workflow/send-alert_white.svg" alt="">
+                          <img matTooltip="{{'Mark-Ticket-as-Closed' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                            *ngIf="item?.actionName?.includes('Mark ticket as Closed')" src="assets/images/workflow/ticket-close_white.svg" alt="">
+                            <img matTooltip="{{'On-Hold' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                              *ngIf="item?.actionName?.includes('On Hold')" src="assets/images/workflow/On_Hold.svg"
+                              alt="">
+                              <img matTooltip="{{'Awaiting-Response-from-Customer' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                                *ngIf="item?.actionName?.includes('Awaiting Response from Customer')" src="assets/images/workflow/awaiting-response_white.svg"
+                                alt="">
+                                <img matTooltip="{{'Canned-Response' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                                  *ngIf="item?.actionName?.includes('Canned Response')" src="assets/images/workflow/canned-response_white.svg"
+                                  alt="">
+                                  <img matTooltip="{{'AI-Classifier' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                                    *ngIf="item?.actionName?.includes('ActionabilityDetection') || item?.actionName?.includes('Actionability Detection')" src="assets/images/workflow/actionability-detection_white.svg" alt="">
+                                    <img matTooltip="{{'response-genie' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                                      *ngIf="item?.actionEnum == 4 || item?.actionName?.includes('AI Response')"
+                                      src="assets/images/workflow/Ai_responce_white.svg" alt="">
+                                      <img matTooltip="{{'timed-out' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                                      *ngIf="item?.actionName?.includes('TimedOut')" src="assets/images/workflow/timeout_white.svg" alt="">
+                                        <img matTooltip="{{'hide-mention' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                                          *ngIf="item?.actionName?.includes('Hide Mention')" src="assets/images/workflow/Hide_white.svg" alt="">
+                                          <img matTooltip="{{'delete-mention' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                                            *ngIf="item?.actionName?.includes('Delete Mention')" src="assets/images/workflow/Delete_white.svg" alt="">
+                                            <img matTooltip="Assign To" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                                              *ngIf="item?.actionName?.includes('Assign')" src="assets/images/workflow/Account-Circle-White.svg" alt="">
+                                            <img matTooltip="Acknowledge" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                                              *ngIf="item?.actionName?.includes('Acknowledge')" src="assets/images/workflow/Hide-Image-White.svg" alt="">
+                                                <img matTooltip="{{'reopen-ticket' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                                                  *ngIf="item?.actionName?.includes('Reopen Ticket')" src="assets/images/workflow/reopen_white.svg" alt="">
+                </span>
+                <span class="workflow-ticket__action--line bg__green" *ngIf="item?.isSuccess && i < workflowAction?.length-1"></span>
+                <span class="workflow-ticket__action--line bg__red--dark" *ngIf="!item?.isSuccess && i < workflowAction?.length-1"></span>
+                <span class="workflow-ticket__action--cross" *ngIf="!item?.isSuccess && i < workflowAction?.length-1">
+                  <img src="assets/workflow/cross-icon.svg">
+                </span>
+              </span>
+              <!-- <span class="d-flex-items-center position-relative">
+                <span class="bg__green p-3 border-radius-8 h-22 w-22 block-center" matTooltip="Sending Feedback"
+                  matTooltipClass="custom-tooltip">
+                  <img class="w-14 h-14" src="assets/images/workflow/Sending-Feedback_white.svg" alt="">
+                </span>
+                <span class="workflow-ticket__action--line"></span>
+                <span class="workflow-ticket__action--cross">
+                  <img src="assets/workflow/cross-icon.svg">
+                </span>
+              </span> -->
+              <!-- <span class="d-flex-items-center position-relative">
+                <span class="bg__red p-3 border-radius-8 h-22 w-22 block-center" matTooltip="Ticket Disposition"
+                  matTooltipClass="custom-tooltip">
+                  <img class="w-14 h-14" src="assets/images/workflow/Ticket-Dispositions_white.svg" alt="">
+                </span>
+                <span class="workflow-ticket__action--line"></span>
+                <span class="workflow-ticket__action--cross">
+                  <img src="assets/workflow/cross-icon.svg">
+                </span>
+              </span> -->
+              <!-- <span class="d-flex-items-center position-relative">
+                <span class="bg__red p-3 border-radius-8 h-22 w-22 block-center" matTooltip="Make it Actionable"
+                  matTooltipClass="custom-tooltip">
+                  <img class="w-14 h-14" src="assets/images/workflow/make-actionable_White.svg" alt="">
+                </span> -->
+                <!-- <span class="workflow-ticket__action--line"></span>
+                <span class="workflow-ticket__action--cross">
+                  <img src="assets/workflow/cross-icon.svg">
+                </span> -->
+              <!-- </span> -->
+              <!-- <span class="d-flex-items-center position-relative">
+                <span class="bg__green p-3 border-radius-8 h-22 w-22 block-center" matTooltip="Change Ticket Status"
+                  matTooltipClass="custom-tooltip">
+                  <img class="w-14 h-14" src="assets/images/workflow/Change-Ticket-Status_white.svg" alt="">
+                </span>
+                <span class="workflow-ticket__action--line"></span>
+                <span class="workflow-ticket__action--cross">
+                  <img src="assets/workflow/cross-icon.svg">
+                </span>
+              </span>
+              <span class="d-flex-items-center position-relative">
+                <span class="bg__green p-3 border-radius-8 h-22 w-22 block-center" matTooltip="Change Priority"
+                  matTooltipClass="custom-tooltip">
+                  <img class="w-14 h-14" src="assets/images/workflow/Change-Priority_white.svg" alt="">
+                </span>
+                <span class="workflow-ticket__action--line"></span>
+                <span class="workflow-ticket__action--cross">
+                  <img src="assets/workflow/cross-icon.svg">
+                </span>
+              </span>
+              <span class="d-flex-items-center position-relative">
+                <span class="bg__green p-3 border-radius-8 h-22 w-22 block-center" matTooltip="Change Priority"
+                  matTooltipClass="custom-tooltip">
+                  <img class="w-14 h-14" src="assets/images/workflow/Change-Priority_white.svg" alt="">
+                </span>
+                <span class="workflow-ticket__action--line"></span>
+                <span class="workflow-ticket__action--cross">
+                  <img src="assets/workflow/cross-icon.svg">
+                </span>
+              </span>
+              <span class="d-flex-items-center position-relative">
+                <span class="bg__green p-3 border-radius-8 h-22 w-22 block-center" matTooltip="Assign to"
+                  matTooltipClass="custom-tooltip">
+                  <img class="w-14 h-14" src="assets/images/workflow/Assign-To_white.svg" alt="">
+                </span>
+                <span class="workflow-ticket__action--line"></span>
+                <span class="workflow-ticket__action--cross">
+                  <img src="assets/workflow/cross-icon.svg">
+                </span>
+              </span>
+              <span class="d-flex-items-center position-relative">
+                <span class="bg__green p-3 border-radius-8 h-22 w-22 block-center" matTooltip="Escalate to"
+                  matTooltipClass="custom-tooltip">
+                  <img class="w-14 h-14" src="assets/images/workflow/Escalate-To_white.svg" alt="">
+                </span>
+              </span> -->
+            </div>
+          </div>
+        </div>
+      </mat-menu>
+      <!-- workflow Ends -->
+       <!-- AI IntentStart -->
+      <!-- <div class="post__head--infoitem"
+        *ngIf="postData?.aiIntentIDs?.length && (pageType === PostsType.Tickets || pageType === PostsType.Mentions || pageType === PostsType.TicketHistory)">
+        <div class="post__pill-wrapper">
+          <div class="post__pill bg__grey--lighter nowrap cursor-pointer d-inline-flex align-items-center pill-gradient"
+            style="background: linear-gradient(90deg, rgba(252, 14, 159, 0.15) 0%, rgba(116, 20, 239, 0.15) 100%) !important;" [ngStyle]="getAiIntentPillWidth()">
+            <img src="assets/account/menu/AI_Intent.svg" class="mr-4 ai-intent-img" alt="SignalSense">
+            <span class="mr-5 pill-text-gradient" [matTooltip]="postData.aiIntentIDs[0].length > 10 ? postData.aiIntentIDs[0] : ''" matTooltipPosition="above">{{ postData.aiIntentIDs[0].substr(0,10) }}<span *ngIf="postData.aiIntentIDs[0].length > 10">...</span></span>
+            <div class="intent-hover-wrapper">
+              <span *ngIf="postData?.aiIntentIDs?.length > 1" class="intent-count-circle bg__blue--lighter colored__locobuzz">
+                {{ postData.aiIntentIDs.length - 1 }}
+              </span>
+      
+              <div class="show-on-hover-intents">
+                <ng-container *ngFor="let intent of postData.aiIntentIDs.slice(1)">
+                  <button mat-menu-item style="white-space: normal;">
+                    <span class="d-flex-items-center">
+                      <img src="assets/account/menu/AI_Intent.svg" class="mr-4 ai-intent-img" alt="SignalSense">
+                      <p class="force-wrap">{{ intent }}</p>
+                    </span>                    
+                  </button>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+  
+        <!-- AI Intent Ends -->
+      <div class="post__head--infoitem" *ngIf="pageType === PostsType.Tickets || pageType === PostsType.Mentions">
+        <div class="post__pill bg__grey--lighter nowrap currentStatus__yellow" *ngIf="
+            ticketHistoryData?.currentassignTo &&
+            ticketHistoryData?.isCurrentAssignToVisible
+          ">
+          <mat-icon class="post__head--icon post__pill--icon" fontSet="material-icons-outlined" aria-hidden="false"
+            aria-label="how_to_reg icon" matTooltip="{{ 'escalator-warning' | translate }}">{{'escalator_warning'}}</mat-icon>
+          <span>{{ ticketHistoryData?.currentassignTo }}</span>
+        </div>
+      </div>
+      <!-- <div class="post__head--infoitem conversation--crm" *ngIf="ticketHistoryData?.salesForceCrm && postData?.ticketInfo.srid == null || postData?.ticketInfo.srid === ''" [matMenuTriggerFor]="salesForceCrm">
+        <div class="post__pill bg__grey--lighter nowrap cursor-pointer">
+          <span class="post__foot--label">CRM</span>
+          <mat-spinner color="accent" class="ml-4" [diameter]="20" *ngIf="salesForceLoader"></mat-spinner>
+        </div>
+        <mat-menu #salesForceCrm="matMenu" yPosition="above" class="matmenu-md">
+          <button mat-menu-item *ngIf="ticketHistoryData?.createSR" (click)="createSalesForceCrm(1)">
+            <span>SR</span>
+          </button>
+          <button mat-menu-item *ngIf="ticketHistoryData?.createLead" (click)="createSalesForceCrm(2)">
+            <span>Lead</span>
+          </button>
+        </mat-menu>
+      </div>
+      <div class="post__head--infoitem conversation--crm" *ngIf="ticketHistoryData?.salesForceCrm && postData?.ticketInfo.srid"
+        >
+        <div class="post__pill bg__grey--lighter nowrap cursor-pointer" [ngClass]="{
+                                      'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''
+                                    }">
+          <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''" class="post__foot--icon mr-3"
+            fontSet="material-icons-outlined" aria-hidden="false" aria-label="done" matTooltip="{{ 'done' | translate }}">
+            done</mat-icon>
+          <span class="post__foot--label">CRM</span>
+        </div>
+      </div> -->
+
+        <div class="post__head--infoitem conversation--crm" (click)="!crmGetAuthorTicketDetails?getRequestPopup():''"
+        *ngIf="ticketHistoryData?.crmcreatereqpop && (ticketHistoryData?.currentticketstatus != 'Closed' || (ticketHistoryData?.currentticketstatus == 'Closed' &&( (postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '') || (postData?.ticketInfo?.leadID !== null && postData?.ticketInfo?.leadID !== '')))); else showmobilenopopup">
+        <div class="post__pill pill-bg nowrap cursor-pointer" [ngClass]="{
+          'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__green--dark active-pill': (postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '') ||( postData?.ticketInfo.leadID !== null && postData?.ticketInfo.leadID !== ''), 'post__head--minimal' : minimalViewHead
+        }"   [matMenuTriggerFor]="clickHoverMenuTriggerFlag ? clickHoverMenu : null" 
+              #clickHoverMenuTrigger="matMenuTrigger" >
+              <img src="assets/images/CRM_Icon.svg" alt="" *ngIf="(postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '') || ( postData?.ticketInfo.leadID !== null && postData?.ticketInfo.leadID !== '')"
+        class="w-14 mr-3">
+        <span class="post__foot--label" [loading]="lookupshow">{{'crm' | translate}}</span><mat-spinner class="ml-15" [diameter]="15" *ngIf="crmGetAuthorTicketDetails"></mat-spinner>
+  
+      </div>
+    </div>
+      <ng-container *ngIf="lookupshow">
+        <div class="lookup__wrapper">
+          <div class="lookup__dialog" [hidden]="snapdealSridFound">
+            <app-loopupcrm (closeDialog)="lookupshow=false" [brandDetails]="filterBrandInfo" [postData]="postData" [srid]="postData?.ticketInfo?.srid" [postType]="pageType"></app-loopupcrm>
+          </div>
+        </div>
+      </ng-container>
+      <mat-menu class="lookup__wrapper--button" #clickHoverMenu="matMenu" yPosition="below">
+        <ng-container *ngIf="clickHoverMenuTriggerFlag">
+           
+          <button mat-menu-item class="d-flex-items-center" *ngIf="(ticketHistoryData?.currentticketstatus == 'Closed' && !postData?.ticketInfo?.srid) ? false : true" (click)="(postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '' && postData?.ticketInfo?.srid) ? CaseLeadFormOpenView('Case'):CaseLeadFormOpen('Case')">
+            
+            <mat-icon class="colored__locobuzz mr-0" fontSet="material-icons-outlined">work_outline</mat-icon>
+            <span class="ml-7">{{ 'Case' | translate }}</span>
+            <img src="assets/images/CRM_Icon.svg" alt="" *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '' && postData?.ticketInfo?.srid" class="w-14 ml-7">
+          </button>
+          
+          <button mat-menu-item class="d-flex-items-center" *ngIf="(ticketHistoryData?.currentticketstatus == 'Closed' && !postData?.ticketInfo?.leadID) ? false:true" (click)="(postData?.ticketInfo?.leadID !== null && postData?.ticketInfo?.leadID !== '' && postData?.ticketInfo?.leadID) ?  CaseLeadFormOpenView('Lead') :CaseLeadFormOpen('Lead')">
+             
+            <img src="assets/images/channel-logos/Lead_Icon.svg" alt="">
+            <span class="ml-5">{{ 'lead' | translate }}</span>
+            <img src="assets/images/CRM_Icon.svg" alt="" *ngIf="postData?.ticketInfo?.leadID !== null && postData?.ticketInfo?.leadID !== '' && postData?.ticketInfo?.leadID" class="w-14 ml-7">
+          </button>
+        </ng-container>
+        </mat-menu>
+            <div class="post__head--infoitem">
+              <div
+                *ngIf="((postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '') || ( postData?.ticketInfo.leadID !== null && postData?.ticketInfo.leadID !== '')) && typeOfCrm==102 && pageType != PostsType.TicketHistory"
+                matTooltip="{{'Sync-data-from-CRM' | translate}}" matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+                class="post__pill workflow-pill bg__grey--lighter cursor-pointer" (click)="syncSFDCData()">
+                <img src="/assets/social-mention/post/Sync_icon.svg" class="w-20" [class.rotate]="rotate">
+              </div>
+            </div>
+      <!-- <ng-container *ngIf="lookupshowquickwork">
+        <div class="lookup__wrapper">
+          <div class="lookup__dialog" [hidden]="quickworkSridFound">
+            <app-lookupcrmquickwork (closeDialog)="lookupshowquickwork=false" [brandDetails]="filterBrandInfo" [postData]="postData" [srid]="postData?.ticketInfo?.srid" [postType]="pageType"></app-lookupcrmquickwork>
+          </div>
+        </div>
+      </ng-container> -->
+      <ng-template #showmobilenopopup>
+        <div class="post__head--infoitem conversation--crm" (click)="getRequestPopup()"
+        *ngIf="ticketHistoryData?.crmmobilenopopup && (ticketHistoryData?.currentticketstatus != 'Closed' || (ticketHistoryData?.currentticketstatus == 'Closed' && (postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '')))">
+          <div class="post__pill bg__grey--lighter cursor-pointer" [ngClass]="{
+              'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '', 'post__head--minimal' : minimalViewHead
+            }">
+            <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''" class="post__foot--icon mr-3"
+              fontSet="material-icons-outlined" aria-hidden="false" aria-label="done" matTooltip="{{ 'done' | translate }}">
+              done</mat-icon>
+            <span class="post__foot--label">{{'crm' | translate}}</span>
+          </div>
+        </div>
+      </ng-template>
+      <div class="post__head--infoitem conversation--crm" (click)="openAnimalWildfare()"
+        *ngIf="ticketHistoryData?.animalWelfare">
+        <div class="post__pill bg__grey--lighter nowrap cursor-pointer" [ngClass]="{
+                                'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''
+                              }">
+          <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''" class="post__foot--icon mr-3"
+            fontSet="material-icons-outlined" aria-hidden="false" aria-label="done">
+            done</mat-icon>
+          <span class="post__foot--label">{{crmLable}}</span>
+        </div>
+      </div>
+      <div class="post__head--infoitem" *ngIf="pageType === PostsType.Tickets || pageType === PostsType.Mentions">
+        <div *ngIf = "postData?.locationProfileName" [matTooltip]="postData?.locationProfileName.length > 10 ? postData?.locationProfileName : ''" matTooltipPosition="above" class="post__pill nowrap cursor-pointer bg__grey--lighter border-radius-16 d-flex-items-center g-3 p-3 pr-10 mr-3">
+          <mat-icon class="material-icons-outlined colored__red">location_on</mat-icon>
+          <p>{{postData?.locationProfileName.substr(0,10)}}<span *ngIf="postData?.locationProfileName.length > 10">...</span></p>
+        </div>
+        <div class="post__pill nowrap cursor-pointer"
+          *ngIf="post?.assignTo && !ticketHistoryData?.isCurrentAssignToVisible" (click)="assignTicket()" [ngClass]="{
+            'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed', 'post__head--minimal' : minimalViewHead, 'bg__grey--lighter' : !minimalViewHead
+          }">
+          <mat-icon class="post__head--icon post__pill--icon 11" fontSet="material-icons-outlined" aria-hidden="false"
+            aria-label="how_to_reg icon">how_to_reg</mat-icon>
+          <!-- <span class="w-auto text__ellipsis">{{(postData?.brandInfo?.isBrandworkFlowEnabled && (postData?.ticketInfo?.status == 9 || postData?.ticketInfo?.status == 15)) ?
+            postData?.ticketInfo?.escalatedTotUserName ? postData?.ticketInfo?.escalatedTotUserName +' ('+
+            postData?.ticketInfo?.escalatedToCSDTeamName + ')' : postData?.ticketInfo?.escalatedToCSDTeamName
+            : post?.assignTo}}</span> -->
+            <span class="w-auto text__ellipsis" [matTooltip]="getAssignedToText().length > 10 ? getAssignedToText() : ''" matTooltipPosition="above" matTooltipClass="custom__tooltip-maxText">
+              {{ getAssignedToText().substr(0, 10) }}<span *ngIf="getAssignedToText().length > 10">...</span>
+            </span>
+        </div>
+      </div>
+      <div *ngIf="postData?.filterKeywords && clickhouseEnabled" class="post__head--infoitem">
+        <div class="post__pill nowrap bg__grey--lighter nowrap responsive__detail--infoitem filter-keyword__block"
+          matTooltipPosition="above" matTooltipClass="custom__tooltip-maxText" matTooltip={{postData?.filterKeywords}}>
+          <img class="img__fluid w-23 brand__img--circle" src="assets/social-mention/post/keywords.svg" alt="keyword image" />
+        </div>
+      </div>
+      <div class="post__head--infoitem">
+        <!-- <div class="post__pill nowrap bg__grey--lighter nowrap responsive__detail--infoitem" [ngClass]="{
+            'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed', 'post__head--minimal' : minimalViewHead, 'bg__grey--lighter' : !minimalViewHead
+          }" [matTooltip]="minimalViewHead ? post?.brandFriendlyName : null" matTooltipPosition="above" matTooltipClass="custom__tooltip-normal">
+          <img class="img__fluid w-20 mr-3 brand__img--circle" [src]="post?.brandLogo"
+            onError="this.src='assets/social-mention/post/default_brand.svg'" alt="brand image" />
+          <span class="brand-name">{{ post?.brandFriendlyName }}</span>
+        </div> -->
+        <div class="post__pill nowrap bg__grey--lighter nowrap responsive__detail--infoitem post-brand" [ngClass]="{
+                    'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed', 'post__head--minimal' : minimalViewHead, 'bg__grey--lighter' : !minimalViewHead
+                  }" [matTooltip]="post?.brandFriendlyName" matTooltipPosition="above"
+          matTooltipClass="custom__tooltip-normal">
+          <img class="img__fluid w-20 mr-3 brand__img--circle" [src]="post?.brandLogo"
+            onError="this.src='assets/social-mention/post/default_brand.svg'" alt="brand image" />
+            <span class="brand-name">{{ post?.brandFriendlyName.substr(0,10) }}<span *ngIf="post?.brandFriendlyName.length > 10">...</span></span>
+        </div>
+        <div class="sfdc__head--brand nowrap bg-none responsive__detail--infoitem w-28 justify-content__center" [ngClass]="{
+                            'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed', 'post__head--minimal' : minimalViewHead
+                          }" [matTooltip]="post?.brandFriendlyName" matTooltipPosition="above"
+          matTooltipClass="custom__tooltip-normal">
+          <img class="img__fluid w-20 mr-3 brand__img--circle" [src]="post?.brandLogo"
+            onError="this.src='assets/social-mention/post/default_brand.svg'" alt="brand image" />
+        </div>
+      </div>
+    </div>
+    <div class="post__head--infoitem no-wrap" *ngIf="
+        ticketHistoryData?.isabouttobreach &&
+        (pageType === PostsType.Tickets || pageType === PostsType.Mentions)
+      ">
+      <mat-icon class="post__head--icon colored__yellow--dark" matTooltip="{{ 'ticket-first-response-about-to-breach' | translate }}"
+        matTooltipPosition="above" matTooltipClass="custom-tooltip"
+        [ngClass]="{ colored__red: ticketHistoryData?.alreadybreached }" fontSet="material-icons-outlined"
+        aria-hidden="false" aria-label="alarm icon">{{
+        ticketHistoryData?.alreadybreached ? 'timer_off' : 'alarm'
+        }}</mat-icon>
+      <span class="post__head--label" appVisiblityNotifier (visibilityChange)="visibilityChangeHandler($event)">{{
+        ticketHistoryData?.timetobreach | translate
+        }}</span>
+    </div>
+    <div class="post__head--infoitem no-wrap" *ngIf="
+        ticketHistoryData?.isbreached &&
+        (pageType === PostsType.Tickets || pageType === PostsType.Mentions)
+      ">
+      <mat-icon class="post__head--icon no-wrap" matTooltip="{{ 'ticket-first-response-already-breached' | translate }}"
+        matTooltipPosition="above" matTooltipClass="custom-tooltip" [ngClass]="{
+          colored__red:
+            ticketHistoryData?.alreadybreached || ticketHistoryData?.isbreached
+        }" fontSet="material-icons-outlined" aria-hidden="false" aria-label="alarm icon">{{
+        ticketHistoryData?.alreadybreached || ticketHistoryData?.isbreached
+        ? 'timer_off'
+        : 'alarm'
+        }}</mat-icon>
+    </div>
+    <div class="post__head--infoitem timeShow-hover no-wrap">
+      <span class="d-flex-items-center pr-15 arbic-timeshow">
+        <ng-container *ngIf="(selectedSortBy == 'DateCreated' || selectedSortBy == 'MentionDateCreated') && pageType != PostsType.TicketHistory">
+          <img src="assets/ticket-list/Created_Date.svg" />
+        </ng-container>
+
+        <ng-container *ngIf="(selectedSortBy == 'LastUpdated' || selectedSortBy == 'MentionLastUpdated') && pageType != PostsType.TicketHistory">
+          <img src="assets/ticket-list/Modification_On.svg" />
+        </ng-container>
+
+        <ng-container *ngIf="selectedSortBy == 'Author' || selectedSortBy == 'Influencer' || selectedSortBy == 'MentionEngagement' || pageType === PostsType.TicketHistory">
+          <img src="assets/ticket-list/Mentioned_On.svg" />
+        </ng-container>
+
+        <ng-container *ngIf="selectedSortBy == 'LastAuthorUpdateDate' && pageType != PostsType.TicketHistory">
+          <img src="assets/ticket-list/Last_Author_Update.svg" />
+        </ng-container>
+        
+        <span class="post__head--label text-nowrap ml-4 mt-2">
+          <ng-container *ngIf="absolutTime">
+            <ng-container *ngIf="pageType === PostsType.Tickets || pageType === PostsType.Mentions">
+          
+              <ng-container
+                *ngIf="(selectedSortBy == 'DateCreated' || selectedSortBy == 'MentionDateCreated') && (!ticketHistoryData?.isBrandPost)">
+                {{ (ticketHistoryData?.showMarkactionable ? post?.ticketTime.mentionDate : post?.ticketTime.createdDate) | cleanDate | date:'MMM d, y, h:mm:ss a' }}
+              </ng-container>
+          
+              <ng-container
+                *ngIf="(selectedSortBy == 'LastUpdated' || selectedSortBy == 'MentionLastUpdated') && (!ticketHistoryData?.isBrandPost)">
+                {{ (ticketHistoryData?.showMarkactionable ? post?.ticketTime.mentionDate : post?.ticketTime.modifiedDate) | cleanDate | date:'MMM d, y, h:mm:ss a' }}
+              </ng-container>
+          
+              <ng-container *ngIf="selectedSortBy == 'LastAuthorUpdateDate' && pageType === PostsType.Tickets">
+                {{(post?.ticketTime?.latestTagIDInsertedAt || post?.ticketTime.mentionDate)| cleanDate | date:'MMM d, y, h:mm:ss a'}}
+              </ng-container>
+
+              <ng-container *ngIf="selectedSortBy == 'Author' || selectedSortBy == 'Influencer' || selectedSortBy == 'MentionEngagement'">
+                  {{(post?.ticketTime.mentionDate)| cleanDate | date:'MMM d, y, h:mm:ss a'}}
+              </ng-container>
+          
+            </ng-container>
+            <ng-container *ngIf="pageType === PostsType.TicketHistory">
+              {{(post?.ticketTime.mentionDate)| cleanDate | date:'MMM d, y, h:mm:ss a'}}
+            </ng-container>
+          
+          </ng-container>
+
+          <ng-container *ngIf="!absolutTime">{{post?.ticketTime.timetoshow}}</ng-container>
+        </span>
+      </span>
+
+      <div class="custom__tooltip">
+        <span>
+          <div class="custom__tooltip--item pb-0" *ngIf="clickhouseEnabled">
+            <span class="custom__tooltip--label d-flex-items-center"><img [ngClass]="{'small-image-width': !defaultLayout}" src="assets/ticket-list/Created_Date.svg"
+                class="mr-2" /> {{ 'Captured-on' | translate }}:</span>
+            <span class="custom__tooltip--value ml-2">
+              {{
+              post?.ticketTime.capturedDate
+              }}</span>
+          </div>
+          <div class="custom__tooltip--item pb-0" *ngIf="
+              pageType === PostsType.Tickets ||
+              (pageType === PostsType.Mentions &&
+                !ticketHistoryData?.isBrandPost &&
+                !ticketHistoryData?.showMarkactionable)
+            ">
+            <span class="custom__tooltip--label d-flex-items-center"><img [ngClass]="{'small-image-width': !defaultLayout}" src="assets/ticket-list/Created_Date.svg" class="mr-2" /> {{ 'Created-on' | translate }}:</span>
+            <span class="custom__tooltip--value ml-2">
+              {{
+              post?.ticketTime.createdDate
+              }}</span>
+          </div>
+          <div class="custom__tooltip--item pb-0" *ngIf="
+              pageType === PostsType.Tickets ||
+              (pageType === PostsType.Mentions &&
+                !ticketHistoryData?.isBrandPost &&
+                !ticketHistoryData?.showMarkactionable)
+            ">
+            <span class="custom__tooltip--label d-flex-items-center"><img [ngClass]="{'small-image-width': !defaultLayout}" src="assets/ticket-list/Modification_On.svg" class="mr-2" /> {{ 'Modified-on' | translate }}:</span>
+            <span class="custom__tooltip--value ml-2">{{
+              post?.ticketTime.modifiedDate
+              }}</span>
+          </div>
+          <div class="custom__tooltip--item pb-0" *ngIf = "pageType === PostsType.Tickets">
+            <span class="custom__tooltip--label d-flex-items-center"><img [ngClass]="{'small-image-width': !defaultLayout}" src="assets/ticket-list/Last_Author_Update.svg"
+                class="mr-2" /> {{ 'Last-Author-Update' | translate }}:</span>
+            <span class="custom__tooltip--value ml-2">{{
+              post?.ticketTime?.latestTagIDInsertedAt
+              }}</span>
+          </div>
+          <div class="custom__tooltip--item pb-0">
+            <span class="custom__tooltip--label d-flex-items-center"><img [ngClass]="{'small-image-width': !defaultLayout}" src="assets/ticket-list/Mentioned_On.svg" class="mr-2" /> {{ 'Mentioned-on' | translate }}:</span>
+            <span class="custom__tooltip--value ml-2">{{
+              post?.ticketTime.mentionDate
+              }}</span>
+          </div>
+        </span>
+      </div>
+    </div>
+    <!-- <div class="post__status post__status--new">
+              New
+          </div> -->
+          <!-- (clickhouseEnabled && ticketHistoryData?.isReadBy && mentionOrGroupView==AllMentionGroupViewEnum.groupView) -->
+    <div
+      *ngIf="(pageType === PostsType.Tickets && ticketHistoryData?.isReadBy &&  !postData?.isDeletedFromSocial && !lockUnlockNote) || (clickhouseEnabled && ticketHistoryData?.isReadBy && mentionOrGroupView==AllMentionGroupViewEnum.groupView)"
+      class="post__status post__status--show bg__locobuzz colored__white">
+      <mat-icon [matTooltip]="ticketHistoryData?.readBy" matTooltipPosition="above" matTooltipClass="custom-tooltip"
+        class="material-icons-outlined colored__white">remove_red_eye</mat-icon>
+    </div>
+    <div
+      *ngIf="(pageType === PostsType.Tickets || pageType === PostsType.TicketHistory || pageType === PostsType.Mentions ) && postData?.isDeletedFromSocial"
+      class="post__status post__status--show">
+      <img matTooltipPosition="above" matTooltipClass="custom-tooltip" matTooltip="{{ 'deleted-from-social' | translate }}"
+        class="post__foot--actionicon" src="/assets/images/channelicons/Delete_Red.svg" />
+    </div>
+    <div
+      *ngIf=" pageType === PostsType.Mentions && (postData?.channelGroup == channelGroupEnum.Twitter ||
+                            postData?.channelGroup == channelGroupEnum.Facebook ||
+                            postData?.channelGroup == channelGroupEnum.Instagram ||
+                            postData?.channelGroup == channelGroupEnum.Youtube ||
+                            postData?.channelGroup == channelGroupEnum.LinkedIn ||
+                            postData?.channelGroup == channelGroupEnum.GooglePlayStore ||
+                            postData?.channelGroup == channelGroupEnum.GoogleMyReview ||
+                            postData?.channelGroup == channelGroupEnum.WhatsApp ||
+                            postData?.channelGroup == channelGroupEnum.Email ||
+                            postData?.channelGroup == channelGroupEnum.Discourse) && postData?.type && !postData?.isBrandPost && postData?.isReplied"
+      class="post__status post__status--show bg__green colored__white">
+      <mat-icon *ngIf="postData?.isReplied" class="material-icons-outlined colored__white" matTooltip="{{ 'replied' | translate }}">done</mat-icon>
+      <span> {{ 'Replied' | translate }} </span>
+    </div>
+    <div *ngIf="pageType === PostsType.Tickets && lockUnlockNote"
+      class="post__status post__status--show bg__locobuzz pt-6 pb-6 d-flex">
+      <!-- <img
+        matTooltipPosition="above"
+      matTooltipClass="custom-tooltip"
+      matTooltip={{lockUnlockNote}}
+        class="post__foot--actionicon"
+        src="/assets/images/channelicons/Delete_Red.svg"
+      /> -->
+      <img matTooltipPosition="above" matTooltipClass="custom-tooltip" class="post__foot--actionicon"
+        matTooltip="{{lockUnlockNote | translate}}" src="assets/images/icons8-edit.gif" />
+    </div>
+  </div>
+</div>
+<!-- Post Old UI for Ticket Header July 2025 Ends-->
+
+
+
+<!-- Post New UI for Ticket Header July 2025 -->
+<div class="new-layout__post-head" *ngIf = "!defaultLayout">
+  <div class="new-layout__post-head--left">
+    <div *ngIf="ticketHistoryData?.showcheckbox" class="post__foot--item post__foot--checkitem">
+      <mat-checkbox
+      [ngModel]="AllCheckBoxes || checkedBox" (ngModelChange)="AllCheckBoxes || (checkedBox = $event)" (change)="postSelect($event.checked, post.ticketId)"
+      ></mat-checkbox>
+    </div>
+    
+    <div class="new-layout__post-head--bottom" *ngIf = "!defaultLayout">
+  <div class="new-layout__post-head--bottom-left">
+    
+
+   
+
+      <ng-container
+        *ngIf="post?.Userinfo?.name ==='Anonymous' && postData?.channelGroup == channelGroupEnum.GooglePlayStore else genralway">
+      </ng-container>
+      <ng-template #genralway>
+        <div class="profile post__dropdown mr-10 conversations__post--profile conversations__post--head--channel">
+          <div class="profile__img w-20 h-20">
+            <ng-container *ngIf="userProfileImg == 'initials'; else showImage">
+              <span [ngStyle]="{'background': colorCode?colorCode:''}" class="initial">{{ initials }}</span>
+            </ng-container>
+            <ng-template #showImage>
+              <img [src]="userProfileImg" onError="this.src='assets/images/agentimages/sample-image.svg'" alt="user image" />
+            </ng-template>
+          </div>
+          <div class="profile__handle--columnView">
+            <div class="profile__name conversations__post--profile--name conversations__post--head--channel-label
+              responsive__detail--infoitem">
+              <a [matTooltip]="post?.Userinfo.name" matTooltipPosition="above" matTooltipClass="custom-tooltip"
+                *ngIf="post?.Userinfo?.name!='Anonymous' && this.ticketHistoryData?.profileurl && postData?.channelGroup !== channelGroupEnum.Facebook"
+                [href]="this.ticketHistoryData?.profileurl" class="text__light" target="_blank">
+                <span>{{post?.Userinfo.name}}</span></a>
+              <span [matTooltip]="post?.Userinfo.name" matTooltipPosition="above" matTooltipClass="custom-tooltip"
+                class="text__light" [ngClass]="{'small_font-size': !defaultLayout,'font-weight-medium': !defaultLayout}"
+                *ngIf="post?.Userinfo?.name=='Anonymous' || this.ticketHistoryData?.profileurl==null || this.ticketHistoryData?.profileurl=='' || postData?.channelGroup === channelGroupEnum.Facebook">
+                {{post?.Userinfo.name}}
+              </span>
+            </div>
+            <!-- <div class="profile__handle profile__handle--none emailid-below" *ngIf="socialHandle">
+              <a [href]="this.ticketHistoryData?.profileurl" target="_blank" [ngClass]="{'large-small-font-size': !defaultLayout,'font-weight-normal': !defaultLayout}">
+                (<span *ngIf="postData?.channelGroup != channelGroupEnum.Yotpo">&#64;</span>{{ post?.Userinfo.screenName }})</a>
+            </div> -->
+      
+            <!-- <div class="profile__handle profile__handle--none emailid-below"
+              *ngIf="postData?.channelGroup == channelGroupEnum.Email">
+              <span> ({{ post?.Userinfo.socialid }}) </span>
+            </div> -->
+          </div>
+          <div class="profile__isverified" *ngIf="true">
+            <img class="img__fluid vertical-sub mb-3" src="/assets/social-mention/post/isVerified.svg" />
+          </div>
+          <div class="profile__isverified"
+            *ngIf="postData?.channelGroup == channelGroupEnum.Yotpo && postData?.authorType == '2'">
+            <mat-icon class="mr-7 colored__green" style="margin-top: -0.5rem;" matTooltip="{{'Verified-Reviewer' | translate}}"
+              matTooltipPosition="above" matTooltipClass="custom-tooltip">check_circle</mat-icon>
+          </div>
+          <div class="
+                  post__dropdown--list post__dropdown--listprofile
+                  profile__dropdown
+                " *ngIf="(clickhouseEnabled && postData?.channelGroup!= channelGroupEnum.TikTok) || !clickhouseEnabled">
+            <div class="profile__dropdown--head">
+              <div class="profile__img mr-10">
+                <ng-container *ngIf="userProfileImg == 'initials'; else showImage">
+                  <span [ngStyle]="{'background': colorCode?colorCode:''}" class="initial">{{ initials }}</span>
+                </ng-container>
+                <ng-template #showImage>
+                  <img class="img__fluid" [src]="userProfileImg"
+                    onError="this.src='assets/images/agentimages/sample-image.svg'" alt="user image" />
+                </ng-template>
+              </div>
+              <div class="profile__dropdowninfo">
+                <a *ngIf="post?.Userinfo?.name!='Anonymous' && this.ticketHistoryData?.profileurl && postData?.channelGroup !== channelGroupEnum.Facebook"
+                  [href]="this.ticketHistoryData?.profileurl" class="profile__name" target="_blank">{{
+                  post?.Userinfo.name
+                  }}</a>
+                <span class="profile__name"
+                  *ngIf="post?.Userinfo?.name=='Anonymous' || this.ticketHistoryData?.profileurl==null || this.ticketHistoryData?.profileurl=='' || postData?.channelGroup === channelGroupEnum.Facebook">
+                  {{post?.Userinfo.name}}
+                </span>
+                <div class="profile__handle" *ngIf="socialHandle" style="width: 20rem;">
+                  <span *ngIf="postData?.channelGroup != channelGroupEnum.Yotpo">&#64;</span>{{ post?.Userinfo.screenName }}
+                </div>
+                <div class="profile__handle" *ngIf="postData?.channelGroup == channelGroupEnum.Email">
+                  {{ post?.Userinfo.socialid }}
+                </div>
+              </div>
+            </div>
+            <div class="profile__dropdown--body">
+              <div class="profile__dropdown--summary" *ngIf="post?.Userinfo.bio">
+                {{ post?.Userinfo.bio }}
+              </div>
+              <div class="profile__dropdown--stats">
+                <div class="profile__dropdown--stats-item"
+                  *ngIf="((post?.Userinfo.followers != null || post?.Userinfo.followers != undefined) || post?.Userinfo.followers > 0) && post?.channelgroup != channelGroupEnum.Voice">
+                  <ng-container
+                    *ngIf="(post?.channelgroup == channelGroupEnum.Twitter || post?.channelgroup == channelGroupEnum.Youtube)">
+                    <span class="text__label--sm">{{ post?.Userinfo.followers | followerNumberFormat }}</span>
+                    <span class="text__regular--sm"> Followers</span>
+                  </ng-container>
+      
+                  <ng-container
+                    *ngIf="(post?.channelgroup == channelGroupEnum.Instagram || (post?.channelgroup == channelGroupEnum.LinkedIn && post?.channeltype != channelType.LinkedInComments)) && postData?.isBrandPost">
+                    <span class="text__label--sm">{{ post?.Userinfo.followers | followerNumberFormat }}</span>
+                    <span class="text__regular--sm"> Followers</span>
+                  </ng-container>
+                </div>
+                <div class="profile__dropdown--stats-item" *ngIf="
+                        (post?.Userinfo.following != null ||
+                        post?.Userinfo.following != undefined) && (post?.channelgroup == channelGroupEnum.Twitter || post?.channelgroup == channelGroupEnum.Instagram || post?.channelgroup == channelGroupEnum.LinkedIn  || post?.channelgroup == channelGroupEnum.Youtube) && post?.channelgroup != channelGroupEnum.Voice
+                      ">
+                  <span class="text__label--sm">{{ post?.Userinfo.following }}</span>
+                  <span class="text__regular--sm"> Following</span>
+                </div>
+                <ng-container *ngIf="post?.channelgroup == channelGroupEnum.Reddit">
+                  <div *ngIf="post?.subRedditName" class="post__pill bg__reddit nowrap"
+                    [ngClass]="{'post__head--minimal' : minimalViewHead}" [matTooltip]=" 'SubReddit : ' + post?.subRedditName"
+                    matTooltipPosition="above" matTooltipClass="custom__tooltip-normal">
+                    <span class="brand-name">
+                      {{ post?.subRedditName?.substr(0,30) }}
+                      <span *ngIf="post?.subRedditName?.length > 30">...</span>
+                    </span>
+                  </div>
+                  
+                  <div *ngIf="post?.flair" class="post__pill bg__reddit--flyer nowrap mx-2"
+                    [ngClass]="{'post__head--minimal' : minimalViewHead}" [matTooltip]="'Flair :' + post?.flair" matTooltipPosition="above"
+                    matTooltipClass="custom__tooltip-normal">
+                    <span class="brand-name">
+                      {{ post?.flair?.substr(0,25) }}
+                      <span *ngIf="post?.flair?.length > 25">...</span>
+                    </span>
+                  </div>
+                </ng-container>
+              </div>
+              <div class="profile__dropdown--location" *ngIf="post?.Userinfo.location">
+                <mat-icon>location_on</mat-icon>
+                <span>{{ post?.Userinfo.location }}</span>
+              </div>
+              <div class="profile__dropdown--score">
+                <ul>
+                  <li class="d-flex-items-center mb-4" *ngIf="
+                          post?.Userinfo.sentimentUpliftScore != null ||
+                          post?.Userinfo.sentimentUpliftScore != undefined
+                        ">
+                    <span class="text__label--sm">{{'Sentiment-Uplift-Score' | translate}}</span>
+                    <span class="colored__yellow--dark text-semibold ml-auto">{{
+                      post?.Userinfo.sentimentUpliftScore
+                      }}</span>
+                  </li>
+                  <li class="d-flex-items-center mb-4" *ngIf="
+                          post?.Userinfo.npsScore != null ||
+                          post?.Userinfo.npsScore != undefined
+                        ">
+                    <span class="text__label--sm">{{'NPS-Score' | translate}}</span>
+                    <span class="colored__green text-semibold ml-auto">{{
+                      post?.Userinfo.npsScore
+                      }}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- start profile dropdown tiktok -->
+          <div *ngIf="postData?.channelGroup== channelGroupEnum.TikTok && clickhouseEnabled" class="
+                            post__dropdown--list post__dropdown--listprofile
+                            profile__dropdown
+                          ">
+            <div class="profile__dropdown--head">
+              <div class="profile__img mr-10">
+                <img class="img__fluid" [src]="post?.Userinfo.image"
+                  onError="this.src='assets/images/agentimages/sample-image.svg'" alt="user image" />
+              </div>
+              <div class="profile__dropdowninfo">
+                <a *ngIf="post?.Userinfo?.name!='Anonymous' && this.ticketHistoryData?.profileurl"
+                  [href]="this.ticketHistoryData?.profileurl" class="profile__name" target="_blank">{{
+                  post?.Userinfo.name
+                  }}</a>
+                <span class="profile__name"
+                  *ngIf="post?.Userinfo?.name=='Anonymous' || this.ticketHistoryData?.profileurl==null || this.ticketHistoryData?.profileurl==''">
+                  {{post?.Userinfo.name}}
+                </span>
+                <div class="profile__handle" *ngIf="post?.Userinfo.screenName" style="width: 20rem;">
+                  <span *ngIf="postData?.channelGroup != channelGroupEnum.Yotpo">&#64;</span>{{ post?.Userinfo.screenName }}
+                </div>
+                <div class="profile__handle" *ngIf="postData?.channelGroup == channelGroupEnum.Email">
+                  {{ post?.Userinfo.socialid }}
+                </div>
+              </div>
+            </div>
+            <p class="profile__dropdown--fetch" *ngIf="tikTokAuthorDetails?.isUpdated==false"
+              (click)="!spinner?getTiktokDetailedView():''">
+              <mat-icon *ngIf="!spinner" fontSet="material-icons-outlined">download</mat-icon>
+              <mat-spinner *ngIf="spinner" color="accent" class="ml-10" [diameter]="20"></mat-spinner>
+              {{'Fetch-Details' | translate}}
+            </p>
+            <ng-container *ngIf="tikTokAuthorDetails?.isUpdated">
+              <div class="profile__dropdown--body">
+                <div class="profile__dropdown--summary" *ngIf="tikTokAuthorDetails.bio">
+                  {{ tikTokAuthorDetails.bio?tikTokAuthorDetails.bio:('NA' | translate) }}
+                </div>
+                <div class="profile__dropdown--stats pt-0">
+                  <div class="profile__dropdown--stats-item"
+                    *ngIf="
+                                ((tikTokAuthorDetails.followersCount != null ||
+                                  tikTokAuthorDetails.followersCount != undefined) || tikTokAuthorDetails.followersCount > 0)">
+                    <span class="text__label--sm colored__locobuzz">{{ tikTokAuthorDetails.followersCount |
+                      followerNumberFormat }}</span>
+                    <span class="text__regular--sm"> {{'Followers' | translate}}</span>
+                  </div>
+                  <div class="profile__dropdown--stats-item" *ngIf="
+                                  (tikTokAuthorDetails.followingCount != null ||
+                                  tikTokAuthorDetails.followingCount != undefined) 
+                                ">
+                    <span class="text__label--sm colored__purple--dark">{{ tikTokAuthorDetails.followingCount |
+                      followerNumberFormat}}</span>
+                    <span class="text__regular--sm"> {{'following' | translate}}</span>
+                  </div>
+                </div>
+                <div *ngIf="tikTokAuthorDetails?.locationName" class="profile__dropdown--location">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{tikTokAuthorDetails?.locationName}}</span>
+                </div>
+                <div *ngIf="tikTokAuthorDetails?.channelMappings?.length>0" class="profile__dropdown--score">
+                  <p class="font-weight-600">{{'associate-channels' | translate}}</p>
+                  <ul class="mt-4">
+                    <li *ngFor="let item of tikTokAuthorDetails?.channelMappings" class="d-flex-items-center mb-4">
+                      <img [src]="channelImageEnum[channelGroupEnum[item.channelGroup]]" alt="" class="mr-5 w-16 h-16">
+                      <span (click)="redirectToUrl(item.redirectUrl)" class="text__label--sm">{{item.handle}}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </ng-template>
+       <div class="ver-divider"></div>
+      <div class="channel">
+        <span class="channel-bg" [ngStyle]="{'background':mentionBackGround}">
+          <img class="channel__image w-18 h-18" [src]="post?.channelImage" alt="channel image" />
+          <span
+            [matTooltip]="postData?.channelGroup == channelGroupEnum.Twitter && postData?.instagramPostType == 3 ? ('quote-tweet' | translate) : (post?.channelNameTooltip | translate)"
+            matTooltipPosition="above" matTooltipClass="custom-tooltip"
+            class="channel__label conversations__post--head--channel-label mr-5"
+            [ngClass]="{'post__minimal--channel' : minimalViewHead}">
+            <span
+              *ngIf="postData?.channelGroup == channelGroupEnum.Twitter && postData?.instagramPostType == 3; else elseChannelName">
+              {{'quote-tweet' | translate}}
+            </span>
+            <ng-template #elseChannelName>
+              <span >{{post?.channelName | translate}}</span>
+            </ng-template>
+          </span>
+        </span>
+      <span class="pl-5 mr-5"
+        *ngIf="postData?.locationName && (postData?.channelGroup == channelGroupEnum.GoogleBusinessMessages)"
+        [matTooltip]="postData?.locationName.length > 20 ? postData?.locationName : ''" matTooltipPosition="above"
+        matTooltipClass="custom-tooltip">
+        <mat-icon class="colored__locobuzz">location_on</mat-icon><span>{{postData?.locationName.substr(0,20)}}</span><span
+          *ngIf="postData?.locationName.length > 20">...</span>
+      </span>
+      <ng-container *ngIf="ticketHistoryData?.locationName">
+        <div class="post__head--GMBlocation width-fit position-relative mr-5">
+          <div class="post__head--channel nowrap conversations__post--head--channel m-0">
+            <mat-icon class="material-icons channel__image colored__locobuzz m-0">fmd_good</mat-icon>
+            <span class="channel__label conversations__post--head--channel-label ml-1">{{ ticketHistoryData?.locationName
+              }}</span>
+          </div>
+          <div *ngIf="ticketHistoryData?.StoreCode || ticketHistoryData?.locality || ticketHistoryData?.locationName"
+            class="post__head--GMBlocation-hover GMBlocation">
+            <div *ngIf="ticketHistoryData?.locationName" class="d-flex">
+              <span class="text__label">{{'Location-Name' | translate}}:</span>
+              <span class="ml-7">{{ ticketHistoryData?.locationName ? ticketHistoryData?.locationName : 'NA' }}</span>
+            </div>
+            <div *ngIf="ticketHistoryData?.StoreCode" class="d-flex">
+              <span class="text__label">{{'Store-Code' | translate}}:</span>
+              <span class="ml-7">{{ ticketHistoryData?.StoreCode?ticketHistoryData?.StoreCode:('NA' | translate) }}</span>
+            </div>
+            <div *ngIf="ticketHistoryData?.locality" class="d-flex">
+              <span class="text__label">{{'Locality' | translate}}:</span>
+              <span class="ml-7">{{ ticketHistoryData?.locality?ticketHistoryData?.locality:('NA' | translate) }}</span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <div class="post__head--channel nowrap conversations__post--head--channel mr-5"
+        *ngIf="postData?.channelGroup == channelGroupEnum.Survey && postData?.locationName">
+        <div class="channel">
+          <img alt="channel image" class="channel__image" src="assets/images/Globe_Location.png">
+          <span [matTooltip]="postData?.locationName.length > 20 ? postData?.locationName : ''" matTooltipPosition="above"
+            matTooltipClass="custom-tooltip"
+            class="mat-tooltip-trigger channel__label conversations__post--head--channel-label" style="max-width:32.2rem">
+            {{postData?.locationName.substr(0,20)}}<span *ngIf="postData?.locationName.length > 20">...</span>
+          </span>
+        </div>
+      </div>
+      <span class="pl-5 mr-5" *ngIf="postData?.locationName && postData?.channelGroup == channelGroupEnum.AppStoreReviews"
+        [matTooltip]="postData?.locationName.length > 20 ? postData?.locationName : ''" matTooltipPosition="above"
+        matTooltipClass="custom-tooltip">
+        <mat-icon class="colored__locobuzz">location_on</mat-icon><span>{{postData?.locationName.substr(0,20)}}</span><span
+          *ngIf="postData?.locationName.length > 20">...</span>
+      </span>
+      <ng-container *ngIf="postData?.fbPageName">
+        <div class="post__head--location position-relative mr-5 new-location-pill" (mouseover)="getFbLocation()">
+          <div class="post__head--channel nowrap conversations__post--head--channel location m-0">
+            <img class="channel__image" onError="this.src='assets/images/agentimages/sample-image.svg'"
+              [src]="post?.FbPageImageUrl" alt="channel image" />
+            <span class="channel__label conversations__post--head--channel-label ml-1" [matTooltip]="postData?.fbPageName"
+              matTooltipPosition="above" matTooltipClass="custom-tooltip">{{ postData?.fbPageName }}</span>
+            <mat-icon class="material-icons colored__locobuzz background-none">fmd_good</mat-icon>
+          </div>
+          <div class="post__head--location-hover">
+            <div class="d-flex">
+              <mat-icon class="material-icons colored__locobuzz">fmd_good</mat-icon>
+              <span class="text__label ml-6">{{ postData?.fbPageName }}</span>
+            </div>
+            <div class="text__light ml-28 address">{{ fblocationdetail }}</div>
+          </div>
+        </div>
+      </ng-container>
+      <!-- <div class="ver-divider"
+        *ngIf="postData?.channelGroup == channelGroupEnum.GooglePlayStore && postData?.appFriendlyName"></div> -->
+      
+      <ng-container *ngIf="postData?.channelGroup == channelGroupEnum.GooglePlayStore && postData?.appFriendlyName">
+        <div class="post__head--location mr-5 new-location-pill">
+          <div matTooltip={{postData?.appFriendlyName}} matTooltipPosition="above" matTooltipClass="custom-tooltip" class="
+                            post__head--channel
+                            nowrap
+                            conversations__post--head--channel
+                            location
+                          ">
+            <img class="channel__image" src="assets/images/channelicons/Apps.svg" alt="channel image" />
+            <span class="channel__label conversations__post--head--channel-label ml-1">{{ postData?.appFriendlyName }}</span>
+          </div>
+        </div>
+      </ng-container>
+      <!-- <div class="ver-divider" *ngIf="postData?.pageName"></div> -->
+      
+      <ng-container *ngIf="postData?.pageName">
+        <div class="post__head--location new-location-pill">
+          <div class="
+                                post__head--channel
+                                nowrap
+                                conversations__post--head--channel
+                                location
+                              ">
+            <img class="channel__image" onError="this.src='assets/images/agentimages/sample-image.svg'"
+              [src]="post?.LinkedInPageImageUrl" alt="channel image" />
+            <span class="channel__label conversations__post--head--channel-label ml-1" [matTooltip]="postData?.pageName"
+              matTooltipPosition="above" matTooltipClass="custom-tooltip">{{ postData?.pageName }}</span>
+            <mat-icon class="material-icons colored__locobuzz background-none">fmd_good</mat-icon>
+          </div>
+          <div class="post__head--location-hover">
+            <div class="d-flex">
+              <mat-icon class="material-icons colored__locobuzz">fmd_good</mat-icon>
+              <span class="text__label ml-6">{{postData?.pageName}}</span>
+            </div>
+            <!-- <div class="text__light ml-28 address">{{ fblocationdetail }}</div> -->
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <!-- <div class="ver-divider" *ngIf="postData?.channelGroup == channelGroupEnum.GlassDoor && postData?.accountName"></div> -->
+
+    <ng-container *ngIf="postData?.channelGroup == channelGroupEnum.GlassDoor && postData?.accountName">
+      <div class="post__head--location new-location-pill">
+        <div matTooltip={{postData?.accountName}} matTooltipPosition="above" matTooltipClass="custom-tooltip" class="
+                            post__head--channel
+                            nowrap
+                            conversations__post--head--channel
+                            location
+                          ">
+          <img class="channel__image" src="assets/images/channelicons/Company.svg" alt="channel image" />
+          <span class="channel__label conversations__post--head--channel-label ml-1">{{ postData?.accountName }}</span>
+        </div>
+      </div>
+    </ng-container>
+
+
+    <!-- <div class="ver-divider"  *ngIf="(post?.channelgroup == channelGroupEnum.Twitter || post?.channelgroup == channelGroupEnum.Youtube)"></div> -->
+
+    <ng-container
+      *ngIf="(post?.channelgroup == channelGroupEnum.Twitter || post?.channelgroup == channelGroupEnum.Youtube)">
+      <div class="d-flex-items-center" matTooltip="{{'followers' | translate}}" matTooltipPosition="above"
+        matTooltipClass="custom-tooltip">
+        <img class="vertical-sub" [ngClass]="{'small-image-width': !defaultLayout}" src="/assets/social-mention/post/followers.svg" />
+        <span class="pl-7 colored__main--text"><b [ngClass]="{'small_font-size': !defaultLayout,'font-weight-medium': !defaultLayout}">{{ post?.Userinfo.followers | followerNumberFormat }}</b></span>
+      </div>
+    </ng-container>
+
+    <!-- <div class="ver-divider" *ngIf="(post?.channelgroup == channelGroupEnum.Instagram || (post?.channelgroup == channelGroupEnum.LinkedIn && post?.channeltype != channelType.LinkedInComments)) && postData?.isBrandPost"></div> -->
+
+    <ng-container
+      *ngIf="(post?.channelgroup == channelGroupEnum.Instagram || (post?.channelgroup == channelGroupEnum.LinkedIn && post?.channeltype != channelType.LinkedInComments)) && postData?.isBrandPost">
+      <div class="d-flex-items-center" matTooltip="{{'followers' | translate}}" matTooltipPosition="above"
+        matTooltipClass="custom-tooltip">
+        <img class="vertical-sub" [ngClass]="{'small-image-width': !defaultLayout}" src="/assets/social-mention/post/followers.svg" />
+        <span class="pl-7 colored__main--text"><b [ngClass]="{'small_font-size': !defaultLayout,'font-weight-medium': !defaultLayout}">{{ post?.Userinfo.followers | followerNumberFormat }}</b></span>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="post?.channelgroup == channelGroupEnum.Reddit">
+      <div *ngIf="post?.subRedditName" class="post__pill bg__reddit nowrap" [ngClass]="{'post__head--minimal' : minimalViewHead}"
+        [matTooltip]=" 'SubReddit : ' + post?.subRedditName" matTooltipPosition="above" matTooltipClass="custom__tooltip-normal">
+        <span class="brand-name">
+          {{ post?.subRedditName?.substr(0,30) }}
+          <span *ngIf="post?.subRedditName?.length > 30">...</span>
+        </span>
+      </div>
+      
+      <div *ngIf="post?.flair" class="post__pill bg__reddit--flyer nowrap mx-2" [ngClass]="{'post__head--minimal' : minimalViewHead}"
+        [matTooltip]="'Flair :' + post?.flair" matTooltipPosition="above" matTooltipClass="custom__tooltip-normal">
+        <span class="brand-name">
+          {{ post?.flair?.substr(0,25) }}
+          <span *ngIf="post?.flair?.length > 25">...</span>
+        </span>
+      </div>
+    </ng-container>
+
+    <!-- <div class="ver-divider" *ngIf="post?.ticketId > 0 && pageType !== PostsType.TicketHistory"></div> -->
+    <!-- <div class="bubble-background" *ngIf="openProfileMoreOptions"></div> -->
+ 
+
+    <!-- <div class="ver-divider" *ngIf="ticketHistoryData?.isInfluencermarked && (pageType === PostsType.Tickets || pageType === PostsType.Mentions)"></div> -->
+        <div class="ver-divider" *ngIf="this.post?.ticketCategory?.mentionUpperCategory">
+        </div>
+        
+        <div class="post__foot--item custom__tooltip--trigger min-width-auto"
+          *ngIf="this.post?.ticketCategory?.mentionUpperCategory">
+          <span class="post__foot--item-wrapper">
+            <span class="d-flex-items-center hover-tooltip width-fit">
+              <div
+                class="post__foot--item-text g-5 pl-5 pr-7 border-radius-16 {{getCategorysSentiment(this.post.ticketCategory.mentionUpperCategory,postData?.aI_MentionUppercategory)}}">
+                <ng-container>
+                  <mat-icon
+                    *ngIf="getCategorysIcons(this.post.ticketCategory.mentionUpperCategory) && postData?.aI_MentionUppercategory"
+                    (click)="openCategoryDialog('mentionCategory')" class="post__foot--icon mr-0"
+                    fontSet="material-icons-outlined">{{getCategorysIcons(this.post.ticketCategory.mentionUpperCategory)}}</mat-icon>
+                  <span (click)="openCategoryDialog('mentionCategory',postData?.aI_MentionUppercategory)"
+                    class="post__foot--label"
+                    [ngClass]="{'small_font-size': !defaultLayout,'font-weight-medium': !defaultLayout}">{{
+                    this.post.ticketCategory.mentionUpperCategory }}</span>
+                </ng-container>
+              </div>
+              <div class="custom__tooltip--hover hover-tooltipdiv custom__tooltip--category">
+                <div class="custom__tooltip--item">
+                  <span class="custom__tooltip--label" [ngClass]="{'small_font-size': !defaultLayout}">
+                    {{'Mention-Upper-Category' | translate}}
+                  </span>
+                  <span class="custom__tooltip--value" [ngClass]="{'small_font-size': !defaultLayout}">{{
+                    this.post.ticketCategory.mentionUpperCategory }}</span>
+                </div>
+              </div>
+            </span>
+          </span>
+        </div>
+        <div class="ver-divider"
+          *ngIf="!this.post?.ticketCategory?.mentionUpperCategory && this.post?.ticketCategory?.ticketUpperCategory">
+        </div>
+        
+        <div class="post__foot--item custom__tooltip--trigger min-width-auto label-title"
+          *ngIf="!this.post?.ticketCategory?.mentionUpperCategory && this.post?.ticketCategory?.ticketUpperCategory">
+          <span class="post__foot--item-wrapper">
+            <span class="d-flex-items-center hover-tooltip width-fit">
+              <div
+                class="post__foot--item-text pl-5 pr-7 border-radius-16 {{getCategorysSentiment(this.post.ticketCategory.ticketUpperCategory, this.postData?.aI_TicketUppercategory)}}">
+                <mat-icon
+                  *ngIf="getCategorysIcons(this.post.ticketCategory.ticketUpperCategory) && this.postData?.aI_TicketUppercategory"
+                  (click)="openCategoryDialog('ticketCategory',this.postData?.aI_TicketUppercategory)" class="post__foot--icon"
+                  fontSet="material-icons-outlined">{{getCategorysIcons(this.post.ticketCategory.ticketUpperCategory)}}</mat-icon>
+                <span (click)="openCategoryDialog('ticketCategory',this.postData?.aI_TicketUppercategory)"
+                  class="post__foot--label"
+                  [ngClass]="{'small_font-size': !defaultLayout,'font-weight-medium': !defaultLayout}">{{
+                  this.post.ticketCategory.ticketUpperCategory }}</span>
+                <div class="custom__tooltip--hover hover-tooltipdiv custom__tooltip--category">
+                  <div class="custom__tooltip--item">
+                    <span class="custom__tooltip--label" [ngClass]="{'small_font-size': !defaultLayout}">
+                      {{'Ticket-Upper-Category' | translate}}
+                    </span>
+                    <span class="custom__tooltip--value" [ngClass]="{'small_font-size': !defaultLayout}">{{
+                      this.post.ticketCategory.ticketUpperCategory }}</span>
+                  </div>
+                </div>
+              </div>
+            </span>
+          </span>
+        </div>
+
+    <!-- <div class="ml-5 mr-10 w-20" *ngIf="ticketHistoryData?.isInfluencermarked && (pageType === PostsType.Tickets || pageType === PostsType.Mentions)" [matTooltip]="postData?.author?.markedInfluencerCategoryName ? (postData?.author?.markedInfluencerCategoryName) + ' Influencer': 'Influencer'" matTooltipPosition="above" matTooltipClass="custom-tooltip" >
+      <img class="img__fluid vertical-sub" [ngClass]="{'small-image-width': !defaultLayout}" src="/assets/social-mention/post/Influencer.svg" />
+    </div> -->
+
+    <div class="ver-divider" *ngIf="isVOIPAgent && contactData && isVOIPBrand && ticketHistoryData?.currentticketstatus != 'Closed'"></div>
+
+    <ng-container *ngIf="isVOIPAgent && contactData && isVOIPBrand && ticketHistoryData?.currentticketstatus != 'Closed'">
+      <ng-container>
+        <div class="post__call mr-10" [matMenuTriggerFor]="call">
+          <mat-icon>local_phone</mat-icon>
+        </div>
+      </ng-container>
+      <mat-menu #call="matMenu">
+        <div class="dialpad">
+          <ng-container>
+            <a class="dialpad-popup border-bottom__light-grey" (click)="makeCall(contactData)">{{contactData}}
+            </a>
+          </ng-container>
+        </div>
+      </mat-menu>
+      <ng-container *ngIf="dialPad">
+        <div class="dialpad-block">
+          <app-dial-pad #dial [number]="contactNo" (makeCallEvent)="makeCall($event)"
+            (closeEvent)="closeEventRes($event)"></app-dial-pad>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <div class="new-layout__post-head--bottom-right">
+    <div class="d-flex-items-center g-5">
+      <!--Ticket assigned to-->
+      <!-- <div class="cursor-pointer d-flex-items-center g-5" *ngIf="post?.assignTo && !ticketHistoryData?.isCurrentAssignToVisible"
+        (click)="assignTicket()">
+        <p>{{'Assigned to' | translate}}:</p>
+        <div class="assigned-to-pill">
+          <mat-icon class="post__head--icon post__pill--icon ml-5 pl-0 mr-1" fontSet="material-icons-outlined"
+            aria-hidden="false" aria-label="how_to_reg icon">how_to_reg</mat-icon>
+          <span> {{(postData?.brandInfo?.isBrandworkFlowEnabled &&
+            (postData?.ticketInfo?.status == 9
+            || postData?.ticketInfo?.status == 15)) ?
+            postData?.ticketInfo?.escalatedTotUserName ? postData?.ticketInfo?.escalatedTotUserName +' ('+
+            postData?.ticketInfo?.escalatedToCSDTeamName + ')' : postData?.ticketInfo?.escalatedToCSDTeamName
+            : post?.assignTo}}</span>
+        </div>
+      </div> -->
+      <!--Ticket Location-->
+      <div class="post__head--infoitem" matTooltip="{{'Location Profile' | translate}}" matTooltipPosition="above" matTooltipClass="custom__tooltip-normal" *ngIf="pageType === PostsType.Tickets || pageType === PostsType.Mentions">
+        <div *ngIf="postData?.locationProfileName"
+          [matTooltip]="postData?.locationProfileName.length > 35 ? postData?.locationProfileName : ''"
+          matTooltipPosition="above"
+          class="post__pill nowrap cursor-pointer bg__grey--lighter border-radius-16 d-flex-items-center py-0 px-5 g-0">
+          <!-- <mat-icon class="material-icons-outlined colored__red">location_on</mat-icon> -->
+          <img class="small-image-width mr-4" src="assets/ticket-list/Agent-location-allocated.svg">
+          <p class="font-weight-medium">{{postData?.locationProfileName.substr(0,35)}}<span *ngIf="postData?.locationProfileName.length > 35">...</span>
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="post__head--infoitem" *ngIf="pageType === PostsType.Tickets || pageType === PostsType.Mentions">
+      <div class="post__pill bg__grey--lighter nowrap currentStatus__yellow" *ngIf="
+                      ticketHistoryData?.currentassignTo &&
+                      ticketHistoryData?.isCurrentAssignToVisible
+                    ">
+        <mat-icon class="post__head--icon post__pill--icon" fontSet="material-icons-outlined" aria-hidden="false"
+          aria-label="how_to_reg icon">escalator_warning</mat-icon>
+        <span>{{ ticketHistoryData?.currentassignTo }}</span>
+      </div>
+    </div>
+    
+  </div>
+  
+</div>
+
+    
+
+  </div>
+  <div class="new-layout__post-head--right" (click)="$event.stopPropagation()">
+    <img class="w-26 mr-4" src="assets/icons/dot-animate.gif">
+    <div class="ml-5 mr-10 w-20"
+      *ngIf="ticketHistoryData?.isInfluencermarked && (pageType === PostsType.Tickets || pageType === PostsType.Mentions)"
+      [matTooltip]="postData?.author?.markedInfluencerCategoryName ? (postData?.author?.markedInfluencerCategoryName) + ' Influencer': 'Influencer'"
+      matTooltipPosition="above" matTooltipClass="custom-tooltip">
+      <img class="img__fluid vertical-sub" [ngClass]="{'small-image-width': !defaultLayout}"
+        src="/assets/social-mention/post/Influencer.svg" />
+    </div>
+    <!-- lock unlock Note Ends-->
+    <!-- Mention Count -->
+    <div class="post-mentions post__foot--item custom__tooltip--trigger min-width-auto"  *ngIf="!ticketHistoryData?.showMarkactionable && post.mentionCount > 0 && pageType != PostsType.TicketHistory">
+      <mat-icon class="post__foot--icon m-0 mention-icon" fontSet="material-icons-outlined" aria-hidden="false"
+        aria-label="question answer">question_answer</mat-icon>
+      <span class="post__foot--label mention-cout" *ngIf = "postData?.brandReplyCount">{{ post.mentionCount + postData?.brandReplyCount }}</span>
+      <span class="post__foot--label mention-cout" *ngIf="!postData?.brandReplyCount">{{ post.mentionCount }}</span>
+
+      <!-- <div class="custom__tooltip--hover post__foot--item--hover custom__tooltip--category">
+        <div class="custom__tooltip--item pb-0">
+          <span class="custom__tooltip--value">
+            <p>
+              <span class="font-weight-500">Customer: </span>
+              <span *ngIf="post.mentionCount > 0">
+                {{post.mentionCount}}
+              </span>
+            </p>
+          </span>
+        </div>
+        <div class="custom__tooltip--item">
+          <span class="custom__tooltip--value">
+            <p>
+              <span class="font-weight-500">Brand: </span>
+              <span>
+                {{postData?.brandReplyCount}}
+              </span>             
+            </p>
+          </span>
+        </div>
+      </div> -->
+
+      <div class="hover-content">
+        <div class="d-flex-items-center g-3">
+          <mat-icon class="colored__locobuzz material-icons-outlined font-size-16 d-flex-items-center justify-content__center">group</mat-icon>
+          <p>{{'Customer' | translate}}: <span [ngClass]="{'font-weight-medium': !defaultLayout}">{{post.mentionCount}}</span></p>
+        </div>
+        <div class="d-flex-items-center g-3 ml-2">
+          <img class="img__fluid w-16 border-round mr-3 brand__img--circle" [src]="post?.brandLogo"
+            onError="this.src='assets/social-mention/post/default_brand.svg'" alt="brand image" />
+          <!-- <mat-icon class="colored__green material-icons-outlined font-size-16 d-flex-items-center justify-content__center">support_agent</mat-icon> -->
+          <p>{{'Brand' | translate}}: <span [ngClass]="{'font-weight-medium': !defaultLayout}">{{postData?.brandReplyCount}}</span></p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="post__head--infoitem conversation--crm"
+      *ngIf="ticketHistoryData?.salesForceCrm && postData?.ticketInfo.srid == null || postData?.ticketInfo.srid === ''"
+      [matMenuTriggerFor]="salesForceCrm">
+      <div class="post__pill post__pill--bg nowrap cursor-pointer">
+        <span class="post__foot--label">{{'crm' | translate}}</span>
+        <mat-spinner color="accent" class="ml-4" [diameter]="20" *ngIf="salesForceLoader"></mat-spinner>
+      </div>
+      <mat-menu #salesForceCrm="matMenu" yPosition="above" class="matmenu-md">
+        <button *ngIf="ticketHistoryData?.createSR" mat-menu-item (click)="createSalesForceCrm(1)">
+          <span>{{'SR' | translate}}</span>
+        </button>
+        <button *ngIf="ticketHistoryData?.createLead" mat-menu-item (click)="createSalesForceCrm(2)">
+          <span>{{'lead' | translate}}</span>
+        </button>
+      </mat-menu>
+    </div>
+    <div class="post__head--infoitem conversation--crm"
+      *ngIf="ticketHistoryData?.salesForceCrm && postData?.ticketInfo.srid">
+      <div class="post__pill nowrap cursor-pointer post__pill--bg" [ngClass]="{
+                                                    'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''
+                                                  }">
+        <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''"
+          class="post__foot--icon mr-3" fontSet="material-icons-outlined" aria-hidden="false" aria-label="done">
+          done</mat-icon>
+        <span class="post__foot--label">{{'crm' | translate}}</span>
+      </div>
+    </div>
+    <div class="post__head--infoitem conversation--crm" (click)="getRequestPopup()"
+      *ngIf="ticketHistoryData?.crmcreatereqpop ; else showmobilenopopup">
+      <div class="post__pill post__pill--bg nowrap cursor-pointer" [ngClass]="{
+                    'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '', 'post__head--minimal' : minimalViewHead
+                  }">
+        <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''"
+          class="post__foot--icon mr-3" fontSet="material-icons-outlined" aria-hidden="false" aria-label="done">
+          done</mat-icon>
+        <span class="post__foot--label">{{'crm' | translate}}</span>
+      </div>
+    </div>
+    <ng-template #showmobilenopopup>
+      <div class="post__head--infoitem conversation--crm" (click)="getRequestPopup()"
+        *ngIf="ticketHistoryData?.crmmobilenopopup">
+        <div class="post__pill post__pill--bg cursor-pointer" [ngClass]="{
+                      'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '', 'post__head--minimal' : minimalViewHead
+                    }">
+          <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''"
+            class="post__foot--icon mr-3" fontSet="material-icons-outlined" aria-hidden="false" aria-label="done">
+            done</mat-icon>
+          <span class="post__foot--label">{{'crm' | translate}}</span>
+        </div>
+      </div>
+    </ng-template>
+    <div class="post__head--infoitem conversation--crm" (click)="openAnimalWildfare()"
+      *ngIf="ticketHistoryData?.animalWelfare">
+      <div class="post__pill post__pill--bg nowrap cursor-pointer" [ngClass]="{
+                              'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''
+                            }">
+        <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''"
+          class="post__foot--icon mr-3" fontSet="material-icons-outlined" aria-hidden="false" aria-label="done">
+          done</mat-icon>
+        <span class="post__foot--label">{{crmLable}}</span>
+      </div>
+    </div>
+    <!-- <div class="post__head--infoitem" *ngIf="pageType === PostsType.Tickets || pageType === PostsType.Mentions">
+      <div class="post__pill bg__grey--lighter nowrap cursor-pointer"
+        *ngIf="post?.assignTo && !ticketHistoryData?.isCurrentAssignToVisible" (click)="assignTicket()" [ngClass]="{
+                      'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed', 'post__head--minimal' : minimalViewHead
+                    }">
+        <mat-icon class="post__head--icon post__pill--icon 12" fontSet="material-icons-outlined" aria-hidden="false"
+          aria-label="how_to_reg icon">how_to_reg</mat-icon>
+    
+        <span>{{(postData?.brandInfo?.isBrandworkFlowEnabled && (postData?.ticketInfo?.status == 9 ||
+          postData?.ticketInfo?.status == 15)) ?
+          postData?.ticketInfo?.escalatedTotUserName ? postData?.ticketInfo?.escalatedTotUserName +' ('+
+          postData?.ticketInfo?.escalatedToCSDTeamName + ')' : postData?.ticketInfo?.escalatedToCSDTeamName
+          : post?.assignTo}}</span>
+      </div>
+    </div> -->
+    <div class="post__head--infoitem">
+      <div *ngIf="unseenCountFlag" matTooltip="{{'new-note-added-via-crm' | translate}}" matTooltipPosition="above"
+        matTooltipClass="custom-tooltip" class="post__pill workflow-pill bg__grey--lighter cursor-pointer">
+        <img src="/assets/social-mention/post/ring_icon.svg" class="w-16">
+      </div>
+    </div>
+    <!-- workflow -->
+    <div class="post__head--infoitem" *ngIf="postData?.ticketInfoWorkflow?.workflowName">
+      <div [matMenuTriggerFor]="workflow" (click)="workflowActionShow(postData?.ticketInfoWorkflow)"
+        [ngClass]="{'active' : activeWorkflow}" matTooltip="{{'workflow-automation' | translate}}" matTooltipPosition="above"
+        matTooltipClass="custom-tooltip" class="post__pill workflow-pill bg__grey--lighter cursor-pointer">
+        <img src="assets/account/menu/WorkFlow_Active.svg" class="w-16">
+      </div>
+    </div>
+    <mat-menu #workflow="matMenu" class="fit-content-min">
+      <div class="workflow-ticket__menu">
+        <div class="workflow-ticket__wrapper">
+          <p class="text__label">Workflow Name</p>
+          <p class="colored__locobuzz">{{postData?.ticketInfoWorkflow?.workflowName}}</p>
+          <p class="text__label mt-6">Action Type</p>
+          <mat-spinner [diameter]="25" *ngIf="workflowActionShowFlag"></mat-spinner>
+          <div class="workflow-ticket__action" *ngIf="!workflowActionShowFlag">
+            <span class="d-flex-items-center position-relative" *ngFor="let item of workflowAction;let i=index;">
+              <span class="p-3 border-radius-8 h-22 w-22 block-center"
+                [ngClass]="{'bg__green':item?.isSuccess,'bg__red':!item?.isSuccess}">
+                <img matTooltip="{{'Respond' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Respond')" src="assets/images/workflow/Respond_white.svg" alt="">
+                <img matTooltip="{{'Sending Feedback' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Sending Feedback')"
+                  src="assets/images/workflow/Sending-Feedback_white.svg" alt="">
+                <img matTooltip="{{'Ticket-Disposition' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Ticket Disposition')"
+                  src="assets/images/workflow/Ticket-Dispositions_white.svg" alt="">
+                <img matTooltip="{{'Make-Actionable' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Make Actionable')"
+                  src="assets/images/workflow/make-actionable_White.svg" alt="">
+                <img matTooltip="{{'Change-Ticket-Status' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('TicketStatusChange')"
+                  src="assets/images/workflow/Change-Ticket-Status_white.svg" alt="">
+                <img matTooltip="{{'Escalate' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Escalate')" src="assets/images/workflow/Escalate-To_white.svg" alt="">
+                <img matTooltip="{{'Change-Priority' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Change Priority') || item?.actionName?.includes('Set Priority')"
+                  src="assets/images/workflow/Set_priority_white.svg" alt="">
+                <img matTooltip="{{'Assign' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Assign')" src="assets/images/workflow/Assign-To_white.svg" alt="">
+                <img matTooltip="{{'Set-Category' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Set Category')" src="assets/images/workflow/set-category_white.svg"
+                  alt="">
+                <img matTooltip="{{'Create-Case' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Create Case')" src="assets/images/workflow/create-case_white.svg"
+                  alt="">
+                <img matTooltip="{{'Create-Lead' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Create Lead')" src="assets/images/workflow/create-lead_white.svg"
+                  alt="">
+                <img matTooltip="{{'Send-Alert' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Send Alert')" src="assets/images/workflow/send-alert_white.svg" alt="">
+                <img matTooltip="{{'Mark-ticket-as-Closed' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Mark ticket as Closed')"
+                  src="assets/images/workflow/ticket-close_white.svg" alt="">
+                <img matTooltip="{{'On-Hold' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('On Hold')" src="assets/images/workflow/On_Hold.svg" alt="">
+                <img matTooltip="{{'Awaiting-Response-From-Customer' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Awaiting Response from Customer')"
+                  src="assets/images/workflow/awaiting-response_white.svg" alt="">
+                <img matTooltip="{{'Canned-Response' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Canned Response')"
+                  src="assets/images/workflow/canned-response_white.svg" alt="">
+                <img matTooltip="{{'AI-Classifier' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Actionability Detection')"
+                  src="assets/images/workflow/actionability-detection_white.svg" alt="">
+                <img matTooltip="{{'ai-response' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('AI Response')" src="assets/images/workflow/Ai_responce_white.svg"
+                  alt="">
+                <img matTooltip="{{'timed-out' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('TimedOut')" src="assets/images/workflow/timeout_white.svg" alt="">
+                <img matTooltip="{{'hide-mention' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Hide Mention')" src="assets/images/workflow/Hide_white.svg" alt="">
+                <img matTooltip="{{'delete-mention' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                  *ngIf="item?.actionName?.includes('Delete Mention')" src="assets/images/workflow/Delete_white.svg" alt="">
+                  <img matTooltip="{{'reopen-ticket' | translate}}" matTooltipClass="custom-tooltip" class="w-14 h-14"
+                    *ngIf="item?.actionName?.includes('Reopen Ticket')" src="assets/images/workflow/reopen_white.svg" alt="">
+              </span>
+              <span class="workflow-ticket__action--line bg__green"
+                *ngIf="item?.isSuccess && i < workflowAction?.length-1"></span>
+              <span class="workflow-ticket__action--line bg__red--dark"
+                *ngIf="!item?.isSuccess && i < workflowAction?.length-1"></span>
+              <span class="workflow-ticket__action--cross" *ngIf="!item?.isSuccess && i < workflowAction?.length-1">
+                <img src="assets/workflow/cross-icon.svg">
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </mat-menu>
+
+    <!-- <div class="post__head--infoitem"
+      *ngIf="postData?.aiIntentIDs?.length && (pageType === PostsType.Tickets || pageType === PostsType.Mentions || pageType === PostsType.TicketHistory)">
+      <div class="post__pill-wrapper">
+        <div class="post__pill bg__grey--lighter nowrap cursor-pointer d-inline-flex align-items-center pill-gradient w-170"
+          style="background: linear-gradient(90deg, rgba(252, 14, 159, 0.15) 0%, rgba(116, 20, 239, 0.15) 100%) !important;">
+          <img src="assets/account/menu/AI_Intent.svg" class="mr-4 ai-intent-img" alt="AI Intent">
+          <span class="mr-5 pill-text-gradient"
+            [matTooltip]="postData.aiIntentIDs[0].length > 10 ? postData.aiIntentIDs[0] : ''" matTooltipPosition="above">{{ postData.aiIntentIDs[0].substr(0,10) }}...</span>
+          <div class="intent-hover-wrapper">
+            <span *ngIf="postData?.aiIntentIDs?.length > 1" class="intent-count-circle bg__blue--lighter colored__locobuzz">
+              {{ postData.aiIntentIDs.length - 1 }}
+            </span>
+    
+            <div class="show-on-hover-intents">
+              <ng-container *ngFor="let intent of postData.aiIntentIDs.slice(1)">
+                <button mat-menu-item style="white-space: normal;">
+                  <span class="d-flex-items-center">
+                    <img src="assets/account/menu/AI_Intent.svg" class="mr-4 ai-intent-img" alt="AI Intent">
+                    <p class="force-wrap">{{ intent }}</p>
+                  </span>
+                </button>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+      
+    <!-- <div class="post__head--infoitem" *ngIf="pageType === PostsType.Tickets || pageType === PostsType.Mentions">
+      <div class="post__pill bg__grey--lighter nowrap currentStatus__yellow" *ngIf="
+                ticketHistoryData?.currentassignTo &&
+                ticketHistoryData?.isCurrentAssignToVisible
+              ">
+        <mat-icon class="post__head--icon post__pill--icon" fontSet="material-icons-outlined" aria-hidden="false"
+          aria-label="how_to_reg icon">escalator_warning</mat-icon>
+        <span>{{ ticketHistoryData?.currentassignTo }}</span>
+      </div>
+    </div> -->
+
+    <!-- <div class="post__head--infoitem conversation--crm" (click)="getRequestPopup()"
+      *ngIf="ticketHistoryData?.crmcreatereqpop && (ticketHistoryData?.currentticketstatus != 'Closed' || (ticketHistoryData?.currentticketstatus == 'Closed' &&( (postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '') || (postData?.ticketInfo?.leadID !== null && postData?.ticketInfo?.leadID !== '')))); else showmobilenopopup">
+      <div class="post__pill pill-bg nowrap cursor-pointer" [ngClass]="{
+              'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__green--dark active-pill': (postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '') ||( postData?.ticketInfo.leadID !== null && postData?.ticketInfo.leadID !== ''), 'post__head--minimal' : minimalViewHead
+            }" [matMenuTriggerFor]="clickHoverMenuTriggerFlag ? clickHoverMenu : null"
+        #clickHoverMenuTrigger="matMenuTrigger">
+        <img src="assets/images/CRM_Icon.svg" alt=""
+          *ngIf="(postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '') || ( postData?.ticketInfo.leadID !== null && postData?.ticketInfo.leadID !== '')"
+          class="w-14 mr-3">
+        <span class="post__foot--label" [loading]="lookupshow">CRM</span><mat-spinner class="ml-15" [diameter]="15"
+          *ngIf="crmGetAuthorTicketDetails"></mat-spinner>
+    
+      </div>
+    </div> -->
+    <ng-container *ngIf="lookupshow">
+      <div class="lookup__wrapper">
+        <div class="lookup__dialog" [hidden]="snapdealSridFound">
+          <app-loopupcrm (closeDialog)="lookupshow=false" [brandDetails]="filterBrandInfo" [postData]="postData"
+            [srid]="postData?.ticketInfo?.srid" [postType]="pageType"></app-loopupcrm>
+        </div>
+      </div>
+    </ng-container>
+    <mat-menu class="lookup__wrapper--button" #clickHoverMenu="matMenu" yPosition="below">
+      <ng-container *ngIf="clickHoverMenuTriggerFlag">
+    
+        <button mat-menu-item class="d-flex-items-center"
+          *ngIf="(ticketHistoryData?.currentticketstatus == 'Closed' && !postData?.ticketInfo?.srid) ? false : true"
+          (click)="(postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '' && postData?.ticketInfo?.srid) ? CaseLeadFormOpenView('Case'):CaseLeadFormOpen('Case')">
+    
+          <mat-icon class="colored__locobuzz mr-0" fontSet="material-icons-outlined">work_outline</mat-icon>
+          <span class="ml-7"> {{'Case' | translate}}</span>
+          <img src="assets/images/CRM_Icon.svg" alt=""
+            *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '' && postData?.ticketInfo?.srid"
+            class="w-14 ml-7">
+        </button>
+    
+        <button mat-menu-item class="d-flex-items-center"
+          *ngIf="(ticketHistoryData?.currentticketstatus == 'Closed' && !postData?.ticketInfo?.leadID) ? false:true"
+          (click)="(postData?.ticketInfo?.leadID !== null && postData?.ticketInfo?.leadID !== '' && postData?.ticketInfo?.leadID) ?  CaseLeadFormOpenView('Lead') :CaseLeadFormOpen('Lead')">
+    
+          <img src="assets/images/channel-logos/Lead_Icon.svg" alt="">
+          <span class="ml-5"> {{'lead' | translate}}</span>
+          <img src="assets/images/CRM_Icon.svg" alt=""
+            *ngIf="postData?.ticketInfo?.leadID !== null && postData?.ticketInfo?.leadID !== '' && postData?.ticketInfo?.leadID"
+            class="w-14 ml-7">
+        </button>
+      </ng-container>
+    </mat-menu>
+    <div class="post__head--infoitem">
+      <div
+        *ngIf="((postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '') || ( postData?.ticketInfo.leadID !== null && postData?.ticketInfo.leadID !== '')) && typeOfCrm==102 && pageType != PostsType.TicketHistory"
+        matTooltip="{{'Sync-data-from-CRM' | translate}}" matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+        class="post__pill workflow-pill bg__grey--lighter cursor-pointer" (click)="syncSFDCData()">
+        <img src="/assets/social-mention/post/Sync_icon.svg" class="w-20" [class.rotate]="rotate">
+      </div>
+    </div>
+
+    <ng-template #showmobilenopopup>
+      <div class="post__head--infoitem conversation--crm" (click)="getRequestPopup()"
+        *ngIf="ticketHistoryData?.crmmobilenopopup && (ticketHistoryData?.currentticketstatus != 'Closed' || (ticketHistoryData?.currentticketstatus == 'Closed' && (postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '')))">
+        <div class="post__pill bg__grey--lighter cursor-pointer" [ngClass]="{
+                  'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== '', 'post__head--minimal' : minimalViewHead
+                }">
+          <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''"
+            class="post__foot--icon mr-3" fontSet="material-icons-outlined" aria-hidden="false" aria-label="done">done
+          </mat-icon>
+          <span class="post__foot--label">{{'crm' | translate}}</span>
+        </div>
+      </div>
+    </ng-template>
+    <div class="post__head--infoitem conversation--crm" (click)="openAnimalWildfare()"
+      *ngIf="ticketHistoryData?.animalWelfare">
+      <div class="post__pill bg__grey--lighter nowrap cursor-pointer" [ngClass]="{
+                                    'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed','colored__yellow--dark': postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''
+                                  }">
+        <mat-icon *ngIf="postData?.ticketInfo.srid !== null && postData?.ticketInfo.srid !== ''"
+          class="post__foot--icon mr-3" fontSet="material-icons-outlined" aria-hidden="false" aria-label="done">
+          done</mat-icon>
+        <span class="post__foot--label">{{crmLable}}</span>
+      </div>
+    </div>
+  
+    <!-- Brand -->
+    <div class="post__head--infoitem">
+      <div class="post__pill nowrap bg__grey--lighter nowrap responsive__detail--infoitem post-brand" [ngClass]="{
+                                  'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed', 'post__head--minimal' : minimalViewHead, 'bg__grey--lighter' : !minimalViewHead
+                                }" [matTooltip]="minimalViewHead ? post?.brandFriendlyName : null"
+        matTooltipPosition="above" matTooltipClass="custom__tooltip-normal">
+        <img class="img__fluid w-20 mr-3 brand__img--circle" [src]="post?.brandLogo"
+          onError="this.src='assets/social-mention/post/default_brand.svg'" alt="brand image" />
+        <span class="brand-name">{{ post?.brandFriendlyName }}</span>
+      </div>
+      <div class="sfdc__head--brand nowrap bg-none responsive__detail--infoitem w-28 justify-content__center" [ngClass]="{
+                                          'close--postBG': ticketHistoryData?.currentticketstatus == 'Closed', 'post__head--minimal' : minimalViewHead
+                                        }" [matTooltip]="post?.brandFriendlyName" matTooltipPosition="above"
+        matTooltipClass="custom__tooltip-normal">
+        <img class="img__fluid w-20 mr-3 brand__img--circle" [src]="post?.brandLogo"
+          onError="this.src='assets/social-mention/post/default_brand.svg'" alt="brand image" />
+      </div>
+    </div>
+    <div *ngIf="postData?.filterKeywords && clickhouseEnabled" class="post__head--infoitem">
+      <div class="post__pill nowrap bg__grey--lighter nowrap responsive__detail--infoitem filter-keyword__block"
+        matTooltipPosition="above" matTooltipClass="custom__tooltip-maxText" matTooltip={{postData?.filterKeywords}}>
+        <img class="img__fluid w-23 brand__img--circle" src="assets/social-mention/post/keywords.svg" alt="keyword image" />
+      </div>
+    </div>
+    <div class="post__head--infoitem no-wrap" *ngIf="
+            ticketHistoryData?.isabouttobreach &&
+            (pageType === PostsType.Tickets || pageType === PostsType.Mentions)
+          ">
+      <mat-icon class="post__head--icon colored__yellow--dark" matTooltip="{{'ticket-first-response-about-to-breach' | translate}}"
+        matTooltipPosition="above" matTooltipClass="custom-tooltip"
+        [ngClass]="{ colored__red: ticketHistoryData?.alreadybreached }" fontSet="material-icons-outlined"
+        aria-hidden="false" aria-label="alarm icon">{{
+        ticketHistoryData?.alreadybreached ? 'timer_off' : 'alarm'
+        }}</mat-icon>
+      <span class="post__head--label" appVisiblityNotifier (visibilityChange)="visibilityChangeHandler($event)">{{
+        ticketHistoryData?.timetobreach
+        }}</span>
+    </div>
+    <div class="post__head--infoitem no-wrap" *ngIf="
+            ticketHistoryData?.isbreached &&
+            (pageType === PostsType.Tickets || pageType === PostsType.Mentions)
+          ">
+      <mat-icon class="post__head--icon no-wrap" matTooltip="{{'ticket-first-response-already-breached' | translate}}"
+        matTooltipPosition="above" matTooltipClass="custom-tooltip" [ngClass]="{
+              colored__red:
+                ticketHistoryData?.alreadybreached || ticketHistoryData?.isbreached
+            }" fontSet="material-icons-outlined" aria-hidden="false" aria-label="alarm icon">{{
+        ticketHistoryData?.alreadybreached || ticketHistoryData?.isbreached
+        ? 'timer_off'
+        : 'alarm'
+        }}</mat-icon>
+    </div>
+
+      <!-- Time Stamp -->
+    <div class="post__head--info margin-unset">
+      <div class="post__head--infoitem timeShow-hover no-wrap m-0">
+        <span class="d-flex-items-center g-5">
+          <ng-container
+            *ngIf="(selectedSortBy == 'DateCreated' || selectedSortBy == 'MentionDateCreated') && pageType != PostsType.TicketHistory">
+            <img src="assets/ticket-list/Created_Date.svg" />
+          </ng-container>
+      
+          <ng-container
+            *ngIf="(selectedSortBy == 'LastUpdated' || selectedSortBy == 'MentionLastUpdated') && pageType != PostsType.TicketHistory">
+            <img src="assets/ticket-list/Modification_On.svg" />
+          </ng-container>
+      
+          <ng-container
+            *ngIf="selectedSortBy == 'Author' || selectedSortBy == 'Influencer' || selectedSortBy == 'MentionEngagement' || pageType === PostsType.TicketHistory">
+            <img src="assets/ticket-list/Mentioned_On.svg" />
+          </ng-container>
+      
+          <ng-container *ngIf="selectedSortBy == 'LastAuthorUpdateDate' && pageType != PostsType.TicketHistory">
+            <img src="assets/ticket-list/Last_Author_Update.svg" />
+          </ng-container>
+      
+          <span class="post__head--label text-nowrap ml-0">
+            <ng-container *ngIf="absolutTime">
+              <ng-container *ngIf="pageType === PostsType.Tickets || pageType === PostsType.Mentions">
+      
+                <ng-container
+                  *ngIf="(selectedSortBy == 'DateCreated' || selectedSortBy == 'MentionDateCreated') && (!ticketHistoryData?.isBrandPost)">
+                 <span> {{ (ticketHistoryData?.showMarkactionable ? post?.ticketTime.mentionDate : post?.ticketTime.createdDate) |
+                  cleanDate | date:'MMM d, y, h:mm:ss a' }} </span>
+                </ng-container>
+      
+                <ng-container
+                  *ngIf="(selectedSortBy == 'LastUpdated' || selectedSortBy == 'MentionLastUpdated') && (!ticketHistoryData?.isBrandPost)">
+                 <span> {{ (ticketHistoryData?.showMarkactionable ? post?.ticketTime.mentionDate : post?.ticketTime.modifiedDate) |
+                  cleanDate | date:'MMM d, y, h:mm:ss a' }} </span>
+                </ng-container>
+      
+                <ng-container *ngIf="selectedSortBy == 'LastAuthorUpdateDate' && pageType === PostsType.Tickets">
+                  <span>{{(post?.ticketTime?.latestTagIDInsertedAt || post?.ticketTime.mentionDate)| cleanDate | date:'MMM d, y,
+                  h:mm:ss a'}}</span>
+                </ng-container>
+      
+                <ng-container
+                  *ngIf="selectedSortBy == 'Author' || selectedSortBy == 'Influencer' || selectedSortBy == 'MentionEngagement'">
+                 <span>{{(post?.ticketTime.mentionDate)| cleanDate | date:'MMM d, y, h:mm:ss a'}}</span> 
+                </ng-container>
+      
+              </ng-container>
+              <ng-container *ngIf="pageType === PostsType.TicketHistory">
+                <span>{{(post?.ticketTime.mentionDate)| cleanDate | date:'MMM d, y, h:mm:ss a'}}</span>
+              </ng-container>
+      
+            </ng-container>
+      
+            <ng-container *ngIf="!absolutTime"><span>{{post?.ticketTime.timetoshow}}</span></ng-container>
+          </span>
+        </span>
+      
+        <!-- Timestamp Hover (Show this on hover) -->
+        <div class="custom__tooltip">
+              <span>
+                <div class="custom__tooltip--item pb-0" *ngIf="clickhouseEnabled">
+                  <span class="custom__tooltip--label d-flex-items-center"><img src="assets/ticket-list/Created_Date.svg"
+                      class="mr-2" [ngClass]="{'small-image-width': !defaultLayout}" /> Captured on:</span>
+                  <span class="custom__tooltip--value ml-2">
+                    {{
+                    post?.ticketTime.capturedDate
+                    }}</span>
+                </div>
+                <div class="custom__tooltip--item pb-0" *ngIf="
+                        pageType === PostsType.Tickets ||
+                        (pageType === PostsType.Mentions &&
+                          !ticketHistoryData?.isBrandPost &&
+                          !ticketHistoryData?.showMarkactionable)
+                      ">
+                  <span class="custom__tooltip--label d-flex-items-center"><img src="assets/ticket-list/Created_Date.svg"
+                      class="mr-2" [ngClass]="{'small-image-width': !defaultLayout}" /> {{ 'Created-on' | translate }}:</span>
+                  <span class="custom__tooltip--value ml-2">
+                    {{
+                    post?.ticketTime.createdDate
+                    }}</span>
+                </div>
+                <div class="custom__tooltip--item pb-0" *ngIf="
+                        pageType === PostsType.Tickets ||
+                        (pageType === PostsType.Mentions &&
+                          !ticketHistoryData?.isBrandPost &&
+                          !ticketHistoryData?.showMarkactionable)
+                      ">
+                  <span class="custom__tooltip--label d-flex-items-center"><img src="assets/ticket-list/Modification_On.svg"
+                      class="mr-2" [ngClass]="{'small-image-width': !defaultLayout}" /> {{ 'Modified-on' | translate }}:</span>
+                  <span class="custom__tooltip--value ml-2">{{
+                    post?.ticketTime.modifiedDate
+                    }}</span>
+                </div>
+                <div class="custom__tooltip--item pb-0" *ngIf="pageType === PostsType.Tickets">
+                  <span class="custom__tooltip--label d-flex-items-center"><img src="assets/ticket-list/Last_Author_Update.svg"
+                      class="mr-2" [ngClass]="{'small-image-width': !defaultLayout}" /> {{ 'Last-Author-Update' | translate }}:</span>
+                  <span class="custom__tooltip--value ml-2">{{
+                    post?.ticketTime?.latestTagIDInsertedAt
+                    }}</span>
+                </div>
+                <div class="custom__tooltip--item pb-0">
+                  <span class="custom__tooltip--label d-flex-items-center"><img src="assets/ticket-list/Mentioned_On.svg"
+                      class="mr-2" [ngClass]="{'small-image-width': !defaultLayout}" /> {{ 'Mentioned-on' | translate }}:</span>
+                  <span class="custom__tooltip--value ml-2">{{
+                    post?.ticketTime.mentionDate
+                    }}</span>
+                </div>
+              </span>
+            </div>      
+      </div>
+    </div>
+     <!-- Time Stamp Ends-->
+    
+     <!-- lock unlock Note -->
+    <div *ngIf="pageType === PostsType.Tickets && lockUnlockNote"
+      class="post__status post__status--show bg__locobuzz pt-6 pb-6 d-flex">
+      <!-- <img
+            matTooltipPosition="above"
+          matTooltipClass="custom-tooltip"
+          matTooltip={{lockUnlockNote}}
+            class="post__foot--actionicon"
+            src="/assets/images/channelicons/Delete_Red.svg"
+          /> -->
+      <img matTooltipPosition="above" matTooltipClass="custom-tooltip" class="post__foot--actionicon"
+        matTooltip={{lockUnlockNote}} src="assets/images/icons8-edit.gif" />
+    </div>
+     <!-- lock unlock Note Ends-->
+    <!-- Ticket Seen Icon -->
+    <div
+      *ngIf="(pageType === PostsType.Tickets && ticketHistoryData?.isReadBy &&  !postData?.isDeletedFromSocial && !lockUnlockNote) || (clickhouseEnabled && ticketHistoryData?.isReadBy && mentionOrGroupView==AllMentionGroupViewEnum.groupView)"
+      class="post__status post__status--show bg__locobuzz colored__white">
+      <mat-icon [matTooltip]="ticketHistoryData?.readBy" matTooltipPosition="above" matTooltipClass="custom-tooltip"
+        class="material-icons-outlined colored__white">remove_red_eye</mat-icon>
+    </div>
+    <div
+      *ngIf="(pageType === PostsType.Tickets || pageType === PostsType.TicketHistory || pageType === PostsType.Mentions ) && postData?.isDeletedFromSocial"
+      class="post__status post__status--show">
+      <img matTooltipPosition="above" matTooltipClass="custom-tooltip" matTooltip="{{'Deleted from social' | translate}}"
+        class="post__foot--actionicon" src="/assets/images/channelicons/Delete_Red.svg" />
+    </div>
+    <div
+      *ngIf=" pageType === PostsType.Mentions && (postData?.channelGroup == channelGroupEnum.Twitter ||
+                                postData?.channelGroup == channelGroupEnum.Facebook ||
+                                postData?.channelGroup == channelGroupEnum.Instagram ||
+                                postData?.channelGroup == channelGroupEnum.Youtube ||
+                                postData?.channelGroup == channelGroupEnum.LinkedIn ||
+                                postData?.channelGroup == channelGroupEnum.GooglePlayStore ||
+                                postData?.channelGroup == channelGroupEnum.GoogleMyReview ||
+                                postData?.channelGroup == channelGroupEnum.WhatsApp ||
+                                postData?.channelGroup == channelGroupEnum.Email ||
+                                postData?.channelGroup == channelGroupEnum.Discourse) && postData?.type && !postData?.isBrandPost && postData?.isReplied"
+      class="post__status post__status--show bg__green colored__white">
+      <mat-icon *ngIf="postData?.isReplied" class="material-icons-outlined colored__white">done</mat-icon>
+      <span> {{'Replied' | translate}} </span>
+    </div>
+
+  </div>
+</div>
+
+<!-- Post New UI for Ticket Header July 2025 Ends-->

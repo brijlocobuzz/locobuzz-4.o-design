@@ -1,0 +1,128 @@
+.dropzone {
+  height: 400px;
+  overflow: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 20px;
+}
+
+.dropzone__drop {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 35px 20px;
+  border: none;
+  -webkit-transform: scale(2.1);
+  transform: scale(2.1);
+  -webkit-transform-origin: top left;
+  transform-origin: top left;
+  -webkit-transition: all 0.1s;
+  transition: all 0.1s;
+}
+
+.dropzone__drop--item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-transform: scale(0.5);
+  transform: scale(0.5);
+}
+
+.dropzone__item {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 48%;
+  flex: 0 0 48%;
+  margin-bottom: 20px;
+  max-height: 150px;
+  overflow: hidden;
+}
+
+.dropzone__item:nth-child(odd) {
+  margin-right: 20px;
+}
+
+.dropzone__item:not(.dropzone__drop) {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.dropzone__item:not(.dropzone__drop) > div {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 50%;
+  flex: 0 0 50%;
+}
+
+.dropzone__item--image {
+  position: relative;
+  overflow: hidden;
+}
+
+.dropzone__item--overlay {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  text-align: center;
+  bottom: 0;
+  -webkit-transform: translateY(25px);
+  transform: translateY(25px);
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  cursor: pointer;
+}
+
+.dropzone__item--overlay mat-icon {
+  color: var(--color-white);
+}
+
+.dropzone__item:hover .dropzone__item--overlay {
+  -webkit-transform: translateY(0px);
+  transform: translateY(0px);
+}
+
+.dropzone.dropped {
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  justify-content: start;
+}
+
+.dropzone.dropped .dropzone__drop {
+  height: auto;
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}
+
+.dropzone.dropped .dropzone__drop--item {
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}
+
+.dropzone:not(.dropped) .dropzone__item:not(.dropzone__drop) {
+  display: none;
+}

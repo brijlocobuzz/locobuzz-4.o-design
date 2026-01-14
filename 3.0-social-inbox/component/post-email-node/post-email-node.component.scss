@@ -1,0 +1,47 @@
+.post{
+    &__document{
+        &--files{
+            &.files{
+                margin-top: 0rem!important;
+            }
+        }
+    }
+}
+.initials{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+    background: #719AFF;
+    color: var(--color-white);
+}
+
+.max-width-74p {
+    max-width: 74% !important;
+}
+
+.flex-direction-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.w-92-p {
+    width: 92%;
+}
+
+::ng-deep .forward-email .mat-mdc-menu-item-text {
+    display: flex;
+    align-items: center;
+}
+.internal-email{
+    position: absolute;
+    display: block;
+    top: 0;
+    right: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--color-locobuzz);
+    
+}

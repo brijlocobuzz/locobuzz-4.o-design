@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AACG,AAAD,YAAQ,CAAC;EAKP,WAAW,EAAE,GAAG;EAChB,WAAW,EAAE,MAAM;CAcpB;;AAbE,AAAD,kBAAO,CAAC;EACN,KAAK,EAAE,kBAAkB;EACzB,UAAU,EAAE,MAAM;CAOnB;;AATA,AAIC,kBAJK,CAIH,SAAS,CAAC;EACV,SAAS,EAAE,eAAe;EAC1B,aAAa,EAAE,GAAG;EAClB,UAAU,EAAE,qBAAqB;CAClC;;AAEF,AAAD,kBAAO,CAAC;EACN,KAAK,EAAE,qBAAqB;CAC7B",
+    "sources": [
+        "replytimer.component.scss"
+    ],
+    "names": [],
+    "file": "replytimer.component.css"
+}

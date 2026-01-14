@@ -1,0 +1,781 @@
+<div class="modal__head popup-bg-color justify-content__between" [ngClass]="{'py-5' : !defaultLayout}">
+  <div class="d-flex flex-direction-column">    
+    <h3 class="modal__title text-capitalize" [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf = "!dispositionOff">
+     <!-- {{((isAITicketTagEnabled || aiIntelligenceLoader) && isAIInsightsEnabled) ? 'Ticket Disposition & Intelligence Details' : 'Ticket Disposition Details'}} -->
+      <mat-icon *ngIf="currentStep == 2" (click)="currentStep = 1">arrow_back</mat-icon>
+      {{(((isAgentIQEnabled && showIqOnClose && !closureApproved) || aiIntelligenceLoader || (isAgentIQEnabled && isSuggested))) ? ('Ticket-Disposition-AgentIQ-Intervention' | translate) : ('Ticket-Disposition-Details' | translate)}}
+    </h3>
+    <!-- <h3 class="modal__title text-capitalize" *ngIf="dispositionOff">Ticket Intelligence</h3> -->
+     <div *ngIf="dispositionOff" class="d-flex-items-center g-10">
+      <!-- <img src="assets/icons/proactive-qa.svg" [ngClass]="{'small-image-width' : !defaultLayout}"> -->
+      <div class="flex-direction-column">
+        <div class="d-flex-items-center g-40">
+          <p class="modal__title medium-font-size text-capitalize" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'AgentIQ-Intervention' | translate }}</p>
+          <!-- <p class="status-pill" [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="!dispositionObj?.isReply">Review Required</p> -->
+        </div>
+        <p class="small_font-size" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Response-Require-Review-Before-Sending' | translate }}</p>
+      </div>
+     </div>
+  </div>
+  
+  <div class="d-flex align-items__center g-5">
+    <div class="d-flex-items-center g-3 px-4 font-size-12 border-radius-4 red-pill width-fit"
+      *ngIf="(((isAgentIQEnabled && showIqOnClose && !closureApproved) || aiIntelligenceLoader || (isAgentIQEnabled && isSuggested))) || dispositionOff">
+      <mat-icon fontSet="material-icons-outlined" class="s-14">warning</mat-icon>
+      <span>{{ 'Action-Required' | translate }}</span>
+    </div>
+    <span class="modal__action">
+      <mat-icon fontSet="material-icons-outlined" [ngClass]="{'small-icon-font-size' : !defaultLayout}" [mat-dialog-close]="false">close</mat-icon>
+    </span>
+  </div>
+</div>
+<div class="modal__body popup-bg-color" [ngClass]="{'bg__grey--lighter' : false}">
+  <div class="body_scroll">
+      <div [formGroup]="dispositionForm" class="disposition" [ngClass]="{'scroll' : false, 'p-10' : !defaultLayout}">
+          <div class="d-flex" [ngClass]="{'flex-container__item--column': (!dispositionOff && isSuggested)}">
+             <div *ngIf = "!dispositionObj.openFromPostDetail ? ((aiIntelligenceLoader || isAITicketTagEnabled) && isAIInsightsEnabled) : (aiIntelligenceLoader || isAITicketTagEnabled)"
+              [ngClass] = "dispositionOff ? 'w-100-p' : 'w-50-p'">
+                  <app-component-loader [postCountTotal]="3" *ngIf="aiIntelligenceLoader"
+                    [loaderType]="loaderTypeEnum.aiTicketIntelligence"></app-component-loader>
+                  <ng-container *ngIf="!dispositionObj.openFromPostDetail ? (isAITicketTagEnabled && isAIInsightsEnabled) : isAITicketTagEnabled">
+                    <div class="mb-18" *ngIf="isBulkAction || creditLimitExpire">
+                      <p class="font-size-12" *ngIf = "isBulkAction" [ngClass]="{'small_font-size' : !defaultLayout}"><span class="ai_note" [ngClass]="{'small_font-size' : !defaultLayout}">{{'Note' | translate}}:</span> {{'Bulk-action-will-suggest-labels' | translate}}</p>
+
+                        <div *ngIf = "creditLimitExpire" [ngClass]="aiTicketIntelligenceMessage.includes('Unable to load') ? 'data-cons__header--noteFailed' : 'data-cons__header--note'" class="text__regular--sm font-weight-500 border-radius-4 account-profile__note"><span
+                           [ngClass]="{'small_font-size' : !defaultLayout}" [ngClass]="aiTicketIntelligenceMessage.includes('Unable to load') ? 'colored__red--dark' : 'colored__yellow--dark'">{{'Note' | translate}}:</span> {{aiTicketIntelligenceMessage}}
+                        </div>
+                    </div>
+                    <div class="sentiment flex-container__item--column mb-12" *ngIf="!isBulkAction && !creditLimitExpire">
+                      <div class="sentiment__block nps-rating border__light-grey">
+                        <p class="font-weight-600">{{'Customer-Satisfaction-Score' | translate}}</p>
+                        <ul class="rating-builder__nps mt-10" [ngClass]="{'cursor-pointer' : !ticketIntelligenceView && aiTagEnable}">
+                          <li class="list bg__red--dark px-20" (click)="onChangeSatisfaction(1)"
+                           [ngClass]="{'small_font-size' : !defaultLayout}" [ngClass]="selectedSatisfactionRating == 1 ? 'select-nps' : 'unselect-nps'">
+                            1
+                          </li>
+                          <li class="list bg__red--dark px-20" (click)="onChangeSatisfaction(2)"
+                           [ngClass]="{'small_font-size' : !defaultLayout}" [ngClass]="selectedSatisfactionRating == 2 ? 'select-nps' : 'unselect-nps'">
+                            2
+                          </li>
+                          <li class="list bg__red--dark px-20" (click)="onChangeSatisfaction(3)"
+                           [ngClass]="{'small_font-size' : !defaultLayout}" [ngClass]="selectedSatisfactionRating == 3 ? 'select-nps' : 'unselect-nps'">
+                            3
+                          </li>
+                          <li class="list bg__red--dark px-20" (click)="onChangeSatisfaction(4)"
+                           [ngClass]="{'small_font-size' : !defaultLayout}" [ngClass]="selectedSatisfactionRating == 4 ? 'select-nps' : 'unselect-nps'">
+                            4
+                          </li>
+                          <li class="list bg__red--dark px-20" (click)="onChangeSatisfaction(5)"
+                           [ngClass]="{'small_font-size' : !defaultLayout}" [ngClass]="selectedSatisfactionRating == 5 ? 'select-nps' : 'unselect-nps'">
+                            5
+                          </li>
+                          <li class="list bg__yellow--dark px-20" (click)="onChangeSatisfaction(6)"
+                           [ngClass]="{'small_font-size' : !defaultLayout}" [ngClass]="selectedSatisfactionRating == 6 ? 'select-nps' : 'unselect-nps'">
+                            6
+                          </li>
+                          <li class="list bg__yellow--dark px-20" (click)="onChangeSatisfaction(7)"
+                           [ngClass]="{'small_font-size' : !defaultLayout}" [ngClass]="selectedSatisfactionRating == 7 ? 'select-nps' : 'unselect-nps'">
+                            7
+                          </li>
+                          <li class="list bg__yellow--dark px-20" (click)="onChangeSatisfaction(8)"
+                           [ngClass]="{'small_font-size' : !defaultLayout}" [ngClass]="selectedSatisfactionRating == 8 ? 'select-nps' : 'unselect-nps'">
+                            8
+                          </li>
+                          <li class="list bg__green px-20" (click)="onChangeSatisfaction(9)"
+                           [ngClass]="{'small_font-size' : !defaultLayout}" [ngClass]="selectedSatisfactionRating == 9 ? 'select-nps' : 'unselect-nps'">
+                            9
+                          </li>
+                          <li class="list bg__green px-20" (click)="onChangeSatisfaction(10)"
+                           [ngClass]="{'small_font-size' : !defaultLayout}" [ngClass]="selectedSatisfactionRating == 10 ? 'select-nps' : 'unselect-nps'">
+                            10
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="d-flex-items-center g-10 w-100-p">
+                        <div class="sentiment__block category border__light-grey">
+                          <p class="font-weight-600">{{'Upper-Category' | translate}}</p>
+                          <div class="d-flex-items-center mt-10 position-relative" *ngIf="selectedUpperTags?.start && selectedUpperTags?.end">
+                            <span class="arrow-line" [ngClass]="{'small_font-size' : !defaultLayout}" [ngClass] = "!dispositionOff ? 'arrow-line-sm' : ''">{{selectedUpperTags?.start}}</span>
+                            <mat-icon class="arrow-line__iocn" [ngClass]="{'small-icon-font-size' : !defaultLayout}">chevron_right</mat-icon>
+                            <span class="block ml-auto" [ngClass]="{'small_font-size' : !defaultLayout}">{{selectedUpperTags.end}}</span>
+                          </div>
+                        </div>
+                        <div class="sentiment__block category border__light-grey">
+                          <p class="font-weight-600" [ngClass]="{'small_font-size' : !defaultLayout}">{{'Purchase-Intent' | translate}}</p>
+                          <div class="mt-10">
+                            <span class="block" [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="selectedLead == 0" style="background: #59E078;">{{'Yes' | translate}}</span>
+                            <span class="block" [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="selectedLead == 1" style="background: #DAA520;color: white;"> {{'No' | translate}} </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="sentiment mb-12 flex-container__item--column" *ngIf="!isBulkAction && !creditLimitExpire">
+                      <div class="sentiment__wrapper border__light-grey">
+                        <p class="font-weight-600" [ngClass]="{'small_font-size' : !defaultLayout}">{{'Sentiment-journey-of-the-customer' | translate}}</p>
+                        <div class="arrow-container mt-10 mb-7">
+                          <div [style.background]="getSentimentJourney()" class="arrow">
+                            <span class="d-flex-items-center">
+                              <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Start' | translate }}</span>
+                              <span class="arrow-right"></span>
+                            </span>
+                            <span class="d-flex-items-center ml-auto">
+                              <span class="arrow-right mr-15"></span>
+                              <span [ngClass]="{'small_font-size' : !defaultLayout}" class="ml-auto">{{ 'End' | translate }}</span>
+                            </span>
+                          </div>
+                        </div>
+                        <div class="sentiment__status">
+                          <span class="colored__red--dark font-weight-600" [ngClass]="{'small_font-size' : !defaultLayout}"
+                            *ngIf="selectedSentiment && selectedSentiment.start == 2">{{'Negative' | translate}}</span>
+                          <span class="font-weight-600" style="color: #DAA520;"
+                            *ngIf="selectedSentiment && selectedSentiment.start == 0">{{'Neutral' | translate}}</span>
+                          <span class="colored__green--dark font-weight-600" [ngClass]="{'small_font-size' : !defaultLayout}"
+                            *ngIf="selectedSentiment && selectedSentiment.start == 1">{{'Positive' | translate}}</span>
+                          <span class="colored__red--dark ml-auto font-weight-600" [ngClass]="{'small_font-size' : !defaultLayout}"
+                            *ngIf="selectedSentiment && selectedSentiment.end == 2">{{'Negative' | translate}}</span>
+                          <span class="font-weight-600 ml-auto" [ngClass]="{'small_font-size' : !defaultLayout}" style="color: #DAA520;"
+                            *ngIf="selectedSentiment && selectedSentiment.end == 0">{{'Neutral' | translate}}</span>
+                          <span class="colored__green--dark ml-auto font-weight-600" [ngClass]="{'small_font-size' : !defaultLayout}"
+                            *ngIf="selectedSentiment && selectedSentiment.end == 1">{{'Positive' | translate}}</span>
+                        </div>
+                      </div>
+                      <div class="sentiment__wrapper border__light-grey">
+                        <p class="font-weight-600" [ngClass]="{'small_font-size' : !defaultLayout}">{{'Emotion-journey-of-the-customer' | translate}}</p>
+                        <div class="arrow-container mt-10 mb-7">
+                          <div class="arrow" [style.background]="getEmotionJourney()">
+                            <span class="d-flex-items-center">
+                              <span [ngClass]="{'small_font-size' : !defaultLayout}">{{'Start' | translate}}</span>
+                              <span class="arrow-right"></span>
+                            </span>
+                            <span class="d-flex-items-center ml-auto">
+                              <span class="arrow-right mr-15"></span>
+                              <span [ngClass]="{'small_font-size' : !defaultLayout}" class="ml-auto">{{ 'End' | translate }}</span>
+                            </span>
+                          </div>
+                        </div>
+                        <div class="sentiment__status" *ngIf="selectedEmotions && selectedEmotions.start">
+                          <span class="font-weight-600" [ngClass]="{'small_font-size' : !defaultLayout}"
+                            [style.color]="selectedEmotions?.startColor">{{selectedEmotions?.startLabel}}</span>
+                          <span class="ml-auto font-weight-600" [ngClass]="{'small_font-size' : !defaultLayout}"
+                            [style.color]="selectedEmotions?.endColor">{{selectedEmotions?.endLabel}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- <mat-divider class="seprator mb-22"></mat-divider> -->
+                    <div class="d-flex-items-center" *ngIf = "!creditLimitExpire" [ngClass]="{'read_only': ticketIntelligenceView}">
+                      <mat-form-field class="custom-input-size" appearance="outline">
+                        <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{'Tags' | translate}}<span class="d-inline-block ms-1 ml-1" style="color: rgb(239, 41, 41);">*</span></mat-label>
+                        <mat-chip-grid #groupbccEmail>
+                          <mat-chip-row [ngClass]="{'small_font-size' : !defaultLayout}" class="max-width-unset" *ngFor="let label of dispositionForm.get('ticketTagLabel')?.value" [selectable]="selectable"
+                            [removable]="removable" (removed)="removePill(label)">
+                            {{ label.tagName }}
+                            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" matChipRemove *ngIf="removable">cancel</mat-icon>
+                          </mat-chip-row>
+                          <input #emailField1 placeholder="{{'Select-tag-s' | translate}}" [ngClass]="{'small_font-size' : !defaultLayout}" [matChipInputFor]="groupbccEmail"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                            (matChipInputTokenEnd)="addPill($event)" (input)="onChangeTo($event)"
+                            (keyup)="showNoRecordFoundOnSearch(brandsstatus.value)" [matAutocomplete]="autoSendEmail" />
+                          <mat-autocomplete class="w-350" #autoSendEmail="matAutocomplete" (optionSelected)="addTag($event)">
+                            <mat-option class="h-30" [ngClass]="{'small_font-size' : !defaultLayout}" *ngFor="let tag of ticketTagSuggestList" [value]="tag">
+                              {{ tag?.tagName }}
+                            </mat-option>
+                            <mat-option class="element__disable pl-15 checkbox-hide" [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="ticketTagSuggestList.length==0">{{'No-Record-Found' | translate}}</mat-option>
+                          </mat-autocomplete>
+                        </mat-chip-grid>
+                      </mat-form-field>
+                  
+                  
+                    </div>
+                    <div class="d-flex-items-center g-12" *ngIf="!isBulkAction && !creditLimitExpire" [ngClass]="{'read_only': ticketIntelligenceView}">
+                      <mat-form-field class="material__select material__select--adaptive" appearance="outline">
+                        <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{'Customer-Type' | translate}}</mat-label>
+                        <mat-select formControlName="customerType">
+                          <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" value="0">{{'Non-Customer' | translate}}</mat-option>
+                          <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" value="1">{{'Customer' | translate}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="ticketTagList?.length==0" [ngClass]="{'small_font-size' : !defaultLayout}">{{'Please-add-label' | translate}}</mat-error>
+                      </mat-form-field>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf ="dispositionOff && !ticketIntelligenceView">
+                      <p class="text__label mb-6" [ngClass]="{'read_only': ticketIntelligenceView, 'small_font-size': !defaultLayout}">{{'Note' | translate}}</p>
+                      <textarea formControlName="note" [ngClass]="{'small_font-size' : !defaultLayout}" class="border__light-grey textarea-featured__input bg__white" placeholder="{{'Enter-note' | translate}}"
+                        [ngClass]="{'read_only': ticketIntelligenceView}"></textarea>
+                      <app-attach-media [ngClass]="{'read_only': ticketIntelligenceView}" class="w-full"
+                        *ngIf="dispositionObj?.baseMention && !ticketIntelligenceView"
+                        [postData]="dispositionObj?.baseMention"></app-attach-media>
+                  </ng-container>
+             </div>
+             <div class="agentiq" *ngIf = "((aiIntelligenceLoader || isAgentIQEnabled) && (isSuggested || !closureApproved) && !isBulkAction) && (dispositionOff || (!dispositionOff && currentStep === 1))" [ngClass] = "dispositionOff ? 'w-100-p' : isSuggested ? 'mr-12 w-100-p' : ''">
+              <app-component-loader [postCountTotal]="3" *ngIf="aiIntelligenceLoader" [loaderType]="loaderTypeEnum.aiTicketIntelligence"></app-component-loader>
+              <div *ngIf="creditLimitExpire && dispositionOff" [ngClass]="{'small_font-size' : !defaultLayout}" class="text__regular--sm font-weight-500 border-radius-4 account-profile__note"><span>{{ 'Note' | translate }}:</span>
+                {{aiTicketIntelligenceMessage}}
+              </div>
+              <ng-container *ngIf="isAgentIQEnabled && !creditLimitExpire && isSuggested && dispositionObj?.isReply">
+                <!-- <div class="d-flex-items-center justify-content__between">
+                  <div class="d-flex-items-center g-10">
+                    <mat-icon class="colored__locobuzz">info</mat-icon>
+                    <p>Customer Satisfaction Impact</p>
+                  </div>
+                  <div class="px-7 py-4 d-flex-items-center border-radius-16 bg__blue">
+                    <p class="colored__white">Scale : 1-10</p>
+                  </div>
+                </div> -->
+                <div class="d-flex flex-direction-column closureBorder" *ngIf="popupType.includes(4)">
+                  <p>{{ 'Ticket-Closure-Blocked' | translate }}</p>
+                  <p class="ticket-disposition__grey--bg p-0 small_font-size">{{(closureJustification && closureJustification.trim()) || ('Default-Closure-Block-Message' | translate)}}</p>
+                </div>
+                <div>
+                  <p>{{ 'Conversation-Content' | translate }}</p>
+                  <p class="ticket-disposition__blue--bg mb-10 small_font-size"><span class="font-weight-500"> {{ 'Customer' | translate }} : </span>{{dispositionObj?.baseMention?.description}}</p>
+                  <p class="ticket-disposition__purple--bg small_font-size"><span class="font-weight-500"> {{ 'Agent' | translate }} : </span>{{replyMessage ? replyMessage : ''}}</p>
+                </div>
+
+                
+                <div class="csat-container-main" *ngIf="popupType.includes(1) || popupType.includes(2) || popupType.includes(3)">
+                    <ng-container *ngIf="popupType.includes(1)">
+                      <div class="d-flex-items-center w-100-p">
+                        <p class="font-weight-600 colored__red--dark" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Customer-Satisfaction-Score' | translate }}</p>
+                        <div class="csat-drop-pill red-pill ml-auto" [ngClass]="{'small-icon-font-size' : !defaultLayout}">
+                        <mat-icon class="s-20">trending_down</mat-icon>
+                        <p>{{satisfactionRatingDiff}} {{ 'Point-Drop' | translate }}</p>
+                        </div>
+                      </div>
+                      <div class="csat-container">
+                        <div class="csat-box flex-direction-column align-center w-50-p">
+                          <p class="csat-title font-weight-500" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Current-Rating' | translate }}</p>
+                          <p class="colored__red--dark font-weight-600 font-size-34" [ngClass]="{'small_font-size' : !defaultLayout}">{{selectedSatisfactionRating}}</p>
+                          <p class="csat-title__text small_font-size">{{currentCSATJustification}}</p>
+                          <!-- <div class="circular-progress" style="--progress: 75">
+                                              <svg viewBox="0 0 36 36">
+                                                <path class="circle-bg" d="M18 2.0845
+                                                     a 15.9155 15.9155 0 0 1 0 31.831
+                                                     a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                                <path class="circle" [attr.stroke-dasharray]="previousRating" d="M18 2.0845
+                                                     a 15.9155 15.9155 0 0 1 0 31.831
+                                                     a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                                <text x="18" y="20.35" class="percentage">{{selectedSatisfactionRating}}</text>
+                                              </svg>
+                                            </div> -->
+                      
+                      
+                          <!-- <div class="csat-value-box">
+                                              <span class="csat-score">{{selectedSatisfactionRating}}</span>
+                                            </div> -->
+                        </div>
+                        <span class="red-pill red-arrow">
+                          <img class="w-18" src="assets/images/red-arrow-solid.svg">
+                        </span>
+                        <div class="csat-box flex-direction-column align-center w-50-p">
+                          <p class="csat-title font-weight-500" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Predicted-Rating' | translate }}</p>
+                          <p class="colored__red--dark font-weight-600 font-size-34" [ngClass]="{'small_font-size' : !defaultLayout}">{{updatedSatisfactionRating}}</p>
+                          <p class="csat-title__text small_font-size">{{predictedCSATJustification}}</p>
+                          <!-- <div class="circular-progress" style="--progress: 75">
+                                              <svg viewBox="0 0 36 36">
+                                                <path class="circle-bg" d="M18 2.0845
+                                                                         a 15.9155 15.9155 0 0 1 0 31.831
+                                                                         a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                                <path class="circle" [attr.stroke-dasharray]="updatedRating" d="M18 2.0845
+                                                                         a 15.9155 15.9155 0 0 1 0 31.831
+                                                                         a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                                <text x="18" y="20.35" class="percentage">{{updatedSatisfactionRating}}</text>
+                                              </svg>
+                                            </div> -->
+                      
+                          <!-- <div class="csat-value-box">
+                                              <span class="csat-score">{{updatedSatisfactionRating}}</span>
+                                            </div> -->
+                        </div>
+                      </div>
+                    </ng-container>
+                    <ng-container *ngIf="popupType.includes(3)">
+                      <div class="d-flex-items-center w-100-p">
+                        <p class="font-weight-600 colored__red--dark" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Brand-Guidelines-Violation' | translate }}</p>
+                        <div class="csat-drop-pill red-pill ml-auto" [ngClass]="{'small-icon-font-size' : !defaultLayout}">
+                          <mat-icon class="s-20">flag</mat-icon>
+                          <p>{{ 'Flagged' | translate }}</p>
+                        </div>
+                      </div>                    
+                    <p class="ticket-disposition__grey--bg small_font-size">{{ 'Brand-Guidelines-Violation-Message' | translate }}</p>
+                    </ng-container>
+                    <ng-container *ngIf="popupType.includes(2)">
+                      <div class="d-flex-items-center g-7 justify-content__start w-100-p">
+                        <p class="font-weight-600 colored__red--dark" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Inappropriate-Language-Detected' | translate }}</p>
+                      </div>
+                      <div class="csat-container">
+                        <div class="foulImpact">
+                          <div>
+                            <label class="font-weight-500">{{ 'Words-Detected' | translate }} ({{foulWords.length}})</label>
+                            <div class="d-flex-items-center g-7 mb-8">
+                              <span *ngFor="let word of foulWords" class="red-pill border-radius-6 px-4">{{word}}</span>
+                            </div>
+                          </div>
+                          <div class="ticket-disposition__grey--bg">
+                            <label class="font-weight-500 font-size-12">{{ 'Original-Response' | translate }}:</label>
+                            <p class="colored__main--text reply-msg" [ngClass]="{'small_font-size' : !defaultLayout}">{{ replyMessage ? replyMessage : ''}}</p>
+                          </div>
+                        </div>
+                        <div class="foulImpact">
+                          <div class="d-flex-items-center">
+                            <label class="font-weight-500">{{ 'Impact' | translate }}</label>
+                            <p class="red-pill p-4 ml-auto right-auto border-radius-6 font-size-12">{{ 'Professional-Status-Violated' | translate }}</p>
+                          </div>
+                            <p class="colored__main--text reply-msg" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Inappropriate-Language-Impact-Message' | translate }}</p>                      
+                        </div>
+                      </div>
+                    </ng-container>
+                </div>
+
+                <!-- <div class="csat-warning-box">
+                  <div class="csat-header">
+                    <span>{{csatText}}</span>
+                  </div>
+                  <div class="csat-score">{{satisfactionRatingDiff}}</div>
+                </div> -->
+                
+                <div class="horiz-divider"></div>
+
+                <div class="flex-direction-column g-5">
+                  <!-- <div class="d-flex-items-center g-10">
+                     <img src="assets/icons/warning_yellow.svg" [ngClass]="{'small-image-width' : !defaultLayout}">
+                    <p class="font-weight-600 mt-3" [ngClass]="{'small_font-size' : !defaultLayout}">Current Agent Response</p>
+                  </div> -->
+                  <!-- <div class="p-10 red-pill border-red border-radius-8 flex-direction-column g-10"> -->
+                    <!-- <div class="d-flex-items-center justify-content__between">
+                      <div class="d-flex-items-center g-10">
+                        <mat-icon class="colored__red">warning</mat-icon>
+                        <p class="colored__main--text font-weight-600">Your Response</p>
+                      </div>
+                      <div class="bg__red border-radius-16 px-7 py-4 d-flex-items-center g-5 justify-content__center">
+                        <img src="assets/icons/ai-white.svg" class="w-18 h-18">
+                        <p class="colored__white">{{csatText}} {{satisfactionRatingDiff}}</p>
+                      </div>
+                    </div> -->
+                    <!-- <div class="p-10 bg__white border-radius-8 reply-msg-container">
+                      <p class="colored__main--text reply-msg">{{ replyMessage ? replyMessage : ''}}</p>
+                    </div> -->
+                    <!-- <p class="colored__main--text reply-msg" [ngClass]="{'small_font-size' : !defaultLayout}">{{ replyMessage ? replyMessage : ''}}</p> -->
+                  <!-- </div> -->
+
+                  <div *ngIf="isAgentIQResponseSuggestionEnabled" class="d-flex justify-content__between g-10">
+                    <div class="d-flex-items-center g-10">
+                      <p class="font-weight-600" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'ResponseGenie-Suggestion' | translate }}</p>
+                      <!-- <img src="assets/icons/ai-green.svg" class="w-20 h-20" [ngClass]="{'small-image-width' : !defaultLayout}"> -->
+                    </div>
+                    <div class="csat-drop-pill purple-pill" [ngClass]="{'small-icon-font-size' : !defaultLayout}">
+                      <img src="assets/icons/ai-green.svg" class="w-20 h-20" [ngClass]="{'small-image-width' : !defaultLayout}">
+                      <span>{{ 'AI-Generated' | translate }}</span>
+                    </div>
+                  </div>
+                  <div *ngIf="isAgentIQResponseSuggestionEnabled" class="smart-suggestions" [ngClass]="isAICaution ? 'smart-suggestions__red' : 'smart-suggestions__green'">                  
+                    <div class="suggestion-card">
+                      <div class="flex-direction-column g-10 small_font-size w-100-p" *ngIf="!suggestionLoader">
+                        <div class="d-flex justify-content__between g-10">
+                          <p class="text-align__justify" [ngClass]="{'small_font-size' : !defaultLayout}" [innerHTML]="suggestedReply | safehtml"></p>
+                          <mat-icon *ngIf="!suggestionLoader && suggestedReply !=''" class="response-edit-btn" matTooltip="Edit"
+                            matTooltipClass="custom__tooltip-normal" (click)="editResponse()" matTooltipPosition="above">edit</mat-icon>
+                        </div>
+
+                        <div class="d-flex-items-center">
+                          <span class="text__light--sm text-italic" [ngClass]="{'small_font-size' : !defaultLayout}"
+                            *ngIf="!isAICaution && !suggestionLoader" (click)="$event.stopPropagation()"><mat-icon class="mr-5 in_knowledge colored__green"
+                              [ngClass]="{'small-icon-font-size' : !defaultLayout}">check_circle</mat-icon>Response from Knowledge Base</span>
+                          <span class="text__light--sm text-italic" [ngClass]="{'small_font-size' : !defaultLayout}"
+                            *ngIf="isAICaution && !suggestionLoader" (click)="$event.stopPropagation()"><mat-icon class="mr-5 out_of_knowledge colored__red"
+                              [ngClass]="{'small-icon-font-size' : !defaultLayout}">cancel</mat-icon>Response from Outside Knowledge Base</span>
+                          <div class="ml-auto" [ngClass]="{ element__disable: suggestionLoader}" (click)="$event.stopPropagation()">
+                            <mat-icon *ngIf="aiMessageFeedback == 1" class="mr-12 s-18 text-green" (click)="$event.stopPropagation()"
+                              [ngClass]="{'small-icon-font-size' : !defaultLayout}">thumb_up</mat-icon>
+                            <mat-icon *ngIf="aiMessageFeedback != 1" [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+                              class="material-icons-outlined mr-12 s-18 text__light cursor-pointer"
+                              (click)="aiMessageFeedback = 1;trackAIResponse()">
+                              thumb_up
+                            </mat-icon>
+                            <mat-icon *ngIf="aiMessageFeedback != 0" class="material-icons-outlined s-18 text__light cursor-pointer"
+                              (click)="rejectAi(true)">
+                              thumb_down
+                            </mat-icon>
+                            <mat-icon *ngIf="aiMessageFeedback == 0" class="material-icons-outlined s-18 colored__red--dark cursor-pointer"
+                              (click)="rejectAi(true)">
+                              thumb_down
+                            </mat-icon>
+                          </div>
+                        </div>
+                        
+                          
+                        <!-- <div class="quote" *ngIf="suggestedReply">{{suggestedReply}}</div> -->
+                      </div>
+
+
+                      
+                                            
+                      <div class="h-50 w-100-p" *ngIf="suggestionLoader">
+                        <app-component-loader class="message__line--loader" [postCountTotal]="2" [loaderType]="loaderTypeEnum.aiAutoResponse"
+                          [rephraseLoader]="true" [emailRephraseLoader]="true">
+                        </app-component-loader>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- <div class="green-pill p-10 border-green border-radius-16 flex-direction-column g-10">
+                    <div class="d-flex-items-center justify-content__between">
+                      <p class="colored__main--text font-weight-600">Add Empathy & Acknowledgment</p>
+                      <div class="d-flex-items-center justify-content__center g-5 px-7 py-4 bg__green border-radius-16">
+                        <p class="colored__white">+7</p>
+                        <p class="colored__white">CSAT</p>
+                      </div>
+                    </div>
+                    <p class="colored__main--text">Start your response by acknowledging the customer's frustration and showing
+                      understanding of their situation.</p>
+                    <div class="p-10 bg__white border-radius-8">
+                      <p class="colored__main--text">"I am afraid we're unable tol asist with this request."</p>
+                    </div>
+                  </div> -->
+                </div>
+
+                
+              </ng-container>
+              <ng-container *ngIf="!dispositionObj?.isReply && isAgentIQEnabled && showIqOnClose && !creditLimitExpire && !closureApproved && closureJustification">
+                <p [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Direct-Close-Flagged' | translate }}</p>
+                <div class="p-10 red-pill border-red border-radius-8 flex-direction-column g-10 mb-10">
+                  <p [ngClass]="{'small_font-size' : !defaultLayout}">{{closureJustification}}</p>
+                </div>
+              </ng-container>
+
+             </div>
+             <div [ngClass] = "(((aiIntelligenceLoader || isAITicketTagEnabled) && isAIInsightsEnabled)) ? 'w-50-p' : (isSuggested && !creditLimitExpire) ? 'w-100-p' : 'w-100-p'" *ngIf="(!dispositionOff && !iqForReply) || (currentStep == 2 && !dispositionOff && iqForReply)">
+                <div class="mb-18" *ngIf="creditLimitExpire">
+                  <div *ngIf="creditLimitExpire" [ngClass]="{'small_font-size' : !defaultLayout}"
+                    [ngClass]="aiTicketIntelligenceMessage.includes('Unable to load') ? 'data-cons__header--noteFailed' : 'data-cons__header--note'"
+                    class="text__regular--sm font-weight-500 border-radius-4 account-profile__note"><span
+                      [ngClass]="aiTicketIntelligenceMessage.includes('Unable to load') ? 'colored__red--dark' : 'colored__yellow--dark'">{{'Note' | translate}}:</span>
+                    {{aiTicketIntelligenceMessage}}
+                  </div>
+                </div>
+                  <mat-form-field class="material__select material__select--adaptive h-44 mb-10" appearance="outline"
+                    [ngClass]="{'read_only': ticketIntelligenceView}">
+                    <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{'Disposition-Name' | translate}}</mat-label>
+                    <mat-select [ngClass]="{'small_font-size' : !defaultLayout}" formControlName="dispositionName" (selectionChange)="onChangeDisposition()">
+                      <mat-option [ngClass]="{'small_font-size h-25' : !defaultLayout}" (onSelectionChange)="changeDispositionEvent(obj)" [value]="obj.id"
+                        *ngFor="let obj of ticketDispositionList">{{obj.dispositionName}}</mat-option>
+                    </mat-select>
+                    <mat-error [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="ticketDispositionList?.length==0">{{'Please-add-disposition-for-this-category' | translate}}</mat-error>
+                  </mat-form-field>
+                  <p *ngIf="showTicketCategory && isAutoTicketCategorizationEnabled && AIBasedSuggestionFlag && !ticketIntelligenceView && !dispositionOff"
+                    [ngClass]="{'read_only': ticketIntelligenceView, 'small_font-size' : !defaultLayout}" class="text__label mb-6 d-flex">
+                    <span [ngClass]="{'small_font-size' : !defaultLayout}">{{'Ticket-Category' | translate}}</span>
+                    <span [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="AIBasedSuggestionFlag" class="colored__yellow--dark ml-auto">{{'AI-Suggested' | translate}}</span>
+                  </p>
+                  <div class="disposition__category bg__white" *ngIf="!ticketIntelligenceView && !dispositionOff && showTicketCategory"
+                    [ngClass]="{'read_only': ticketIntelligenceView}">
+                    <div class="disposition__category--wrapper">
+                      <div *ngFor="let item of categoryCards" class="category-pill__wrapper">
+                        <div *ngIf="item.sentiment != null && item?.subCategories.length == 0"
+                          class="category-pill w-250 position-relative">
+                          <div class="category-pill__item">
+                            <span class="category-pill__label" [ngClass]="{'small_font-size' : !defaultLayout}">{{ item.name }}</span>
+                            <span *ngIf="item?.subCategories.length == 0" class="category-pill__sentiment">
+                              -
+                              <span [ngClass]="{ colored__green: item?.sentiment == '1' }" [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="item?.sentiment == '1'">
+                                {{'Positive' | translate}}
+                              </span>
+                              <span [ngClass]="{ colored__red: item?.sentiment == '2' }" [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="item?.sentiment == '2'">
+                                {{'Negative' | translate}}
+                              </span>
+                              <span [ngClass]="{'colored__yellow--dark': item?.sentiment == '0', 'small_font-size': !defaultLayout}" *ngIf="item?.sentiment == '0'">
+                                {{'Neutral' | translate}}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                  
+                        <div *ngFor="let subitem of item.subCategories" class="category-pill position-relative" style="flex-wrap: wrap;">
+                          <ng-container *ngIf="subitem.subSubCategories.length != 0">
+                            <div class="category-pill__item">
+                              <span class="category-pill__label text-semibold" [ngClass]="{'small_font-size' : !defaultLayout}">{{
+                                item.name
+                                }} /</span>
+                            </div>
+                            <div *ngIf="subitem.subSubCategories.length != 0">
+                              <span class="category-pill__label text-semibold" [ngClass]="{'small_font-size' : !defaultLayout}">{{
+                                subitem.name
+                                }}
+                                <span *ngIf="subitem.subSubCategories.length == 0" class="category-pill__sentiment" [ngClass]="{'small_font-size' : !defaultLayout}">
+                                  -
+                                  <span [ngClass]="{ colored__green: subitem?.sentiment == '1', 'small_font-size': !defaultLayout }" *ngIf="subitem?.sentiment == '1'">
+                                    {{'Positive' | translate}}
+                                  </span>
+                                  <span [ngClass]="{ colored__red: subitem?.sentiment == '2', 'small_font-size': !defaultLayout }" *ngIf="subitem?.sentiment == '2'">
+                                    {{'Negative' | translate}}
+                                  </span>
+                                  <span [ngClass]="{'colored__yellow--dark': subitem?.sentiment == '0', 'small_font-size': !defaultLayout}" *ngIf="subitem?.sentiment == '0'">
+                                    {{'Neutral' | translate}}
+                                  </span>
+                                </span>
+                              </span>
+                            </div>
+                          </ng-container>
+                  
+                          <div class="category-pill__category" *ngIf="subitem.subSubCategories.length == 0">
+                            <div class="category-pill__item">
+                              <span class="category-pill__sublabel mb-5 text-semibold" [ngClass]="{'small_font-size' : !defaultLayout}">{{
+                                item.name
+                                }} /</span>
+                            </div>
+                            <div class="category-pill__item">
+                              <span class="category-pill__sublabel" [ngClass]="{'small_font-size' : !defaultLayout}">{{
+                                subitem.name
+                                }}
+                                <span class="category-pill__sentiment" [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="subitem.subSubCategories.length == 0">
+                                  -
+
+                                  <span [ngClass]="{ colored__green: subitem?.sentiment == '1', 'small_font-size': !defaultLayout }" *ngIf="subitem?.sentiment == '1'">
+                                    {{'Positive' | translate}}
+                                  </span>
+                                  <span [ngClass]="{ colored__red: subitem?.sentiment == '2', 'small_font-size': !defaultLayout }" *ngIf="subitem?.sentiment == '2'">
+                                    {{'Negative' | translate}}
+                                  </span>
+                                  <span [ngClass]="{'colored__yellow--dark': subitem?.sentiment == '0', 'small_font-size': !defaultLayout}" *ngIf="subitem?.sentiment == '0'">
+                                    {{'Neutral' | translate}}
+                                  </span>
+                                </span>
+                              </span>
+                            </div>
+                          </div>
+                          <ng-container *ngFor="let subsubitem of subitem.subSubCategories">
+                            <span class="category-pill__sublabel" [ngClass]="{'small_font-size' : !defaultLayout}">{{
+                              subsubitem.name
+                              }}</span>
+                            <span class="category-pill__sentiment" [ngClass]="{'small_font-size' : !defaultLayout}">
+                              -
+
+                              <span [ngClass]="{ colored__green: subsubitem?.sentiment == '1', 'small_font-size': !defaultLayout }" *ngIf="subsubitem?.sentiment == '1'">
+                                {{'Positive' | translate}}
+                              </span>
+                              <span [ngClass]="{ colored__red: subsubitem?.sentiment == '2', 'small_font-size': !defaultLayout }" *ngIf="subsubitem?.sentiment == '2'">
+                                {{'Negative' | translate}}
+                              </span>
+                              <span [ngClass]="{'colored__yellow--dark': subsubitem?.sentiment == '0', 'small_font-size': !defaultLayout}" *ngIf="subsubitem?.sentiment == '0'">
+                                {{'Neutral' | translate}}
+                              </span>
+                            </span>
+                          </ng-container>
+                        </div>
+                      </div>
+                      <div *ngIf="categoryCards?.length==0" class="category-pill__wrapper pt-6" [ngClass]="{'small_font-size' : !defaultLayout}">
+                        {{'Select-Category' | translate}}
+                      </div>
+                    </div>
+                    <!-- <div class="disposition__category--list" *ngFor="let item of categoryCards">
+                                                          <div class="disposition__category--select">
+                                                              <span>{{ item.name }}/Number Change</span> -
+                                                              <span>Positive</span>
+                                          
+                                                          </div> <span>/</span>
+                                                          <div class="disposition__category--select">
+                                                              <span>{{ item.name }}/Number Change</span> -
+                                                              <span>Positive</span>
+                                                          </div> <span>/</span>
+                                                          <div class="disposition__category--select">
+                                                              <span>{{ item.name }}/Number Change</span> -
+                                                              <span>Positive</span>
+                                                          </div>
+                                                      </div> -->
+                    <div class="disposition__category--suggestion">
+                      <mat-icon fontSet="material-icons-outlined" [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="!categoryShow" class="cursor-pointer f-20"
+                        (click)="openCategory()">edit</mat-icon>
+                      <mat-spinner *ngIf="AICatergoryLoader" [ngClass]="{'small-icon-font-size' : !defaultLayout}" [diameter]="10"></mat-spinner>
+                    </div>
+                  
+                  </div>
+                  <div class="category" *ngIf="categoryShow" [ngClass]="{'read_only': ticketIntelligenceView}">
+                    <span class="category__close" [ngClass]="{'h-31' : !defaultLayout}">
+                      <mat-icon class="category__close--icon" fontSet="material-icons-outlined" (click)="closeCategory()"
+                        [ngClass]="{'small_font-size d-flex-items-center justify-content__center' : !defaultLayout}">close
+                      </mat-icon>
+                    </span>
+                    <div class="category__search">
+                      <input class="custom__input" [ngClass]="{'small_font-size' : !defaultLayout}" #input (input)="filter(input.value)" autocomplete="off" placeholder="{{'Type-to-search' | translate}}" />
+                    </div>
+                    <div class="category__tree--wrapper category__tree--wrapper--height">
+                      <app-component-loader [postCountTotal]="3" [loaderType]="loaderTypeEnum.checkList" *ngIf="categoryLoader">
+                      </app-component-loader>
+                      <ng-container *ngIf="dataSource.length > 0 || categoryLoader; else noDataSource">
+                        <div class="category__tree" *ngFor="let data of dataSource; let i = index">
+                          <div class="category__tree--listitem">
+                            <div class="category__tree--group">
+                              <mat-checkbox (change)="onParentClick(checkBox, data)" [ngClass]="{'small_font-size' : !defaultLayout}" name="{{ data.category + data.categoryID}}"
+                                #checkBox>
+                                {{ data.category }}</mat-checkbox>
+                            </div>
+                            <mat-radio-group [ngModelOptions]="{ standalone: true }" ngModel #pradio="ngModel"
+                              name="{{ data.category + data.categoryID}}" *ngIf="data.sentiment != null && checkBox._checked"
+                              aria-label="Select an option" class="radio-right"
+                              (change)="radio(pradio.value, data.category+ data.categoryID, 'parent', data)">
+                              <mat-radio-button class="radio-positive" [ngClass]="{'small_font-size' : !defaultLayout}" #parentradio value="1">{{'Positive' | translate}}</mat-radio-button>
+                              <mat-radio-button class="radio-negative" [ngClass]="{'small_font-size' : !defaultLayout}" #parentradio value="2">{{'Negative' | translate}}</mat-radio-button>
+                              <mat-radio-button class="radio-neutral" [ngClass]="{'small_font-size' : !defaultLayout}" #parentradio value="0">{{'Neutral' | translate}}</mat-radio-button>
+                            </mat-radio-group>
+                          </div>
+                          <div *ngIf="checkBox._checked || input.value.length>0">
+                            <div class="category__tree--nested" [ngClass]="{
+                                                                            'category__tree--nestedlast': data.depatments.length - 1 == i
+                                                                          }" *ngFor="let nestdata of data.depatments; let i = index">
+                              <div #divi class="category__tree--listitem">
+                                <mat-checkbox [ngClass]="{'small_font-size' : !defaultLayout}" (change)="
+                                                                                onchildClick(nestdata, nestCheckbox, data, data.category,checkBox)
+                                                                              "
+                                  name="{{ nestdata.departmentName + nestdata.departmentID}}" #nestCheckbox>
+                                  {{ nestdata.departmentName }}</mat-checkbox>
+                                <mat-radio-group [ngClass]="{'small_font-size' : !defaultLayout}" [ngModelOptions]="{ standalone: true }" ngModel #nestedRadio="ngModel"
+                                  name="{{ nestdata.departmentName + nestdata.departmentID}}" *ngIf="
+                                                                                nestdata.departmentSentiment != null &&
+                                                                                nestCheckbox._checked
+                                                                              " aria-label="Select an option" (change)="
+                                                                                radio(
+                                                                                  nestedRadio.value,
+                                                                                  nestdata.departmentName+ nestdata.departmentID,
+                                                                                  'child',
+                                                                                  nestdata
+                                                                                )
+                                                                              ">
+                                  <mat-radio-button class="radio-positive" [ngClass]="{'small_font-size' : !defaultLayout}" #subRadio value="1">{{'Positive' | translate}}</mat-radio-button>
+                                  <mat-radio-button class="radio-negative" [ngClass]="{'small_font-size' : !defaultLayout}" #subRadio value="2">{{'Negative' | translate}}</mat-radio-button>
+                                  <mat-radio-button class="radio-neutral" [ngClass]="{'small_font-size' : !defaultLayout}" #subRadio value="0">{{'Neutral' | translate}}</mat-radio-button>
+                                </mat-radio-group>
+                              </div>
+                              <div *ngIf="nestCheckbox._checked || input.value.length>0">
+                                <div class="category__tree--nested" *ngFor="let subdata of nestdata.subCategories">
+                                  <div class="category__tree--listitem">
+                                    <mat-checkbox [ngClass]="{'small_font-size' : !defaultLayout}" name="{{ subdata.subCategoryName + subdata.subCategoryID}}" #dnestedCheck (change)="
+                                                                                    ondNestedChildClick(
+                                                                                      subdata,
+                                                                                      dnestedCheck,
+                                                                                      nestdata,
+                                                                                      subdata.subCategoryName,
+                                                                                      data,
+                                                                                      nestCheckbox,
+                                                                                      checkBox
+                                                                                    )
+                                                                                  ">
+                                      {{ subdata.subCategoryName }}
+                                    </mat-checkbox>
+                                    <mat-radio-group [ngClass]="{'small_font-size' : !defaultLayout}" [ngModelOptions]="{ standalone: true }" ngModel #dnestedRadio="ngModel"
+                                      name="{{ subdata.subCategoryName + subdata.subCategoryID}}" *ngIf="
+                                                                                    dnestedCheck._checked &&
+                                                                                    subdata.subCategorySentiment != null
+                                                                                  " aria-label="Select an option" (change)="
+                                                                                    radio(
+                                                                                      dnestedRadio.value,
+                                                                                      subdata.subCategoryName+ subdata.subCategoryID,
+                                                                                      'subchild',
+                                                                                      subdata
+                                                                                    )
+                                                                                  ">
+                                      <mat-radio-button class="radio-positive" [ngClass]="{'small_font-size' : !defaultLayout}" #subsubRadios value="1">{{'Positive' | translate}}</mat-radio-button>
+                                      <mat-radio-button class="radio-negative" [ngClass]="{'small_font-size' : !defaultLayout}" #subsubRadios value="2">{{'Negative' | translate}}</mat-radio-button>
+                                      <mat-radio-button class="radio-neutral" [ngClass]="{'small_font-size' : !defaultLayout}" #subsubRadios value="0">{{'Neutral' | translate}}</mat-radio-button>
+                                    </mat-radio-group>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-container>
+                      <ng-template #noDataSource>
+                        <div class="category__tree--wrapper__no-result-found position-absolute text-center">
+                          <img src="assets/images/account-profile/no_result_found.svg" [ngClass]="{'small-image-width' : !defaultLayout}"/>
+                          <p class="font-weight-700 mb-6 mt-12" [ngClass]="{'small_font-size' : !defaultLayout}">{{'No-Result-Found' | translate}}</p>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </div>
+                  <div
+                    *ngIf="isAutoTicketCategorizationEnabled && AISuggestionNotDetected && !AICatergoryLoader && !ticketIntelligenceView && showTicketCategory"
+                    class="disposition__error disposition__error--danger colored__red--dark" [ngClass]="{'py-5' : !defaultLayout}">
+                    <mat-icon fontSet="material-icons-outlined" class="mr-5" [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">info</mat-icon>
+                    <span class="line-height-1.25" [ngClass]="{'small_font-size' : !defaultLayout}">{{'No-recommendation-due-to-insufficient-data' | translate}}</span>
+                  </div>
+                  <p class="text__label mt-12" [ngClass]="{'read_only': ticketIntelligenceView, 'small_font-size' : !defaultLayout}">{{'Note' | translate}}</p>
+                  <textarea formControlName="note" class="border__light-grey textarea-featured__input bg__white" placeholder="{{'Enter-note' | translate}}"
+                    [ngClass]="{'read_only': ticketIntelligenceView, 'small_font-size' : !defaultLayout}"></textarea>
+                  <app-attach-media [ngClass]="{'read_only': ticketIntelligenceView}" class="w-full"
+                    *ngIf="dispositionObj?.baseMention && !ticketIntelligenceView"
+                    [postData]="dispositionObj?.baseMention"></app-attach-media>
+                  <!-- <div *ngIf="ticketIntelligenceView && selectedMedias.length" class="textarea-featured__foot--item--media pt-10">
+                    <ng-container *ngFor="let ugc of selectedMedias">
+                      <span *ngIf="ugc.mediaType == 2" matTooltip="{{ugc?.name}}" class="textarea-featured__foot--item--icon">
+                        <img class="media__img--icon" [src]="ugc.mediaUrl" alt="" />
+                      </span>
+                      <span *ngIf="ugc.mediaType == 3" matTooltip="{{ugc?.name}}" class="textarea-featured__foot--item--icon">
+                        <video class="media__img--icon">
+                          <source [src]="ugc.mediaUrl" data-autoplay="false" type="video/m4v" />
+                          <source [src]="ugc.mediaUrl" data-autoplay="false" type="video/mp4" />
+                          <source [src]="ugc.mediaUrl" data-autoplay="false" type="video/mpeg" />
+                          <source [src]="ugc.mediaUrl" data-autoplay="false" type="video/x-msvideo" />
+                          <source [src]="ugc.mediaUrl" data-autoplay="false" type="video/x-ms-wmv" />
+                          <source [src]="ugc.mediaUrl" data-autoplay="false" type="video/avi" />
+                        </video>
+                        <span class="item__overlay--video">
+                          <mat-icon class="play__img--icon">play_circle_outline</mat-icon>
+                        </span>
+                      </span>
+                      <span matTooltip="{{ugc?.name}}"
+                        *ngIf="ugc.mediaType == mediaTypeEnum.PDF || ugc.mediaType == mediaTypeEnum.DOC || ugc.mediaType == mediaTypeEnum.EXCEL"
+                        class="textarea-featured__foot--item--icon">
+                        <img src="assets/images/common/pdf.png" *ngIf="ugc.mediaType == mediaTypeEnum.PDF" class="media__img--icon">
+                        <img src="assets/images/common/word.png" *ngIf="ugc.mediaType == mediaTypeEnum.DOC" class="media__img--icon">
+                        <img src="assets/images/common/excel-file.png" *ngIf="ugc.mediaType == mediaTypeEnum.EXCEL"
+                          class="media__img--icon">
+                      </span>
+                    </ng-container>
+                  </div> -->
+
+             </div>
+          </div>
+      </div>
+  </div>
+</div>
+<div class="modal__foot pr-15 popup-bg-color" *ngIf="onlyDisposition">
+  <button mat-stroked-button class="mr-8 ml-auto" [ngClass]="{'small_font-size h-25 px-10' : !defaultLayout}"
+  *ngIf="!ticketIntelligenceView" color="accent" [mat-dialog-close]="false">
+    {{'Cancel' | translate}}
+  </button>
+  <button (click)="saveTicketDisposition()" *ngIf="!ticketIntelligenceView" mat-flat-button color="accent"
+  [ngClass]="{'element__disable': ticketData, 'small_font-size h-25 px-10' : !defaultLayout}">
+    {{'Save-Close' | translate}}
+  </button>
+  <button *ngIf="ticketIntelligenceView" [mat-dialog-close]="false" [ngClass]="{'small_font-size h-25 px-10' : !defaultLayout}"
+  mat-flat-button color="accent">
+    {{'Close' | translate}}
+  </button>
+</div>
+<div class="modal__foot pr-15 popup-bg-color" *ngIf="iqForReply">
+  <button mat-stroked-button (click)="currentStep = 2" [ngClass]="{'element__disable': suggestionLoader}" *ngIf="currentStep === 1 && !dispositionOff"
+    [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout}" class="mr-14 ml-auto" color="accent">
+    {{ 'Next' | translate }}
+  </button>
+  <ng-container *ngIf="currentStep === 2 || dispositionOff">
+    <button mat-stroked-button (click)="saveTicketDisposition(false)"
+      [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout}" class="mr-14 ml-auto" color="accent" *ngIf="!ticketIntelligenceView">
+      {{ 'Send-Original-Anyway' | translate }}
+    </button>
+    <button (click)="(!isAgentIQResponseSuggestionEnabled || suggestedReply =='')? composeReply():saveTicketDisposition(true)" *ngIf="!ticketIntelligenceView" mat-flat-button color="accent"
+      [ngClass]="{'element__disable': creditLimitExpire || suggestionLoader, 'small_font-size h-25 px-5' : !defaultLayout}">
+      {{!isAgentIQResponseSuggestionEnabled || suggestedReply ==''?'Compose Reply': 'Send Suggested Response'}}
+    </button>
+  </ng-container>
+</div>
+<div class="modal__foot pr-15 popup-bg-color" *ngIf="showDirectClose">
+  <button class="mr-8 ml-auto" (click)="saveTicketDisposition()" [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout}" mat-stroked-button color="accent">
+    {{ 'Close-Anyway' | translate }}
+  </button>
+  <button class="mr-8" mat-stroked-button color="accent" [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout}" *ngIf="dispositionObj?.closeWithNote" [mat-dialog-close]="'closeWithNote'">
+    {{ 'Close-With-Note' | translate }}
+  </button>
+  <button mat-flat-button color="accent" [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout}"
+    [mat-dialog-close]="'composeReply'">
+    {{ 'Compose-Reply' | translate }}
+  </button>
+</div>

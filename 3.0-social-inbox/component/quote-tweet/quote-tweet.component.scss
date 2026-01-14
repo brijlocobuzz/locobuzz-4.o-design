@@ -1,0 +1,44 @@
+.quotetweet {
+  &__head {
+    display: flex;
+    align-items: flex-start;
+  }
+  &__body {
+    & .post {
+      &__head {
+        &--profile {
+          & .profile {
+            &__img {
+              width: 20px !important;
+              height: 20px !important;
+              flex: 0 0 20px;
+              min-width: 20px;
+              overflow: inherit;
+            }
+          }
+        }
+      }
+    }
+  }
+  &__inputarea {
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+  }
+
+  &__input {
+    flex: 1;
+    height: auto;
+    min-height: 50px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+
+    &--item {
+      &:not(:last-child) {
+        margin-right: 1rem;
+      }
+    }
+  }
+}

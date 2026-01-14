@@ -1,0 +1,25 @@
+<div class="unlink-profile">
+    <div class="unlink-profile__head">
+        <mat-icon fontSet="material-icons-outlined" class="colored__grey close-icon"
+            [mat-dialog-close]="false">close</mat-icon>
+    </div>
+    <div class="unlink-profile__body">
+        <mat-icon fontSet="material-icons-outlined" class="help-icon colored__yellow--dark">help</mat-icon>
+        <div class="ml-10">
+            <p class="unlink-profile__body--title text__title--fontxl colored__blue--dark">
+                {{'Are-you-sure-you-want-to-unlink-this-profile' | translate}}
+            </p>
+            <p class="unlink-profile__body--subtitle">
+                {{'Taking-this-action-will-separate-all-mentions' | translate}}
+            </p>
+        </div>
+    </div>
+    <div class="unlink-profile__actions">
+        <button mat-flat-button color="accent" [mat-dialog-close]="true" class="mr-15 ml-auto">
+            {{'Unlink-Profile' | translate}}
+        </button>
+        <button mat-stroked-button color="accent" [mat-dialog-close]="false">
+            {{'Cancel' | translate}}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,231 @@
+<div *ngIf="postMessage" class="post">
+  <div class="post__head">
+    <div class="post__head--profile">
+      <div class="post__head--channel">
+        <div class="channel">
+          <img
+            class="channel__image"
+            [src]="postMessage.channelImage"
+            alt="channel image"
+          />
+          <span class="channel__label">{{ postMessage.channelName }}</span>
+        </div>
+      </div>
+      <div class="post__head--channel">
+        <img
+          src="assets/social-mention/post/default_brand.svg"
+          alt="brand image"
+        />
+      </div>
+      <div>
+        <div class="profile">
+          <div class="profile__img">
+            <img [src]="postMessage.Userinfo.image" alt="user image" />
+          </div>
+          <div class="profile__name">{{ postMessage.Userinfo.name }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="post__head--info">
+      <div class="post__head--infoitem">
+        <div class="post__pill">
+          <span>{{ postMessage.brandName }}</span>
+        </div>
+      </div>
+      <div class="post__head--infoitem">
+        <span class="text__light--sm">{{
+          postMessage.ticketTime.timetoshow
+        }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="post__body">
+    <div class="post__body--content">
+      <p>{{ postMessage.ticketDescription }}</p>
+    </div>
+    <!-- <div class="post__note">
+            <p class="post__note--title">Translated from From: <a class="post__note--highlight">Marathi</a> To: <a class="post__note--highlight post__note--dropdown" [matMenuTriggerFor]="languageDropdown">English <mat-icon>keyboard_arrow_down</mat-icon></a>  <mat-icon fontSet="material-icons-outlined" >highlight_off</mat-icon></p>
+            <mat-menu #languageDropdown="matMenu">
+                <button mat-menu-item>Chinese</button>
+                <button mat-menu-item>Spanish</button>
+              </mat-menu>
+            <span class="post__note--info">Lorem ipsum dolor sit amet, consetetur sadip sci ng elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna.</span>
+        </div> -->
+    <div class="post__body--foot">
+      <mat-menu
+        #brandSelect="matMenu"
+        (click)="$event.stopPropagation()"
+        yPosition="above"
+      >
+        <ng-template matMenuContent let-type="type">
+          <button mat-menu-item>
+            <div class="d-flex-items-center">
+              <!-- <mat-icon class="colored__green mr-8 custom__icon--md">check_circle</mat-icon> -->
+              <img
+                class="mr-4"
+                src="assets/social-mention/post/default_brand.svg"
+                alt="Brand Image"
+              />
+              <span>{{'SBI' | translate}}</span>
+            </div>
+          </button>
+          <button mat-menu-item>
+            <div class="d-flex-items-center">
+              <img
+                class="mr-4"
+                src="assets/social-mention/post/default_brand.svg"
+                alt="Brand Image"
+              />
+              <span>{{'SBI' | translate}}</span>
+            </div>
+          </button>
+          <a (click)="submitActionHandle()">{{'Submit' | translate}}</a>
+        </ng-template>
+      </mat-menu>
+      <div class="post__stat">
+        <div
+          class="post__stat--item"
+          [matMenuTriggerFor]="brandSelect"
+          [matMenuTriggerData]="{ type: 'like' }"
+        >
+          <span class="post__stat--icon">
+            <mat-icon fontSet="material-icons-outlined">favorite</mat-icon>
+          </span>
+          <span class="post__stat--value">1.2k</span>
+        </div>
+        <div
+          class="post__stat--item"
+          [matMenuTriggerFor]="brandSelect"
+          [matMenuTriggerData]="{ type: 'retweet' }"
+        >
+          <span class="post__stat--icon">
+            <mat-icon fontSet="material-icons-outlined">repeat</mat-icon>
+          </span>
+          <span class="post__stat--value">1.2k</span>
+        </div>
+      </div>
+      <div class="ml-auto">
+        <div class="post__category">
+          <span
+            class="post__category--icon"
+            [matMenuTriggerFor]="brandSelect"
+            [matMenuTriggerData]="{ name: 'Sally' }"
+          >
+            <mat-icon
+              class="mr-4 colored__yellow--dark"
+              fontSet="material-icons-outlined"
+              >message</mat-icon
+            >
+          </span>
+          <span
+            class="post__category--label"
+            *ngIf="postMessage.mentionCategoryTop"
+            >{{ postMessage.mentionCategoryTop }}</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="post__foot">
+    <div class="post__foot--wrapper">
+      <div class="post__foot--item">
+        <mat-checkbox></mat-checkbox>
+        <mat-icon
+          class="post__foot--icon"
+          fontSet="material-icons-outlined"
+          aria-hidden="false"
+          aria-label="local activity"
+          >local_activity</mat-icon
+        >
+        <span class="post__foot--label">{{ postMessage.ticketId }}</span>
+      </div>
+      <div class="post__foot--item">
+        <mat-icon
+          class="post__foot--icon"
+          fontSet="material-icons-outlined"
+          aria-hidden="false"
+          aria-label="question answer"
+          >question_answer</mat-icon
+        >
+        <span class="post__foot--label">535/7/1578</span>
+      </div>
+    </div>
+    <div class="post__foot--wrapper ml-auto">
+      <div class="post__foot--item">
+        <mat-icon
+          class="post__foot--actionicon"
+          fontSet="material-icons-outlined"
+          aria-hidden="false"
+          aria-label="escalator_warning"
+          >escalator_warning</mat-icon
+        >
+      </div>
+      <div class="post__foot--item">
+        <mat-icon
+          class="post__foot--actionicon"
+          fontSet="material-icons-outlined"
+          aria-hidden="false"
+          aria-label="cancel"
+          >cancel</mat-icon
+        >
+      </div>
+      <div class="post__foot--item">
+        <mat-icon
+          class="post__foot--actionicon forward-icon"
+          aria-hidden="false"
+          aria-label="forward"
+          >reply</mat-icon
+        >
+      </div>
+      <div class="post__foot--item">
+        <mat-icon
+          class="post__foot--actionicon"
+          aria-hidden="false"
+          aria-label="reply"
+          >reply</mat-icon
+        >
+      </div>
+      <div class="post__foot--item post__dropdown">
+        <mat-icon
+          class="post__foot--actionicon"
+          fontSet="material-icons-outlined"
+          aria-hidden="false"
+          aria-label="more_vert"
+          >more_vert</mat-icon
+        >
+        <ul class="post__dropdown--list">
+          <li mat-menu-item>
+            <mat-icon fontSet="material-icons-outlined"
+              >account_circle</mat-icon
+            >
+            <span>{{'Delete-From-Locobuzz' | translate}}</span>
+          </li>
+          <li mat-menu-item>
+            <mat-icon fontSet="material-icons-outlined">translate</mat-icon>
+            <span> {{'See-Translation' | translate}}</span>
+          </li>
+          <li mat-menu-item (click)="openSubscribePopup()">
+            <mat-icon fontSet="material-icons-outlined"
+              >notifications_active</mat-icon
+            >
+            <span> {{'Subscribe' | translate}}</span>
+          </li>
+          <li mat-menu-item *ngIf="userpostLink">
+            <mat-icon fontSet="material-icons-outlined">launch</mat-icon>
+            <span> {{'Open-Post' | translate}} </span>
+          </li>
+          <li mat-menu-item>
+            <mat-icon fontSet="material-icons-outlined"
+              >local_activity</mat-icon
+            >
+            <span> {{'Create-Ticket' | translate}}</span>
+          </li>
+          <li mat-menu-item>
+            <mat-icon fontSet="material-icons-outlined">attach_file</mat-icon>
+            <span>{{'Attach-Ticket' | translate}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

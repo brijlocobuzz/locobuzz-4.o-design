@@ -1,0 +1,167 @@
+<div class="modal__head">
+  <div class="modal__title" [ngClass]="{'medium-font-size' : !defaultLayout}">
+    <mat-icon class="mr-8" fontSet="material-icons-outlined" [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+      >notifications_active</mat-icon
+    >
+    {{'Subscribe-this-ticket' | translate}}
+  </div>
+  <span class="modal__action">
+    <mat-icon fontSet="material-icons-outlined" [mat-dialog-close]="true" [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+      >close</mat-icon
+    >
+  </span>
+</div>
+<form
+  [formGroup]="subscribeForm"
+  #subscribeFormElement
+  (ngSubmit)="subscribePost()"
+>
+  <div class="modal__body">
+    <app-component-loader *ngIf="subscribeLoading"></app-component-loader>
+    <div class="modal__body--section">
+      <div class="d-flex-items-center mb-12">
+        <span class="text__label mr-8" [ngClass]="{'medium-font-size' : !defaultLayout}"
+          >{{'Subscribe-to' | translate}}<span class="colored__red">*</span> -
+        </span>
+        <mat-radio-group
+          aria-label="Select an action"
+          formControlName="subscribeTo"
+        >
+          <mat-radio-button [ngClass]="{'ai-layout__radio-btn' : !defaultLayout}" (change)="assignSubject($event.value)" value="1"
+            >{{'All-Activity' | translate}}</mat-radio-button
+          >
+          <mat-radio-button [ngClass]="{'ai-layout__radio-btn' : !defaultLayout}" (change)="assignSubject($event.value)" value="2"
+            >{{'Ticket-Status-Change' | translate}}</mat-radio-button
+          >
+        </mat-radio-group>
+      </div>
+      <div class="custom__inputwrapper space-bottom">
+        <mat-form-field appearance="outline" class="material__select">
+          <mat-label>
+            {{'Send-email-to-subscribe' | translate}}
+          </mat-label>
+          <mat-chip-grid
+            #chipList
+            aria-label="Email selection"
+            formControlName="emailIds"
+          >
+            <mat-chip-row [ngClass]="{'small_font-size' : !defaultLayout}"
+              *ngFor="let email of emailIds.value"
+              [selectable]="selectable"
+              [removable]="removable"
+              (removed)="removeEmail(email)"
+            >
+              {{ email }}
+              <mat-icon matChipRemove *ngIf="removable" [ngClass]="{'small-icon-font-size' : !defaultLayout}">cancel</mat-icon>
+            </mat-chip-row>
+            <input
+              placeholder="{{'Type-to-search-for-emails' | translate}}"
+              #emailInput
+              [formControl]="emailCtrl"
+              name="emails"
+              (focus)="clearFilteredlist()"
+              [matAutocomplete]="auto"
+              [matChipInputFor]="chipList"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              (matChipInputTokenEnd)="addEmail($event)"
+            />
+          </mat-chip-grid>
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            (optionSelected)="selectedEmail($event)"
+          >
+            <mat-option *ngFor="let email of filteredEmails" [value]="email">
+              {{ email }}
+            </mat-option>
+            <!-- <mat-option
+              *ngIf="
+                !emailsLoading &&
+                filteredEmails.length === 0
+              "
+              [disabled]="true"
+              
+            >
+              Email Not found
+            </mat-option> -->
+            <mat-option *ngIf="emailsLoading" [disabled]="true" >
+              {{'Fetching-Emails' | translate}}
+            </mat-option>
+          </mat-autocomplete>
+
+          <!-- <mat-hint
+            >*You can only add contacts which are configured in our
+            database.</mat-hint
+          > -->
+        </mat-form-field>
+        <p class="mat-hint-p">{{'Only-configured-contacts-hint' | translate}}</p>
+      </div>
+      <div class="custom__inputwrapper space-bottom">
+        <mat-form-field appearance="outline" class="material__select">
+          <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{'Subject' | translate}}</mat-label>
+          <input matInput readonly formControlName="subject" [ngClass]="{'small_font-size' : !defaultLayout}"/>
+          <!-- <mat-hint
+            >*You'll be automatically Unsubscribed when the ticket is closed and resubscribed when it reopens.</mat-hint
+          > -->
+        </mat-form-field>
+        <p class="mat-hint-p">{{'Unsubscribe-resubscribe-hint' | translate}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="modal__foot">
+    <mat-checkbox formControlName="sendNewUpdates" [ngClass]="{'ai-layout__checkbox' : !defaultLayout}"
+      >{{'Send-only-new-ticket-updates-in-email' | translate}}</mat-checkbox
+    >
+    <ng-container *ngIf="isSubscribe; else notSubscribed">
+      <button [ngClass]="{'small_font-size px-5 h-25' : !defaultLayout}"
+        type="button"
+        class="ml-auto colored__blue mr-10"
+        [disabled]="modifySubscribeLoader"
+        mat-stroked-button
+        [loading]="subscribeLoader"
+        (click)="unsubscribePost()"
+      >
+        {{'Unsubscribe' | translate}}
+      </button>
+      <button [ngClass]="{'small_font-size px-5 h-25' : !defaultLayout}"
+        type="submit"
+        mat-raised-button
+        color="accent"
+        [disabled]="
+          subscribeLoader ||
+          !(
+            subscribeForm.get('subscribeTo').dirty ||
+            subscribeForm.get('emailIds').dirty ||
+            subscribeForm.get('subject').dirty ||
+            subscribeForm.get('sendNewUpdates').dirty
+          )
+        "
+        type="button"
+        [loading]="modifySubscribeLoader"
+        (click)="modifySubscribe()"
+      >
+        {{'Modify-Subscribe' | translate}}
+      </button>
+    </ng-container>
+    <ng-template #notSubscribed>
+      <button [ngClass]="{'small_font-size px-5 h-25' : !defaultLayout}"
+        type="button"
+        class="ml-auto mr-10"
+        color="accent"
+        mat-stroked-button
+        [mat-dialog-close]="true"
+      >
+        {{'Cancel' | translate}}
+      </button>
+      <button [ngClass]="{'small_font-size px-5 h-25' : !defaultLayout}"
+        mat-flat-button
+        color="accent"
+        type="submit"
+        [disabled]="subscribeLoading"
+        [loading]="subscribeLoader"
+      >
+        <!-- <mat-icon class="mr-10"  fontSet="material-icons-outlined">notifications_active</mat-icon> -->
+        {{'Subscribe' | translate}}
+      </button>
+    </ng-template>
+  </div>
+</form>

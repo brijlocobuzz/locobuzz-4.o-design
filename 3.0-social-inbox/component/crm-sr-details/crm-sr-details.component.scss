@@ -1,0 +1,51 @@
+.post{
+    &__foot{
+        &--desc{
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1.2rem;
+        }
+    }
+}
+.upload-file{
+    &__item{
+        margin-top: 0.6rem;
+        &--img{
+            width: 9rem;
+            height: 9rem;
+            border: 1px solid var(--color-light-grey);
+            border-radius: 0.6rem;
+            & .img{
+                border-radius: 0.6rem;
+                height: 100%;
+                width: 100%;
+            }
+        }
+        &--title{
+            position: absolute;
+            bottom: 0rem;
+            padding: 0.3rem;
+            background: var(--color-locobuzz);
+            border-radius: 0 0 0.6rem 0.6rem;
+            width: 100%;
+            height: 3rem;
+            & .name{
+                display: block;
+                height: 3rem;
+                max-width: 8rem;
+                width: 7rem;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+    &__block{
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    &__wrapper{
+        position: relative;
+    }
+}

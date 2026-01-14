@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "crm-lead-details.component.scss"
+    ],
+    "names": [],
+    "file": "crm-lead-details.component.css"
+}

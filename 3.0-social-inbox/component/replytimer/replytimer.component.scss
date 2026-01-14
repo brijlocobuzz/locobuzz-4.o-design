@@ -1,0 +1,26 @@
+.days {
+  &__reply {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    // border: 1px solid #ff5d4838;
+    // border-radius: 25px;
+    // padding: 1px 5px 3px 5px;
+    // background: #fff5f3;
+    font-weight: 500;
+    white-space: nowrap;
+    &--icon {
+      color: var(--color-white);
+      text-align: center;
+      // margin-right: 6px;
+      & .mat-icon {
+        font-size: 15px !important;
+        border-radius: 50%;
+        background: var(--color-red-dark);
+      }
+    }
+    &--text {
+      color: var(--color-red-dark);
+    }
+  }
+}

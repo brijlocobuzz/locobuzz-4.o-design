@@ -1,0 +1,413 @@
+<div class="trends">
+  <div class="trends__left">
+    <div class="trends__list--head">
+      <div [mat-dialog-close]="true" class="trends__close">
+        <mat-icon class="mr-15">arrow_back</mat-icon>
+        <span class="text__title">{{'Trends' | translate}}</span>
+      </div>
+    </div>
+    <div class="trends__list--body">
+            <!-- <app-component-loader *ngIf="profileLoading" [loaderType]="loaderTypeEnum.profile"></app-component-loader> -->
+      <app-post-userprofile (loaderOutputEmitFlag)="loaderOutputEmitFlagResponse($event)" ></app-post-userprofile>
+    </div>
+  </div>
+  <div class="trends__right">
+    <div class="trends__details">
+      <div class="trends__details--head">
+        <ul>
+          <li
+            [ngClass]="{ active: usermentionLi }"
+            (click)="scrollToclass('user-mention')"
+          >
+            {{'User-Mention' | translate}}
+          </li>
+          <li
+            [ngClass]="{ active: trendchartLi }"
+            (click)="scrollToclass('trend-chart')"
+          >
+            {{'User-Trend-Chart' | translate}}
+          </li>
+          <li
+            [ngClass]="{ active: engageduserLi }"
+            (click)="scrollToclass('engaged-user-demo')"
+          >
+            {{'Engaged-User-Profile' | translate}}({{ totalEngagedUsers }})
+          </li>
+          <li
+            [ngClass]="{ active: replywordcloudLi }"
+            (click)="scrollToclass('reply-wordcloud')"
+          >
+            {{'Reply-Word-Cloud' | translate}}
+          </li>
+          <li
+            *ngIf="showReTweetMap"
+            [ngClass]="{ active: retweetmapLi }"
+            (click)="scrollToclass('retweet-map')"
+          >
+            {{'Retweet-Map' | translate}}
+          </li>
+          <li
+            *ngIf="showReplyMap"
+            [ngClass]="{ active: replymapLi }"
+            (click)="scrollToclass('reply-map')"
+          >
+            {{'Reply-Map' | translate}}
+          </li>
+        </ul>
+      </div>
+      <div class="trends__details--body">
+        <div class="trends__details--post user-mention" #usermention>
+          <h3 class="mb-12">{{'User-Mention' | translate}}</h3>
+          <ng-container *ngIf="load">            
+            <app-component-loader [postCountTotal]="1" [loaderType]="loaderTypeEnum.trends"></app-component-loader>
+          </ng-container>
+          <app-post *ngIf="!load"
+            [postData]="baseMentionObj"
+            [pageType]="3"
+            [showPostFooter]="false"
+          ></app-post>
+        </div>
+        <div class="trends__details--post trend-chart" #trendchart>
+          <div class="trends__chart">
+            <div class="trends__chart--head">
+              <div class="title">
+                <h3>{{'User-Trend-Chart' | translate}}</h3>
+              </div>
+            </div>
+            <div class="trends__chart--body">
+              <app-chart
+                *ngIf="chartOptions"
+                [highchartOptions]="chartOptions"
+              ></app-chart>
+              <ng-container *ngIf="!chartOptions">            
+                <app-component-loader [loaderType]="loaderTypeEnum.spinner"></app-component-loader>
+              </ng-container>
+              <ng-container *ngIf="showUserTrendChartNoDataF">
+                <div class="noDataFound block-center mt-4">
+                  <mat-icon>error_outline</mat-icon>
+                  <p>{{'No-Data-Found' | translate}}</p>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <div
+          class="trends__details--post bg__white pb-25 engaged-user-demo"
+          #engageduser
+        >
+          <div class="engaged-user">
+            <div class="engaged-user__head">
+              <div class="title">
+                <h3 class="text__label">
+                  {{'Engaged-User-Profile' | translate}} ({{ totalEngagedUsers }})
+                </h3>
+              </div>
+              <div class="option">
+                <div class="option__list">
+                  <mat-form-field
+                    *ngIf="baseMentionObj.channelGroup == 1"
+                    appearance="outline"
+                    class="
+                      outline--none
+                      material__select material__select--adaptive
+                    "
+                  >
+                    <mat-label>{{'Filters' | translate}}</mat-label>
+                    <mat-select
+                      [(ngModel)]="selectedfilter"
+                      (selectionChange)="filterApply($event.value)"
+                    >
+                      <mat-option value="-1" selected>{{'All' | translate}}</mat-option>
+                      <mat-option value="0" selected>{{'Retweet' | translate}}</mat-option>
+                      <mat-option value="1" selected>{{'Reply' | translate}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field
+                    *ngIf="baseMentionObj.channelGroup != 1"
+                    appearance="outline"
+                    class="
+                      outline--none
+                      material__select material__select--adaptive
+                    "
+                  >
+                    <mat-label>{{'Filters' | translate}}</mat-label>
+                    <mat-select
+                      [(ngModel)]="selectedfilter"
+                      (selectionChange)="filterApply($event.value)"
+                    >
+                      <mat-option value="-1" selected>{{'Comment' | translate}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div
+                  class="option__list cursor-pointer"
+                  *ngIf="baseMentionObj.channelGroup == 1"
+                  matTooltip="{{'Sort' | translate}}"
+                  matTooltipClass="custom-tooltipHeader"
+                  matTooltipPosition="above"
+                  mat-icon-button
+                  [matMenuTriggerFor]="sortmenu"
+                >
+                  <mat-icon fontSet="material-icons-outlined"
+                    >filter_list</mat-icon
+                  >
+                </div>
+
+                <mat-menu #sortmenu="matMenu" xPosition="before">
+                  <ul class="sort-dropdown" (click)="$event.stopPropagation()">
+                    <li class="sort-dropdown__item">
+                      <mat-radio-group
+                        [(ngModel)]="selectedOrderBy"
+                        aria-label="Select an option"
+                      >
+                        <div class="sort-dropdown__item--input">
+                          <mat-radio-button
+                            value="0"
+                            (change)="orderByApply($event.value)"
+                            >{{'Interaction' | translate}}</mat-radio-button
+                          >
+                        </div>
+                        <div class="sort-dropdown__item--input">
+                          <mat-radio-button
+                            value="1"
+                            (change)="orderByApply($event.value)"
+                            >{{'Followers' | translate}}</mat-radio-button
+                          >
+                        </div>
+                      </mat-radio-group>
+                    </li>
+                  </ul>
+                </mat-menu>
+              </div>
+            </div>
+            <div class="engaged-user__body">
+              <ng-container
+                *ngIf="engagedUserList && engagedUserList?.length > 0"
+              >
+                <app-engaged-users
+                  *ngFor="let user of engagedUserList"
+                  [postData]="user"
+                ></app-engaged-users>
+              </ng-container>
+              <!-- <app-engaged-users></app-engaged-users> -->
+              <div
+                class="post__list--pagination"
+                *ngIf="engagedUserList && engagedUserList?.length > 0"
+              >
+                <mat-paginator
+                  showFirstLastButtons
+                  appLocobuzzPaginator
+                  [length]="totalEngagedUsers"
+                  [pageSize]="10"
+                  [pageSizeOptions]="[5, 10, 25, 100]"
+                  (page)="OnPageChange($event)"
+                >
+                </mat-paginator>
+              </div>
+
+              <ng-container *ngIf="showEngagedProfilesNoDataF">
+                <div class="noDataFound block-center mb-35 mt-35">
+                  <mat-icon class="noDataFound-maticon">error_outline</mat-icon>
+                  <p>{{'No-Data-Found' | translate}}</p>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <div class="trends__details--post reply-wordcloud" #replywordcloud>
+          <div class="cloud">
+            <div class="cloud__head">
+              <h3>{{'Reply-Word-Cloud' | translate}}</h3>
+            </div>
+            <div class="cloud__body">
+              <div class="cloud__body--box">
+                <div class="cloud__body--box-left">
+                  <div class="block">
+                    <h4 class="text-semibold">{{'Sentiment' | translate}}</h4>
+                    <ul>
+                      <li class="total">
+                        <span class="text-semibold">{{'total' | translate}}:</span> {{ totalWC }}
+                      </li>
+                      <li class="positive">
+                        <span class="text-semibold">{{'positive' | translate}}:</span>
+                        {{ positiveWC }}
+                      </li>
+                      <li class="negative">
+                        <span class="text-semibold">{{'negative' | translate}}:</span>
+                        {{ negativeWC }}
+                      </li>
+                      <li class="natural">
+                        <span class="text-semibold">{{'neutral' | translate}}:</span>
+                        {{ neutralWC }}
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="block">
+                    <h4 class="text-semibold">{{'Word-Cloud-Color' | translate}}</h4>
+                    <ul>
+                      <li>
+                        <mat-radio-button
+                          (change)="chnageColorOfWCLoud($event)"
+                          value="0"
+                          >{{'Sentiment-Colors' | translate}}</mat-radio-button
+                        >
+                      </li>
+                      <li>
+                        <mat-radio-button
+                          (change)="chnageColorOfWCLoud($event)"
+                          value="1"
+                          >{{'Multiple-Colors' | translate}}</mat-radio-button
+                        >
+                      </li>
+                      <li>
+                        <mat-radio-button
+                          (change)="chnageColorOfWCLoud($event)"
+                          value="2"
+                          >{{'Solid-Colors' | translate}}</mat-radio-button
+                        >
+                      </li>
+                    </ul>
+                    <color-sketch
+                      *ngIf="showColorPicker"
+                      (onChangeComplete)="changeCustomColorEvent($event)"
+                    ></color-sketch>
+                  </div>
+                </div>
+                <div class="cloud__body--box-right">
+                  <div
+                    *ngIf="wclouddata && wclouddata.length > 0"
+                    class="mx-auto"
+                    style="width: 650px"
+                  >
+                    <!-- <angular-d3-cloud
+                      [data]="wclouddata"
+                      [width]="650"
+                      [height]="500"
+                      [padding]="5"
+                      [rotate]="rotate"
+                      [font]="font"
+                      [autoFill]="autoFill"
+                      [fillMapper]="fillMapper"
+                      [animations]="animations"
+                      (wordClick)="onWordClick($event)"
+                    ></angular-d3-cloud> -->
+                  </div>
+                  <!-- <ng-container *ngIf="showReplyWordCloudNoDataF">
+                                        <div class="noDataFound block-center">
+                                          <mat-icon class="noDataFound-maticon">error_outline</mat-icon>
+                                          <p>
+                                            No Data Found
+                                          </p>
+                                        </div>
+                                    </ng-container> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="trends__details--post reply-map" #replymap>
+          <div class="map">
+            <div *ngIf="showReTweetMap" class="map__retweet">
+              <div class="map__retweet--head">
+                <div class="title">
+                  <h3>{{'Retweet-Map' | translate}}</h3>
+                </div>
+                <div class="option">
+                  <div
+                    class="option__list cursor-pointer extend"
+                    matTooltip="{{'View-In-Full-Screen' | translate}}"
+                    matTooltipClass="custom-tooltip"
+                    matTooltipPosition="above"
+                  >
+                    <mat-icon fontSet="material-icons-outlined"
+                      >open_in_full</mat-icon
+                    >
+                  </div>
+                </div>
+              </div>
+              <div
+                class="map__retweet--body"
+                *ngIf="this.retweetmapData && this.retweetmapData.length > 0"
+              >
+                <!-- <agm-map
+                  class="map"
+                  [latitude]="retweetlat"
+                  [longitude]="retweetlon"
+                  (mapReady)="onRetweetMapLoad($event)"
+                >
+                  <agm-marker
+                    *ngFor="let m of retweetMarker; let i = index"
+                    [latitude]="m.lat"
+                    [longitude]="m.lng"
+                    [iconUrl]="m.icon"
+                  >
+                  </agm-marker>
+                </agm-map> -->
+                <ng-container *ngIf="showReTweetMapNoDataF">
+                  <div class="noDataFound block-center">
+                    <mat-icon class="noDataFound-icon">error_outline</mat-icon>
+                    <p>{{'No-Data-Found' | translate}}</p>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+            <div *ngIf="showReplyMap" class="map__reply">
+              <div class="map__reply--head">
+                <div class="title">
+                  <h3>{{'Reply-Map' | translate}}</h3>
+                </div>
+                <div class="option">
+                  <div class="option__list">
+                    <mat-radio-button value="0" (change)="redrawReplyMap(0)"
+                      >{{'Normal-Color' | translate}}</mat-radio-button
+                    >
+                    <mat-radio-button value="1" (change)="redrawReplyMap(1)"
+                      >{{'Sentiment-Colors' | translate}}</mat-radio-button
+                    >
+                  </div>
+                  <div
+                    class="option__list cursor-pointer extend"
+                    matTooltip="{{'View-In-Full-Screen' | translate}}"
+                    matTooltipClass="custom-tooltip"
+                    matTooltipPosition="above"
+                  >
+                    <mat-icon fontSet="material-icons-outlined"
+                      >open_in_full</mat-icon
+                    >
+                  </div>
+                </div>
+              </div>
+              <div
+                class="map__reply--body"
+                *ngIf="this.replymapData && this.replymapData.length > 0"
+              >
+                <!-- <agm-map
+                  class="map"
+                  [latitude]="replylat"
+                  [longitude]="replylon"
+                  (mapReady)="onReplyMapLoad($event)"
+                >
+                  <agm-marker
+                    *ngFor="let m of replyMarker; let i = index"
+                    [latitude]="m.lat"
+                    [longitude]="m.lng"
+                    [iconUrl]="m.icon"
+                  >
+                  </agm-marker>
+                </agm-map> -->
+                <!-- <ng-container *ngIf="showReplyMapNoDataF">
+                                    <div class="noDataFound block-center">
+                                      <mat-icon class="noDataFound-icon">error_outline</mat-icon>
+                                      <p>
+                                        No Data Found
+                                      </p>
+                                    </div>
+                                  </ng-container> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

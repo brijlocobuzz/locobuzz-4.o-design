@@ -1,0 +1,152 @@
+.lookup-detail{
+    &__body{
+        overflow: auto;
+        max-height: calc(100vh - 106px);
+        margin-bottom: 1.2rem;
+    }
+    &__wrapper{
+        display: flex;
+        flex-wrap: wrap;
+        padding: 1.2rem;
+        gap: 1rem;
+    }
+    &__field{
+        align-items: center;
+        display: flex;
+        width: 32%;
+        // height: 50px;
+    }
+    &__block{
+        border-radius: 0.4rem;
+        padding: 1.2rem;
+        margin: 0rem 1.2rem;
+        margin-bottom: 1.2rem;
+        &.no-bg{
+            background: unset!important;
+        }
+        & .mat-expansion-panel{
+            box-shadow: none;
+            margin-bottom: 1.2rem;
+        }
+        & .mat-expansion-panel-header{
+            padding: 0rem 0rem!important;
+            padding-right: 1.2rem !important;
+            padding-left: 1.2rem !important;
+            & .mat-content {
+                overflow: initial;
+            }
+        }
+        
+        &--accordian{
+            background: #F5F6F8;
+            padding: 0 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+    }
+    &__list{
+        &--li{
+            display: flex;
+            margin-bottom: 1rem;
+            & .title{
+                display: flex;
+                width: 22%;
+                font-size: 1.2rem;
+                font-weight: 600;
+            }
+            & .name{
+                margin-left: 1rem;
+                &.pill-name{
+                    background: #185EDF1A;
+                    border-radius: 2rem;
+                    padding: 0rem 0.8rem;
+                }
+            }
+        }
+    }
+    &__expandable{
+        display: flex;
+        align-items: center;
+        position: relative;
+        width: 100%;
+        & .title{
+            width: 24%;
+            font-weight: 600;
+            font-size: 1.4rem;
+            &::before{
+                content: '';
+                position: absolute;
+                width: 0.4rem;
+                height: 3rem;
+                top: -4px;
+                background: var(--color-locobuzz);
+                left: -12px;
+                border-radius: 0rem 0.4rem 0.4rem 0rem;
+            }
+        }
+        & .detail {
+            border-radius: 2rem;
+            background: #185EDF1A;
+            padding: 0.2rem 0.9rem;
+            font-weight: 400;
+            font-size: 1.2rem;
+        }
+        & .create-btn{
+            margin-left: auto;
+            font-size: 1.2rem !important;
+            display: flex;
+            align-items: center;
+            place-content: flex-end;
+            flex: 1;
+        }
+    }
+    &__table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        & td, th {
+                text-align: left;
+                padding: 8px;
+            }
+        & th{
+            white-space: nowrap;
+        }
+    }
+    &__area{
+        width: 49%;
+        height: 104px;
+        & .field-area{
+            width: 47%;
+            margin: 5px;
+            margin-bottom: 10px;
+            margin-top: 0px;
+            float: left;
+        }
+        & .area-textarea{
+            /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
+            /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
+            & mat-mdc-form-field-wrapper{
+                & .mat-mdc-form-field {
+                    & mat-mdc-form-field-appearance-outline{
+                        /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
+                        & mat-mdc-form-field-flex{
+                            height: 104px;
+                        }
+                    }
+                }
+            }
+            
+        }
+    }
+}
+.filter{
+    &__accordian{
+        &--group{
+            padding-left: 1.2rem;
+            border-radius: 0.6rem;
+            overflow: hidden;
+        }
+    }
+}
+.width-49{
+    width: 49%!important;
+}

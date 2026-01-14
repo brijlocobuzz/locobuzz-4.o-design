@@ -1,0 +1,479 @@
+<div
+  class="post__foot bt__light-grey"
+  
+  [ngClass]="{ element__disable: postFootDisable }"
+>
+  <div class="post__foot--wrapper ml-auto">
+    <div
+      class="post__foot--item post__foot--itemaction"
+      *ngIf="postData.ticketInfo.isSubscribed"
+      (click)="openSubscribePopup()"
+    >
+    <span class="custom__foot--button post__pill" matTooltip="{{ 'Subscription-Enabled' | translate }}"
+        matTooltipPosition="above"
+        matTooltipClass="custom-tooltip">
+      <mat-icon
+        class="post__foot--icon mr-0"
+        class="colored__locobuzz"
+        aria-hidden="false"
+        aria-label="escalator_warning"
+        >notifications_active</mat-icon
+      >
+    </span>
+      
+    </div>
+    <ng-container *ngIf="showreadOption && !postData.isBrandPost">
+      <span class="custom__foot--button post__pill p-8 mr-12 colored__locobuzz cursor-pointer" *ngIf="
+          postData.thisMentionIsRead || postData.allMentionInThisTicketIsRead
+        " matTooltip="{{ 'Marked-As-Read' | translate }}"
+        matTooltipPosition="above"
+        matTooltipClass="custom-tooltip">
+        <mat-icon 
+        fontSet="material-icons-outlined"
+        aria-hidden="false"
+        aria-label="local activity"
+        class="post__foot--icon mr-0"
+        >done_all</mat-icon
+      >  
+      </span>
+      
+      <span class="custom__foot--button post__pill p-8 mr-12 cursor-pointer" 
+        matTooltip="{{ 'Mark-As-Read' | translate }}"
+        matTooltipPosition="above"
+        matTooltipClass="custom-tooltip" 
+        (click)="markAsRead()" *ngIf="!postData.thisMentionIsRead">
+        <mat-icon
+        fontSet="material-icons-outlined"
+        aria-hidden="false"
+        class="post__foot--icon mr-0"
+        aria-label="local activity"
+        >done_all</mat-icon
+      >
+      </span>
+      
+    </ng-container>
+
+    <div
+      class="post__foot--item cursor-default post__foot--itemaction Verify-ticket"
+      *ngIf="postData.ticketInfoSsre && ticketHistoryData.isSSREVerified"
+    >
+      <span class="post__foot--label post__pill custom__foot--button" matTooltip="{{ 'Verified-by' | translate }} {{ postData.ticketInfoSsre.ssreReplyVerifiedOrRejectedBy }}"
+        matTooltipPosition="above"
+        matTooltipClass="custom-tooltip">
+        <mat-icon
+          class="post__foot--icon colored__green mr-0"
+          fontSet="material-icons-outlined"
+          >check_circle_outline</mat-icon
+        >
+        </span
+      >
+    </div>
+    <div
+      *ngIf="!ticketHistoryData.replyString"
+      class="post__foot--item post__foot--itemaction cursor-default"
+    >
+      <span>
+         <img
+        class="post__foot--icon mr-0"
+        [src]="ticketHistoryData.replyTicketIcon"
+      /> {{ ticketHistoryData.replyString }}
+      </span>
+     
+    </div>
+     <div
+      class="post__foot--item post__foot--itemaction"
+      *ngIf="ticketHistoryData.sendmailallmention"
+      (click)="sendPostEmail()"
+    >
+    <span class="custom__foot--button post__pill p-8" matTooltip="{{ 'Send-Email' | translate }}"
+        matTooltipPosition="above"
+        matTooltipClass="custom-tooltip">
+      <mat-icon class="post__foot--icon mr-0">mail_outline</mat-icon> 
+    </span>
+    </div>
+    <div
+      *ngIf="
+        ticketHistoryData.isDirectCloseVisible &&
+        !ticketHistoryData.isSimulationSSRE &&
+        !ticketHistoryData.isLiveSSRE &&
+        !ticketHistoryData.isApproveRejectMakerChecker
+      "
+      class="post__foot--item post__foot--itemaction"
+    >
+    <span class="custom__foot--button post__pill p-8"
+    matTooltip="{{ 'Direct-Close' | translate }}"
+        matTooltipPosition="above"
+        matTooltipClass="custom-tooltip" [matMenuTriggerFor]="directClose">
+      <mat-icon        
+        class="post__foot--icon mr-0"
+        fontSet="material-icons-outlined"
+        aria-hidden="false"
+        aria-label="cancel"
+        >cancel</mat-icon
+      >
+    </span>
+      
+      <mat-menu #directClose="matMenu">
+        <button
+            mat-menu-item
+            (click)="directCloseTicket()"
+          >
+            <mat-icon>highlight_off</mat-icon>
+            <span>{{ 'Close-Without-Note' | translate }}</span>
+          </button>
+          <button (click)="directCloseTicketWithNote()"
+            mat-menu-item
+          >
+            <mat-icon>edit_note</mat-icon>
+            <span>{{ 'Close-With-Note' | translate }}</span>
+          </button>
+</mat-menu>
+    </div>
+    <!-- brand & csd approve and reject -->
+    <div
+      *ngIf="
+        ticketHistoryData.isworkflowApproveVisible &&
+        !ticketHistoryData.isSimulationSSRE &&
+        !ticketHistoryData.isLiveSSRE &&
+        !ticketHistoryData.isApproveRejectMakerChecker
+      "
+      class="post__foot--item post__foot--itemaction"
+    >
+      <span
+        class="custom__foot--button post__pill p-8 bg__green colored__white"
+        [matMenuTriggerFor]="workFlowApprovenote" matTooltip="{{ 'Approve' | translate }}"
+        matTooltipPosition="above"
+        matTooltipClass="custom-tooltip"
+        (click)="clearnote()"
+      >
+        <mat-icon class="post__foot--icon mr-0">check_circle_outline</mat-icon>
+      </span>
+      <mat-menu #workFlowApprovenote="matMenu" class="note-elem__dropdown">
+        <div class="note-elem pr-20 pl-20 pt-10 pb-15">
+          <div class="note-elem__input" (click)="$event.stopPropagation()">
+            <mat-form-field class="material__select">
+              <mat-label class="text__label custom__input--label"
+                >{{ 'Add-Note' | translate }}</mat-label
+              >
+              <textarea
+                matInput
+                [(ngModel)]="cannedapprovenote"
+                class="resize"
+              ></textarea>
+            </mat-form-field>
+          </div>
+          <div class="note-elem__actions">
+            <button
+              mat-stroked-button
+              (click)="CannedResponse(1)"
+              (click)="$event.stopPropagation()"
+            >
+              {{ 'Canned-Response' | translate }}
+            </button>
+            <button mat-button color="accent" class="ml-auto">{{ 'Cancel' | translate }}</button>
+            <button mat-button color="accent" (click)="workFlowApproved()">
+              {{ 'Save' | translate }}
+            </button>
+          </div>
+        </div>
+      </mat-menu>
+    </div>
+
+    <div
+      *ngIf="
+        ticketHistoryData.isworkflowRejectVisible &&
+        !ticketHistoryData.isSimulationSSRE &&
+        !ticketHistoryData.isLiveSSRE &&
+        !ticketHistoryData.isApproveRejectMakerChecker
+      "
+      class="post__foot--item post__foot--itemaction"
+    >
+      <span
+        class="custom__foot--button post__pill p-8 bg__red colored__white"
+        [matMenuTriggerFor]="workFlowRejectnote" matTooltip="{{ 'Reject' | translate }}"
+        matTooltipPosition="above"
+        matTooltipClass="custom-tooltip"
+        (click)="clearnote()"
+      >
+        <mat-icon class="post__foot--icon mr-0">highlight_off</mat-icon>
+      </span>
+      <mat-menu #workFlowRejectnote="matMenu" class="note-elem__dropdown">
+        <div class="note-elem pr-20 pl-20 pt-10 pb-15">
+          <div class="note-elem__input" (click)="$event.stopPropagation()">
+            <label class="text__label custom__input--label">{{ 'Add-Note' | translate }}</label>
+            <textarea
+              [(ngModel)]="cannedrejectnote"
+              class="custom__input"
+              placeholder="{{ 'Enter-note-here' | translate }}"
+            ></textarea>
+          </div>
+          <div class="note-elem__actions pt-15">
+            <button
+              mat-stroked-button
+              (click)="CannedResponse(2)"
+              (click)="$event.stopPropagation()"
+            >
+              {{ 'Canned-Response' | translate }}
+            </button>
+            <button mat-button color="accent" class="ml-auto">{{ 'Cancel' | translate }}</button>
+            <button mat-button color="accent" (click)="workFlowRejected()">
+              {{ 'Save' | translate }}
+            </button>
+          </div>
+        </div>
+      </mat-menu>
+    </div>
+
+    <div
+      *ngIf="ticketHistoryData.isForwardVisible"
+      class="post__foot--item post__foot--itemaction hover-itemaction"
+    >
+    <span class="custom__foot--button post__pill p-8" 
+      matTooltip="{{ 'Forward' | translate }}"
+      matTooltipPosition="above"
+      matTooltipClass="custom-tooltip"
+      (click)="sendPostEmail()">
+       <mat-icon
+        class="post__foot--icon forward-icon mr-0"
+        aria-hidden="false"
+        aria-label="forward"
+        >reply</mat-icon
+      >
+    </span>
+     
+    </div>
+    <div
+      *ngIf="
+        ticketHistoryData.isReplyVisible &&
+        !ticketHistoryData.isSimulationSSRE &&
+        !ticketHistoryData.isLiveSSRE &&
+        !ticketHistoryData.isApproveRejectMakerChecker&&
+        !postData.isDeletedFromSocial
+      "
+      class="post__foot--item post__foot--itemaction hover-itemaction"
+    >
+    <span class="custom__foot--button post__pill p-8" matTooltip="{{ 'Reply' | translate }}"
+        matTooltipPosition="above"
+        matTooltipClass="custom-tooltip" (click)="replyPost()">
+      <mat-icon
+        class="post__foot--icon mr-0"
+        
+        aria-hidden="false"
+        aria-label="reply"
+        >reply
+      </mat-icon> 
+      <mat-icon class="replyError-icon colored__red" *ngIf="replyError"
+        >warning</mat-icon
+      >
+    </span>
+    </div>
+    <mat-menu #CreateTicketNote="matMenu" class="note-elem__dropdown">
+      <div class="note-elem">
+        <div class="note-elem__input" (click)="$event.stopPropagation()">
+          <label class="text__label custom__input--label">{{ 'Add-Note' | translate }}</label>
+          <textarea
+            [(ngModel)]="createticketnote"
+            class="custom__input"
+            placeholder="{{ 'Enter-note-here' | translate }}"
+          ></textarea>
+        </div>
+        <div class="note-elem__actions">
+          <button
+            mat-button
+            class="colored__blue ml-auto mr-8"
+            (click)="clearnote()"
+          >
+            {{ 'Cancel' | translate }}
+          </button>
+          <button mat-button class="colored__blue" (click)="createNewTicket()">
+            {{ 'Save' | translate }}
+          </button>
+        </div>
+      </div>
+    </mat-menu>
+    <mat-menu #AcknowledgeNote="matMenu" class="note-elem__dropdown">
+      <div class="note-elem">
+        <div class="note-elem__input" (click)="$event.stopPropagation()">
+          <label class="text__label custom__input--label">{{ 'Add-Note' | translate }}</label>
+          <textarea
+            [(ngModel)]="acknowledgednote"
+            class="custom__input"
+            placeholder="{{ 'Enter-note-here' | translate }}"
+          ></textarea>
+        </div>
+        <div class="note-elem__actions">
+          <button mat-button class="colored__blue ml-auto mr-8">{{ 'Cancel' | translate }}</button>
+          <button
+            mat-button
+            class="colored__blue"
+            (click)="AcknowledgeTicket()"
+          >
+            {{ 'Save' | translate }}
+          </button>
+        </div>
+      </div>
+    </mat-menu>
+    <!-- post__foot--itembutton -->
+    <div
+      *ngIf="
+        userpostLink &&
+        !ticketHistoryData.isSimulationSSRE &&
+        !ticketHistoryData.isLiveSSRE &&
+        !ticketHistoryData.isApproveRejectMakerChecker
+      "
+      class="post__foot--item post__foot--itemaction hover-itemaction">
+      <a [href]="userpostLink" target="_blank">
+        <span class="custom__foot--button post__pill p-8" matTooltip="{{ 'Open-Post' | translate }}"
+        matTooltipPosition="above"
+        matTooltipClass="custom-tooltip">
+          <mat-icon
+          class="post__foot--icon mr-0"
+          fontSet="material-icons-outlined"
+          aria-hidden="false"
+          aria-label="open_in_new"
+          >open_in_new</mat-icon>
+        </span>        
+      </a>
+    </div>
+    <div
+      class="post__foot--item post__foot--itemaction hover-itemaction"
+      [matMenuTriggerFor]="userHistoryOption"
+    >
+      <span class="custom__foot--button post__pill p-8" matTooltip="{{ 'More' | translate }}"
+        matTooltipPosition="above"
+        matTooltipClass="custom-tooltip">
+        <mat-icon
+        class="post__foot--icon mr-0"
+        fontSet="material-icons-outlined"
+        aria-hidden="false"
+        aria-label="more_vert"
+        >more_vert</mat-icon
+      >
+      </span>
+      
+      <mat-menu
+        #userHistoryOption="matMenu"
+        xPosition="before"
+        yPosition="above"
+      >
+        <button
+          mat-menu-item
+          *ngIf="
+            ticketHistoryData.isAssignVisible &&
+            ticketHistoryData.isparentpostpopup
+          "
+          (click)="assignTicket()"
+        >
+          <mat-icon>account_circle</mat-icon>
+          <span>{{ 'Assign-to' | translate }}</span>
+        </button>
+        <button
+          *ngIf="ticketHistoryData.isDeleteFromLocobuzz"
+          mat-menu-item
+          (click)="deleteFromLocobuzz()"
+        >
+          <mat-icon fontSet="material-icons-outlined">delete_outline</mat-icon>
+          <span>{{ 'Delete-From-Locobuzz' | translate }}</span>
+        </button>
+        <button
+          *ngIf="ticketHistoryData.isDeleteFromChannel && !postData.isDeletedFromSocial"
+          mat-menu-item
+          (click)="deleteFromSocial()"
+        >
+          <mat-icon fontSet="material-icons-outlined">delete_outline</mat-icon>
+          <span>{{ 'Delete-From-Channel' | translate }}</span>
+        </button>
+        <button *ngIf="ticketHistoryData.isDeleteFromLocobuzz && ticketHistoryData.isDeleteFromChannel && !postData.isDeletedFromSocial" mat-menu-item (click)="deleteFromSocialAndTool()">
+          <mat-icon fontSet="material-icons-outlined">delete_outline</mat-icon>
+          <span>{{ 'Delete-From-Both' | translate }}</span>
+        </button>
+         <button
+            mat-menu-item
+            *ngIf="ticketHistoryData.hideUnhideShowIcon"
+            (click)="hideUnhideFromFacebook(postData.isHidden)"
+          >
+                      <mat-icon>delete</mat-icon>
+            <span *ngIf="!ticketHistoryData.hideUnhideFacebookFlag && postData?.channelType !== 22">{{ 'Hide-from-facebook' | translate }}</span>
+              <span  *ngIf="!ticketHistoryData?.hideUnhideInstagramFlag && postData?.channelType === 22">{{
+                'Hide-from-instagram' | translate }}</span>
+              <span 
+                *ngIf="ticketHistoryData.hideUnhideFacebookFlag || ticketHistoryData?.hideUnhideInstagramFlag">{{ 'Unhide from
+                Channel' | translate }}</span>
+          </button>
+        <button
+          *ngIf="ticketHistoryData.isTranslationVisible"
+          (click)="translateText()"
+          mat-menu-item
+        >
+          <mat-icon fontSet="material-icons-outlined">translate</mat-icon>
+          <span> {{ 'See-Translation' | translate }}</span>
+        </button>
+        <button
+          *ngIf="ticketHistoryData.isSubscribe"
+          mat-menu-item
+          (click)="openSubscribePopup()"
+        >
+          <mat-icon fontSet="material-icons-outlined"
+            >notifications_active</mat-icon
+          >
+          <span> {{ 'Subscribe' | translate }}</span>
+        </button>
+        <a
+          [href]="userpostLink"
+          target="_blank"
+          mat-menu-item
+          *ngIf="
+            userpostLink &&
+            !ticketHistoryData.isSimulationSSRE &&
+            !ticketHistoryData.isLiveSSRE &&
+            !ticketHistoryData.isApproveRejectMakerChecker
+          "
+        >
+          <mat-icon fontSet="material-icons-outlined">launch</mat-icon>
+          <span> {{ 'Open-Post' | translate }} </span>
+        </a>
+        <a
+          class="create-ticket"
+          *ngIf="ticketHistoryData.isCreateTicketVisible"
+          [matMenuTriggerFor]="CreateTicketNote"
+          #clickTicketMenuTrigger="matMenuTrigger"
+          (click)="createTicketCall();$event.stopPropagation();clickTicketMenuTrigger.closeMenu();clickacknowledgeMenuTrigger.closeMenu()"
+        >
+          <mat-icon
+            fontSet="material-icons-outlined"
+            class="colored__sub-text s-20"
+            >local_activity</mat-icon
+          >
+          <span class="ml-12"> {{ 'Create-Ticket' | translate }}</span>
+        </a>
+        <button
+          mat-menu-item
+          *ngIf="ticketHistoryData.isAttachTicketVisible"
+          (click)="attachTicket()"
+        >
+          <mat-icon fontSet="material-icons-outlined">attach_file</mat-icon>
+          <span>{{ 'Attach-Ticket' | translate }}</span>
+        </button>
+        <button
+          mat-menu-item
+          *ngIf="ticketHistoryData.isEscalateVisible"
+          (click)="replyEscalate()"
+        >
+          <mat-icon>escalator_warning</mat-icon>
+          <span>{{ 'Escalate' | translate }}</span>
+        </button>
+        <button
+          *ngIf="ticketHistoryData.isAcknowledge"
+          [matMenuTriggerFor]="AcknowledgeNote"
+          #clickacknowledgeMenuTrigger="matMenuTrigger"
+          (menuOpened)="acknowlegeCall();$event.stopPropagation();clickTicketMenuTrigger.closeMenu()"
+          mat-menu-item
+        >
+          <mat-icon fontSet="material-icons-outlined">add_task</mat-icon>
+
+          <span> {{ 'Acknowledge' | translate }}</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+  </div>

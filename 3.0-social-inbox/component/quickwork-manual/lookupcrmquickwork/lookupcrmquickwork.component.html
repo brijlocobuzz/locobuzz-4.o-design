@@ -1,0 +1,1511 @@
+<!-- <div class="note-elem__lookup">
+    <form class="note-elem" [formGroup]="myForm">
+        <div class="note-elem__input pt-7" (click)="$event.stopPropagation()">
+            <p class="text__label">Look Up</p>
+            <p class="note-elem__desc">Please enter a value in one of the fields provided.</p>
+            <mat-form-field appearance="outline" class="material__select input-blue note-elem__field" *ngFor="let control of jsonFormData?.controls">
+                <mat-label class="text-capitalize">{{ control.label }}</mat-label>
+                <input matInput  [type]="control.type"
+                                    [formControlName]="control.name"
+                                    [value]="control.value"
+                    (input)="enableDiableFromField($event.target.value,'email','email')" />
+                <span matSuffix class="lookup__field--icon" *ngIf="showImages"
+                    [ngClass]="{'bg__locobuzz':( lookupdata == 'email'+'Look'),'bg__green':( lookupdata == 'email'+'Found'),'bg__red--dark':( lookupdata == 'email'+'LookNotFound')}">
+                    <img class="w-25 h-25" [src]="showImages" alt="">
+                </span>
+            </mat-form-field>
+        </div>
+        <div class="note-elem__actions">
+            <button mat-stroked-button class="ml-auto blank-hoverBtn mr-8 colored__blue"
+                (click)="$event.preventDefault();closedDialog()">Cancel</button>
+            <button mat-flat-button color="accent" [loading]="loading"
+                [ngClass]="{'element__disable': nextButtonDisable}">
+                Next
+            </button>
+        </div>
+    </form>
+</div> -->
+
+
+<!-- <div class="item colored__locobuzz cursor-pointer" [matMenuTriggerFor]="previewMenu">
+    <mat-icon fontSet="material-icons-outlined">view_quilt</mat-icon>
+    <span class="ml-5 font-weight-500">Preview</span>
+</div> -->
+<div class="modal__head">
+    <!-- <mat-icon fontSet="material-icons-outlined" [mat-dialog-close]="true" class="mr-10 cursor-pointer">arrow_back
+    </mat-icon> -->
+    <h3 class="modal__title" [ngClass]="{'medium-font-size' : !defaultLayout}">{{'Manual-Push-Integration' | translate}}</h3>
+    <mat-icon fontSet="material-icons-outlined" [mat-dialog-close]="true" class="ml-auto cursor-pointer"
+        [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">close</mat-icon>
+</div>
+<div class="modal__body">
+    <!-- <mat-menu #previewMenu="matMenu" class="mt-5 w-800" (click)="$event.stopPropagation()"> -->
+        <!-- //working for vagis for css changes  -->
+        <div class="sr__create">
+            <div class="sr__create__summary">
+                <app-post-userprofile (userProfileLinkEmit)="userProfileLinkEmitRes($event)" [showActions]="false"></app-post-userprofile>
+            </div>
+            <div class="sr__create__options scroll" [ngClass]="defaultLayout ? 'create-case-height' : 'p-unset'">
+                <div class="previewMenu" (click)="$event.stopPropagation()">
+                    <!-- <app-component-loader  class="line-loader"
+                                    *ngIf="durationFilterLoader" [postCountTotal]="1" [loaderType]="loaderTypeEnum.line"></app-component-loader> -->
+                    <ng-container *ngIf="durationFilterLoader">
+                        <div class="component__loader p-15" [@fadeInOut]>
+                            <div class="loader__content">
+                                <div class="loader__content--info d-flex-items-center">
+                                    <div class="loader__content--info--line w-30-p h-45 mr-10"></div>
+                                    <div class="loader__content--info--line w-30-p h-45 mr-10"></div>
+                                    <div class="loader__content--info--line w-30-p h-45 mr-10"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="false">
+                    <div class="stepper mb-6">
+                        <div class="stepper__wrapper">
+                            <div class="stepper__wrapper--list active">
+                                <div class="step-counter"> 1</div> <!--  bg__locobuzz colored__white  --> 
+                                <div class="step-name text__title--fontxl colored__locobuzz">{{'Search-in-CRM' | translate}}</div>
+                            </div>
+                            <div class="stepper__wrapper--list"> <!--  active  -->
+                                <div class="step-counter"> 2 </div>
+                                <div class="step-name text__title--fontxl">{{'Create-Case' | translate}}</div>
+                            </div>                    
+                        </div>
+                    </div>
+                    
+                    <div class="ref-strip">
+                        <mat-icon class="colored__yellow--dark s-22">refresh</mat-icon>
+                        <span>{{'Creating-new-case-with-customer-id' | translate}}: 24353456</span>
+                    </div>
+                    </ng-container>
+                    <ng-container *ngIf="false">
+                    <form [formGroup]="myFormLookupFields">
+                        <div class="previewMenu__body pt-10" style="max-height: fit-content;min-height: fit-content; margin-bottom: 2rem;">
+                            <ng-container *ngFor="let mainObj of lookUpFieldsWithGroupIdAndColor">
+                                    <p class="d-flex-items-center mt-10 mb-10" *ngIf="mainObj?.name && mainObj?.fields?.length>0"
+                                        [ngClass]="{'small_font-size' : !defaultLayout}">
+                                    <mat-icon class="s-16 mr-2" [ngStyle]="{'color': mainObj?.color}">fiber_manual_record</mat-icon>
+                                    <span class="text__label">{{mainObj?.name}}</span>
+                                    ({{mainObj?.mandatoryFields=='0'?mainObj?.fields?.length:mainObj?.mandatoryFields==''?0:mainObj?.mandatoryFields}}
+                                    {{'out-of' | translate}} {{mainObj?.fields?.length}} {{'mandatory-fields' | translate}})
+                                </p>
+                                <ng-container *ngFor="let control of mainObj?.fields;">
+                                    <mat-form-field appearance="outline"
+                                        class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber"
+                                            [ngClass]="{'error-red':  errorMesArrLookup?.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}"
+                                        *ngIf="control.type !='dropdown' &&  control?.type!='date'  &&  control?.type!='datetime' && control?.label!='Description'">
+                                        <mat-label class="text-capitalize">{{ control.label | titlecase}} <span class="colored__red"
+                                                *ngIf="control.isRequired">*</span></mat-label>
+                                        <input matInput [formControlName]="control.name" [value]="control.value"
+                                            [type]="(control.type?.toLowerCase() == 'integer' || control.type?.toLowerCase() == 'number' || control.type?.toLowerCase() == 'contactnumber')?'number':'text'"
+                                                [placeholder]="control?.label" [ngClass]="{'small_font-size' : !defaultLayout}"
+                                            [maxlength]="(control.characterLimit!=0 && control.characterLimit)?control.characterLimit:1000"
+                                            (input)="enableDiableFromFieldDataPush($event.target.value,control)" min="0"
+                                            [readonly]="control?.isDisableField" />
+                                        <!-- <span matSuffix class="lookup__field--icon" *ngIf="showImages"
+                                                                                                                        [ngClass]="{'bg__locobuzz':( lookupdata == 'email'+'Look'),'bg__green':( lookupdata == 'email'+'Found'),'bg__red--dark':( lookupdata == 'email'+'LookNotFound')}">
+                                                                                                                        <img class="w-25 h-25" [src]="showImages" alt="">
+                                                                                                                    </span> -->
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline" class="material__select material__select--adaptive mr-10"
+                                        *ngIf="control?.label=='Description'"
+                                            [ngClass]="{'error-red':  errorMesArrLookup?.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}">
+                                        <mat-label class="text-capitalize">{{control?.label | titlecase}} <span class="colored__red"
+                                                *ngIf="control.isRequired">*</span></mat-label>
+                                        <textarea matInput class="previewMenu__textarea" [value]="control.value"
+                                                [formControlName]="control.name" [ngClass]="{'small_font-size' : !defaultLayout}"
+                                            (input)="enableDiableFromFieldDataPush($event.target.value,control)"></textarea>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline"
+                                        class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber custom__block--calendar report__calendar--single bottom"
+                                        *ngIf="control?.type?.toLowerCase()=='date' || control?.type?.toLowerCase()=='datetime' "
+                                            [ngClass]="{'error-red':  errorMesArrLookup?.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}">
+                                        <mat-label class="text-capitalize">{{control?.label | titlecase}} <span class="colored__red"
+                                                *ngIf="control.isRequired">*</span></mat-label>
+                                        <input type="text" [value]="control.value" #scheduleDateTime matInput ngxDaterangepickerMd
+                                            [formControlName]="control.name" [autoApply]="false" [closeOnAutoApply]="false"
+                                            [singleDatePicker]="true" [timePicker]="true" autocomplete="off" readonly
+                                            (datesUpdated)="enableDiableFromFieldDataPush($event,control)"
+                                                [locale]="{format: 'DD-MM-YYYY hh:mm A'}" [ngClass]="{'small_font-size' : !defaultLayout}" />
+                                        <mat-icon class="ngx-daterangepicker-action border-radius-50 cursor-pointer" matSuffix
+                                            (click)="scheduleDateTime?.click()">
+                                            date_range
+                                        </mat-icon>
+                                    </mat-form-field>
+                                    <mat-form-field
+                                        class="material__select arrow material__select--adaptive h-55 previewMenu__push--item mr-10"
+                                        appearance="outline" *ngIf="control.type =='dropdown'"
+                                            [ngClass]="{'error-red':  errorMesArrLookup?.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}">
+                                        <mat-label>{{ control.label | titlecase}} <span class="colored__red"
+                                                *ngIf="control.isRequired">*</span></mat-label>
+                                        <mat-select [(value)]="control.value"
+                                            (selectionChange)="changeTicketFirstLevelDropdown($event.value,control, control.dropdowndata)">
+                                                <mat-option [value]="item.Value" [ngClass]="{'small_font-size h-25' : !defaultLayout}"
+                                                *ngFor="let item of control.dropdowndata;let i=index;">{{item.Value
+                                                }}</mat-option>
+                                                <mat-option *ngIf="control.dropdowndata?.length==0">{{'No-Record-Found' | translate}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <ng-container *ngIf="(control?.dropdowndata?.index>=0 && control?.dropdowndata[control?.dropdowndata?.index]?.DropDownData?.length>0 ||
+                                            control?.index>=0 &&  control?.dropdowndata[control?.index]?.DropDownData?.length>0)">
+                                        <mat-form-field
+                                            class="material__select arrow material__select--adaptive h-55 previewMenu__push--item  mr-10"
+                                            appearance="outline"
+                                                [ngClass]="{'error-red':  errorMesArrLookup?.includes(control?.label),'element__disable':!control.value, 'small_font-size' : !defaultLayout}">
+                                            <mat-label>{{control?.dropdowndata[control?.dropdowndata?.index>=0?control?.dropdowndata?.index:control?.index]?.DropDownName
+                                                | titlecase}} <span class="colored__red" *ngIf="control.isRequired">*</span></mat-label>
+                                            <mat-select [(value)]="control.value2"
+                                                (selectionChange)="changeTicketSecondLevelDropdown($event.value,control,control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData)">
+                                                <!--  -->
+                                                    <mat-option [value]="is.Value" [ngClass]="{'small_font-size h-25' : !defaultLayout}"
+                                                    *ngFor="let is of control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData;let i=index;">{{is.Value
+                                                    }}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </ng-container>
+                                    <ng-container *ngIf="(control?.dropdowndata?.index>=0 && control?.dropdowndata?.indexOne >= 0 && control?.dropdowndata[control?.dropdowndata?.index]?.DropDownData[control.dropdowndata.indexOne]?.DropDownData?.length>0) ||(
+                                            control?.indexOne>=0 && control?.index>=0 && control?.dropdowndata[control?.index]?.DropDownData[control?.indexOne]?.DropDownData?.length>0)">
+                                        <mat-form-field
+                                            class="material__select arrow material__select--adaptive h-55 previewMenu__push--item  mr-10"
+                                            appearance="outline"
+                                                [ngClass]="{'error-red':  errorMesArrLookup?.includes(control?.label),'element__disable':!control.value2, 'small_font-size' : !defaultLayout}">
+                                            <mat-label>{{control.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index].DropDownData[control.dropdowndata.indexOne>=0?control?.dropdowndata?.indexOne:control?.indexOne]?.DropDownName
+                                                | titlecase}} <span class="colored__red" *ngIf="control.isRequired">*</span></mat-label>
+                                            <!-- [(value)]="control.dropdowndata[control.dropdowndata.index].DropDownData[control.dropdowndata.indexOne].selected" -->
+                                            <mat-select [(value)]="control.value3"
+                                                (selectionChange)="changeTicketThirdLevelDropdown($event.value,control,control.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index].DropDownData[control.dropdowndata.indexOne>=0?control?.dropdowndata?.indexOne:control?.indexOne].DropDownData)">
+                                                    <mat-option [value]="is.Value" [ngClass]="{'small_font-size h-25' : !defaultLayout}"
+                                                    *ngFor="let is of control.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index].DropDownData[control.dropdowndata.indexOne>=0?control?.dropdowndata?.indexOne:control?.indexOne].DropDownData;let i=index;">{{is.Value
+                                                    }}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </ng-container>
+                                    <!-- <mat-form-field class="material__select material__select--adaptive h-55" appearance="outline">
+                                                                                <mat-label>Select</mat-label>
+                                                                                <mat-select>
+                                                                                    <mat-option value="item">value</mat-option>
+                                                                                </mat-select>
+                                                                            </mat-form-field>
+                                                                            <div class="textarea-featured__block position-relative compose-post__container--textarea">
+                                                                                <textarea></textarea>
+                                                                            </div> -->
+                                </ng-container>
+                    
+                            </ng-container>
+                            <div class="item">
+                                    <button [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout}" type="button" mat-flat-button color="accent" (click)="GetCRMLookUpData()">
+                                        {{'Lookup' | translate}}
+                                </button>
+                                    <button [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout}" mat-stroked-button type="button" class="ml-12" color="accent">
+                                        {{'Skip' | translate}}
+                                </button>
+                            </div>
+                        </div>
+                        <!-- <div class="modal__foot pb-0">
+                                                        <button mat-stroked-button class="textarea-featured__foot--item ml-auto mr-15"
+                                                            [mat-dialog-close]="true" color="accent">
+                                                            Cancel
+                                                        </button>
+                                                        <button mat-flat-button color="accent" [loading]="loading">
+                                                            Submit
+                                                        </button>
+                                                    </div> -->
+                    </form>
+                    </ng-container>
+                    <mat-tab-group (selectedTabChange)="changeTab($event)" [selectedIndex]="selectedIndexTab" [ngClass]="{'small_font-size' : !defaultLayout}">
+                        <mat-tab label="{{'Lookup' | translate}}" *ngIf="lookUpFieldsWithGroupIdAndColor?.length>0">
+                            <form [formGroup]="myFormLookupFields">
+                                <div class="previewMenu__body previewMenu__body--no-scroll pt-10" style="max-height: fit-content;min-height: fit-content; margin-bottom: 2rem;">
+                                    <ng-container *ngFor="let mainObj of lookUpFieldsWithGroupIdAndColor">
+                                        <p class="d-flex-items-center mt-10 mb-10" *ngIf="mainObj?.name && mainObj?.fields?.length>0"
+                                            [ngClass]="{'small_font-size' : !defaultLayout}">
+                                            <mat-icon class="s-16 mr-2" [ngStyle]="{'color': mainObj?.color}">fiber_manual_record</mat-icon>
+                                            <span class="text__label">{{mainObj?.name}}</span>
+                                            ({{mainObj?.mandatoryFields=='0'?mainObj?.fields?.length:mainObj?.mandatoryFields==''?0:mainObj?.mandatoryFields}}
+                                            {{'out-of' | translate}} {{mainObj?.fields?.length}} {{'mandatory-fields' | translate}})
+                                        </p>
+                                        <ng-container *ngFor="let control of mainObj?.fields;">
+                                        <mat-form-field appearance="outline"
+                                            class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber"
+                                                [ngClass]="{'error-red':  errorMesArrLookup?.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}"
+                                            *ngIf="control.type !='dropdown' &&  control?.type!='date'  &&  control?.type!='datetime' && control?.label!='Description'">
+                                                <mat-label class="text-capitalize" [ngClass]="{'small_font-size' : !defaultLayout}">{{ control.label | titlecase}} <span class="colored__red"
+                                                    *ngIf="control.isRequired">*</span></mat-label>
+                                            <input matInput [formControlName]="control.name" [value]="control.value"
+                                                [type]="(control.type?.toLowerCase() == 'integer' || control.type?.toLowerCase() == 'number' || control.type?.toLowerCase() == 'contactnumber')?'number':'text'"
+                                                    [placeholder]="control?.label | titlecase" [ngClass]="{'small_font-size' : !defaultLayout}"
+                                                [maxlength]="(control.characterLimit!=0 && control.characterLimit)?control.characterLimit:1000"
+                                                (input)="enableDiableFromFieldDataPush($event.target.value,control,'lookup')" min="0"
+                                                [readonly]="control?.isDisableField" />
+                                            <!-- <span matSuffix class="lookup__field--icon" *ngIf="showImages"
+                                                                                                    [ngClass]="{'bg__locobuzz':( lookupdata == 'email'+'Look'),'bg__green':( lookupdata == 'email'+'Found'),'bg__red--dark':( lookupdata == 'email'+'LookNotFound')}">
+                                                                                                    <img class="w-25 h-25" [src]="showImages" alt="">
+                                                                                                </span> -->
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" class="material__select material__select--adaptive mr-10"
+                                            *ngIf="control?.label=='Description'"
+                                                [ngClass]="{'error-red':  errorMesArrLookup?.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}">
+                                                <mat-label [ngClass]="{'small_font-size' : !defaultLayout}" class="text-capitalize">{{control?.label | titlecase}} <span class="colored__red"
+                                                    *ngIf="control.isRequired">*</span></mat-label>
+                                            <textarea matInput class="previewMenu__textarea" [value]="control.value" [formControlName]="control.name"
+                                                    (input)="enableDiableFromFieldDataPush($event.target.value,control,'lookup')" [ngClass]="{'small_font-size' : !defaultLayout}"></textarea>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline"
+                                            class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber custom__block--calendar report__calendar--single bottom"
+                                            *ngIf="control?.type?.toLowerCase()=='date' || control?.type?.toLowerCase()=='datetime' "
+                                                [ngClass]="{'error-red':  errorMesArrLookup?.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}">
+                                                <mat-label [ngClass]="{'small_font-size' : !defaultLayout}" class="text-capitalize">{{control?.label | titlecase}} <span class="colored__red"
+                                                    *ngIf="control.isRequired">*</span></mat-label>
+                                            <input type="text" [value]="control.value" #scheduleDateTime matInput ngxDaterangepickerMd
+                                                [formControlName]="control.name" [autoApply]="false" [closeOnAutoApply]="false" [singleDatePicker]="true"
+                                                [timePicker]="true" autocomplete="off" readonly (datesUpdated)="enableDiableFromFieldDataPush($event,control,'lookup')"
+                                                    [locale]="{format: 'DD-MM-YYYY hh:mm A'}" [ngClass]="{'small_font-size' : !defaultLayout}" />
+                                            <mat-icon class="ngx-daterangepicker-action border-radius-50 cursor-pointer" matSuffix
+                                                    (click)="scheduleDateTime?.click()" [ngClass]="{'small-icon-font-size' : !defaultLayout}">
+                                                date_range
+                                            </mat-icon>
+                                        </mat-form-field>
+                                        <mat-form-field class="material__select arrow material__select--adaptive h-55 previewMenu__push--item mr-10"
+                                            appearance="outline" *ngIf="control.type =='dropdown'"
+                                                [ngClass]="{'error-red':  errorMesArrLookup?.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}">
+                                                <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ control.label | titlecase}} <span class="colored__red" *ngIf="control.isRequired">*</span></mat-label>
+                                            <mat-select [(value)]="control.value" (selectionChange)="changeLookupFirstLevelDropdown($event.value,control, control.dropdowndata,'lookup')">
+                                                <mat-option [value]="item.Value" *ngFor="let item of control.dropdowndata;let i=index;"
+                                                        [ngClass]="{'small_font-size h-30' : !defaultLayout}">{{item.Value
+                                                    }}</mat-option>
+                                                    <mat-option *ngIf="control.dropdowndata?.length==0">{{'No-Record-Found' | translate}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <ng-container *ngIf="(control?.dropdowndata?.index>=0 && control?.dropdowndata[control?.dropdowndata?.index]?.DropDownData?.length>0 ||
+                                                control?.index>=0 &&  control?.dropdowndata[control?.index]?.DropDownData?.length>0)">
+                                            <mat-form-field class="material__select arrow material__select--adaptive h-55 previewMenu__push--item  mr-10"
+                                                appearance="outline"
+                                                    [ngClass]="{'error-red':  errorMesArrLookup?.includes(control?.label),'element__disable':!control.value, 'small_font-size' : !defaultLayout}">
+                                                    <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{control?.dropdowndata[control?.dropdowndata?.index>=0?control?.dropdowndata?.index:control?.index]?.DropDownName
+                                                    | titlecase}} <span class="colored__red" *ngIf="control.isRequired">*</span></mat-label>
+                                                <mat-select [(value)]="control.value2" (selectionChange)="changeLookupThirdLevelDropdown($event.value,control,control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData,'lookup')">
+                                                    <!--  -->
+                                                        <mat-option [value]="is.Value" [ngClass]="{'small_font-size h-30' : !defaultLayout}"
+                                                        *ngFor="let is of control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData;let i=index;"
+                                                        >{{is.Value
+                                                        }}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </ng-container>
+                                        <ng-container *ngIf="(control?.dropdowndata?.index>=0 && control?.dropdowndata?.indexOne >= 0 && control?.dropdowndata[control?.dropdowndata?.index]?.DropDownData[control.dropdowndata.indexOne]?.DropDownData?.length>0) ||(
+                                                control?.indexOne>=0 && control?.index>=0 && control?.dropdowndata[control?.index]?.DropDownData[control?.indexOne]?.DropDownData?.length>0)">
+                                            <mat-form-field class="material__select arrow material__select--adaptive h-55 previewMenu__push--item  mr-10"
+                                                appearance="outline"
+                                                    [ngClass]="{'error-red':  errorMesArrLookup?.includes(control?.label),'element__disable':!control.value2, 'small_font-size' : !defaultLayout}">
+                                                    <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{control.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index].DropDownData[control.dropdowndata.indexOne>=0?control?.dropdowndata?.indexOne:control?.indexOne]?.DropDownName
+                                                    | titlecase}} <span class="colored__red" *ngIf="control.isRequired">*</span></mat-label>
+                                                <!-- [(value)]="control.dropdowndata[control.dropdowndata.index].DropDownData[control.dropdowndata.indexOne].selected" -->
+                                                <mat-select [(value)]="control.value3" (selectionChange)="changeLookupThirdLevelDropdown($event.value,control,control.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index].DropDownData[control.dropdowndata.indexOne>=0?control?.dropdowndata?.indexOne:control?.indexOne].DropDownData)">
+                                                        <mat-option [value]="is.Value" [ngClass]="{'small_font-size h-30' : !defaultLayout}"
+                                                        *ngFor="let is of control.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index].DropDownData[control.dropdowndata.indexOne>=0?control?.dropdowndata?.indexOne:control?.indexOne].DropDownData;let i=index;">{{is.Value
+                                                        }}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </ng-container>
+                                            <!-- <mat-form-field class="material__select material__select--adaptive h-55" appearance="outline">
+                                                            <mat-label>Select</mat-label>
+                                                            <mat-select>
+                                                                <mat-option value="item">value</mat-option>
+                                                            </mat-select>
+                                                        </mat-form-field>
+                                                        <div class="textarea-featured__block position-relative compose-post__container--textarea">
+                                                            <textarea></textarea>
+                                                        </div> -->
+                                    </ng-container>
+                                    
+                                    </ng-container>
+                                    <div class="item">
+                                        <button mat-stroked-button class="textarea-featured__foot--item" color="accent" (click)="GetCRMLookUpData()"
+                                            [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout, 'h-41' : defaultLayout}">
+                                            {{'Lookup' | translate}}
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- <div class="custom-field mx-12">
+                                    <p class="font-weight-600">Custom Fields</p>
+                                    <div class="previewMenu__body pt-10 px-0" style="max-height: fit-content;min-height: fit-content; margin-bottom: 2rem;">
+                                        <ng-container>
+                                            <ng-container>
+                                                <mat-form-field appearance="outline"
+                                                    class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber bg-form">
+                                                    <mat-label class="text-capitalize">control<span class="colored__red">*</span></mat-label>
+                                                    <input matInput type="text"/>
+                                                </mat-form-field>
+                                                <mat-form-field class="material__select arrow material__select--adaptive h-55 previewMenu__push--item mr-10 bg-form"
+                                                    appearance="outline">
+                                                    <mat-label>label<span class="colored__red">*</span></mat-label>
+                                                    <mat-select value="control">
+                                                        <mat-option value="item"></mat-option>
+                                                        <mat-option *ngIf="false">{{'No-Record-Found' | translate}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <mat-form-field appearance="outline"
+                                                    class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber bg-form">
+                                                    <mat-label class="text-capitalize">control<span class="colored__red">*</span></mat-label>
+                                                    <input matInput type="text" />
+                                                </mat-form-field>
+                                                <mat-form-field appearance="outline"
+                                                    class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber bg-form">
+                                                    <mat-label class="text-capitalize">control<span class="colored__red">*</span></mat-label>
+                                                    <input matInput type="text" />
+                                                </mat-form-field>
+                                            </ng-container>
+                                        </ng-container>
+                                    </div>
+                                </div> -->
+                            </form>
+                            <div class="lookup-detail__box">
+                                <div class="lookup-detail__left">
+                                    <!-- <div class="d-flex">
+                                        <input type="radio" value="OrderDetails" class="lookup-detail__radio">
+                                        <div class="lookup-detail__block ml-0 mr-0 w-100-p">
+                                            <div class="lookup-detail__expandable">
+                                                <p class="title"> Order Detail of</p>
+                                                <span class="detail mr-10">Order Id :<span
+                                                        class="colored__locobuzz">234</span></span>
+                                            </div>
+                                            <ul class="lookup-detail__list mt-12">
+                                                <li class="lookup-detail__list--li">
+                                                    <span class="title">label</span>:
+                                                    <span class="name">45</span>
+                                                </li>
+                                                <li class="lookup-detail__list--li">
+                                                    <span class="title">label</span>:
+                                                    <span class="name">45</span>
+                                                </li>
+                                                <li class="lookup-detail__list--li">
+                                                    <span class="title">label</span>:
+                                                    <span class="name">45</span>
+                                                </li>
+                                                <li class="lookup-detail__list--li">
+                                                    <span class="title">label</span>:
+                                                    <span class="name">45</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div> -->
+                                    <div class="d-flex" *ngIf="LookupCrmDataDetails?.length>0">
+                                        <div class="lookup-detail__block no-bg p-0 ml-0 mr-0 w-100-p">
+                                            <mat-accordion class="accordian_headers" #accordion="matAccordion" [multi]="true"*ngFor="let item of LookupCrmDataDetails | keyvalue;let i=index">
+                                                <input type="radio" [ngClass]="{'small_font-size' : !defaultLayout}" value="RefundDetail" class="lookup-detail__radio" [checked]="i==Idchecked" (change)="selectRadioButton(i,item)">
+                                                <mat-expansion-panel class="mb-12" [expanded]="i==0?true:false" >
+                                                    <mat-expansion-panel-header class="filter__accordian--header" [collapsedHeight]="'50px'" [expandedHeight]="'50px'">
+                                                        <mat-panel-title>
+                                                            <div class="lookup-detail__expandable">
+                                                                <p class="title">{{'Details' | translate}}</p>
+                                                                <span class="detail mr-10">{{'ID' | translate}}
+                                                                    :<span class="colored__locobuzz">{{i+1}}</span></span>
+                                                            </div>
+                                                        </mat-panel-title>
+                                                    </mat-expansion-panel-header>
+                                                
+                                                    <div class="filter__accordian--body">
+                                                        <div class="filter__accordian--group pb-12 pr-12 pl-12">
+                                                            <ul class="lookup-detail__list" *ngIf="item.value">
+                                                                <li class="lookup-detail__list--li" *ngFor="let prop of item.value | keyvalue" [ngClass]="{'nonTree' : prop.value !='[object Object]'}">
+                                                                    <div class="lookup-detail__list--block nonTree-block">
+                                                                        <span class="title">    {{ prop.key   }}</span> <ng-container *ngIf="prop.value !='[object Object]'">:</ng-container>
+                                                                        <span class="name" *ngIf="prop.value !='[object Object]' && (typeof prop.value !== 'object' || prop.value === null) && !isJsonString(prop.value); else checkObjectValue">{{  prop.value  }}</span>
+                                                                        <ng-template #checkObjectValue>
+                                                                            <span class="name" *ngIf="isJsonString(prop.value) && getJsonValue(prop.value); else checkRegularObject">{{
+                                                                                getJsonValue(prop.value) }}</span>
+                                                                            <ng-template #checkRegularObject>
+                                                                                <span class="name"
+                                                                                    *ngIf="typeof prop.value === 'object' && prop.value !== null && prop.value.value !== undefined; else notLoggedIn">{{
+                                                                                    prop.value.value }}</span>
+                                                                            </ng-template>
+                                                                        </ng-template>
+                                                                    </div>                                                                    
+                                                                    <ng-template #notLoggedIn>
+                                                                     <ul class="lookup-detail__list ml-12"  *ngIf="item.value">
+                                                                        <li class="lookup-detail__list--subli"  *ngFor="let prop2 of prop.value | keyvalue">
+                                                                        <span class="title">    {{ prop2.key }}</span>:
+                                                                    <span class="name">{{  prop2.value  }}</span>
+                                                                        </li>
+                                                                     </ul>
+                                                                </ng-template>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </mat-expansion-panel>    
+                                                <!-- <mat-expansion-panel *ngIf="false">
+                                                    <mat-expansion-panel-header class="filter__accordian--header" [collapsedHeight]="'50px'" [expandedHeight]="'50px'">
+                                                        <mat-panel-title>
+                                                            <div class="lookup-detail__expandable">
+                                                                <p class="title">RPU Detail of</p>
+                                                                <span class="detail mr-10">Order Id
+                                                                    :<span class="colored__locobuzz">234</span></span>
+                                                            </div>
+                                                        </mat-panel-title>
+                                                    </mat-expansion-panel-header>
+                                                
+                                                    <div class="filter__accordian--body">
+                                                        <div class="filter__accordian--group pb-12 pr-12 pl-12">
+                                                            <table class="lookup-detail__table">
+                                                                <tr>
+                                                                    <th class="w-130">Current Status</th>
+                                                                    <th class="w-180">Created Date</th>
+                                                                    <th>Remarks</th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>statusCode</td>
+                                                                    <td>convertEpochDate</td>
+                                                                    <td>statusCode</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </mat-expansion-panel>
+                                                <mat-expansion-panel [expanded]="true" *ngIf="false">
+                                                    <mat-expansion-panel-header class="filter__accordian--header" [collapsedHeight]="'50px'" [expandedHeight]="'50px'">
+                                                        <mat-panel-title *ngIf="false">
+                                                            <div class="lookup-detail__expandable">
+                                                                <p class="title">SF Ticket of</p>
+                                                                <ng-container *ngIf="ticketLoaderFound">
+                                                                    <mat-spinner [diameter]="20" color="accent"></mat-spinner>
+                                                                </ng-container>
+                                                
+                                                                <span class="detail mr-10">Order ID :<span
+                                                                        class="colored__locobuzz">23</span></span>
+                                                                <span class="detail">Sub Order ID :<span
+                                                                        class="colored__locobuzz">44</span></span>
+                                                                <span class="create-btn colored__locobuzz">
+                                                                    <mat-icon>add</mat-icon>
+                                                                    <span class="ml-4">Create New Ticket</span>
+                                                                </span>
+                                                            </div>
+                                                        </mat-panel-title>
+                                                        <mat-panel-title>
+                                                            <div class="lookup-detail__expandable">
+                                                                <p class="title">SF Ticket of</p>
+                                                                <ng-container *ngIf="ticketLoaderFound">
+                                                                                                        <mat-spinner [diameter]="20" color="accent"></mat-spinner>
+                                                                                                    </ng-container>
+                                                
+                                                                <span class="detail mr-10">Order Id :<span class="colored__locobuzz">65</span></span>
+                                                                <span class="create-btn colored__locobuzz">
+                                                                                                        <mat-icon>add</mat-icon>
+                                                                                                        <span class="ml-4">Create New Ticket</span>
+                                                                                                    </span>
+                                                            </div>
+                                                        </mat-panel-title>
+                                                    </mat-expansion-panel-header>
+                                                
+                                                    <div class="filter__accordian--body">
+                                                        <div class="filter__accordian--group pl-12 pb-12 pr-30">
+                                                            <div class="lookup-detail__wrapper pl-0">
+                                                                <div class="lookup-detail__area">
+                                                                    <div class="lookup-detail__field field-area">
+                                                                        <mat-form-field color="accent" appearance="outline" class="material__select material__select">
+                                                                            <mat-label>Ticket ID (8888)</mat-label>
+                                                                            <mat-select value="selectedTicketId">
+                                                                                <mat-option value="CaseNumber">
+                                                                                    CaseNumber
+                                                                                </mat-option>
+                                                                                <mat-option value="CaseNumber">
+                                                                                    CaseNumber
+                                                                                </mat-option>
+                                                                                <mat-option value="CaseNumber">
+                                                                                    CaseNumber
+                                                                                </mat-option>
+                                                                                <mat-option value="CaseNumber">
+                                                                                    CaseNumber
+                                                                                </mat-option>
+                                                                            </mat-select>
+                                                                        </mat-form-field>
+                                                                    </div>
+                                                                    <div class="lookup-detail__field field-area">
+                                                                        <mat-form-field color="accent" appearance="outline" class="material__select material__select">
+                                                                            <mat-label>Status</mat-label>
+                                                                            <mat-select value="sfTicketDetails">
+                                                                                <mat-option value="status">
+                                                                                    status
+                                                                                </mat-option>
+                                                                                <mat-option value="status">
+                                                                                    status
+                                                                                </mat-option>
+                                                                                <mat-option value="status">
+                                                                                    status
+                                                                                </mat-option>
+                                                                                <mat-option value="status">
+                                                                                    status
+                                                                                </mat-option>
+                                                                            </mat-select>
+                                                                        </mat-form-field>
+                                                                    </div>
+                                                                    <div class="lookup-detail__field field-area">
+                                                                        <mat-form-field color="accent" appearance="outline" class="material__select material__select">
+                                                                            <mat-label>Forum Picklist</mat-label>
+                                                                            <mat-select value="sfTicketDetails">
+                                                                                <mat-option value="forum">
+                                                                                    forum
+                                                                                </mat-option>
+                                                                                <mat-option value="forum">
+                                                                                    forum
+                                                                                </mat-option>
+                                                                            </mat-select>
+                                                                        </mat-form-field>
+                                                                    </div>
+                                                                    <div class="lookup-detail__field field-area">
+                                                                        <mat-form-field color="accent" appearance="outline" class="material__select material__select">
+                                                                            <mat-label>Escalation Reason</mat-label>
+                                                                            <mat-select value="sfTicketDetails">
+                                                                                <mat-option value="escalation">
+                                                                                    escalation
+                                                                                </mat-option>
+                                                                            </mat-select>
+                                                                        </mat-form-field>
+                                                                    </div>
+                                                
+                                                                </div>
+                                                                <div class="lookup-detail__area">
+                                                                    <div class="lookup-detail__field w-100-p area-textarea">
+                                                                        <mat-form-field appearance="outline" class="material__select">
+                                                                            <mat-label class="text-capitalize">Notes </mat-label>
+                                                                            <textarea matInput class="resize h-70"></textarea>
+                                                                        </mat-form-field>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="lookup-detail__field">
+                                                                    <button class="ml-7" mat-flat-button color="accent">Update</button>
+                                                                </div>
+                                                            </div>
+                                                            <ul class="lookup-detail__list pl-12">
+                                                                <li class="lookup-detail__list--li">
+                                                                    <span class="title">Lable</span>:
+                                                                    <span class="name">12 </span>
+                                                                </li>
+                                                                <li class="lookup-detail__list--li">
+                                                                    <span class="title">Lable</span>:
+                                                                    <span class="name">12 </span>
+                                                                </li>
+                                                                <li class="lookup-detail__list--li">
+                                                                    <span class="title">Lable</span>:
+                                                                    <span class="name">12 </span>
+                                                                </li>
+                                                                <li class="lookup-detail__list--li">
+                                                                    <span class="title">Lable</span>:
+                                                                    <span class="name">12 </span>
+                                                                </li>
+                                                            </ul>
+                                                            <p class="pl-14 mt-12 mb-12 text__label">Note</p>
+                                                            <table class="lookup-detail__table ml-14 mr-14">
+                                                                <tr>
+                                                                    <th class="w-180">Date</th>
+                                                                    <th class="w-180">Created By</th>
+                                                                    <th>Description</th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>convertDate</td>
+                                                                    <td>convertDate</td>
+                                                                    <td>convertDate</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="block-center h-70" *ngIf="!foundTicketOnorderId && !ticketLoaderFound">
+                                                                                            <p>No ticket found on this order</p>
+                                                                                        </div>
+                                                </mat-expansion-panel> -->
+                                            </mat-accordion>
+                                        </div>
+                                    </div>
+                                   <div class="lookup-detail__block no-bg p-0 ml-0 mr-0 w-100-p" *ngIf="lookuploader">
+                                        <app-component-loader class="lookup-detail__loader" [postCountTotal]="1"
+                                            [loaderType]="loaderTypeEnum.line"></app-component-loader>
+                                   </div>
+                                </div>
+                            </div>                            
+                        </mat-tab>
+                        <mat-tab [label]="'Create '+ data?.FormType" *ngIf="dataFieldsWithGroupIdAndColor?.length>0">
+                            <form [formGroup]="myFormDataFields" class="overflow-hidden">
+                                <div class="previewMenu__body pt-10">
+                                    <ng-container *ngFor="let mainObj of dataFieldsWithGroupIdAndColor">
+                                        <p [ngClass]="{'small_font-size' : !defaultLayout}" class="d-flex-items-center mt-10 mb-10" *ngIf="mainObj?.name && mainObj?.fields?.length>0"> 
+                                            <mat-icon class="s-16 mr-2" [ngStyle]="{'color': mainObj?.color}">fiber_manual_record</mat-icon> 
+                                        <span class="text__label" >{{mainObj?.name}}</span> ({{mainObj?.mandatoryFields=='0'?mainObj?.fields?.length:mainObj?.mandatoryFields==''?0:mainObj?.mandatoryFields}} out of {{mainObj?.fields?.length}} mandatory fields)
+                                    </p>
+                                    <ng-container *ngFor="let control of mainObj?.fields;">
+                                        <!-- <div class="previewMenu__push account-profile__matinputvalue pl-0 pb-0"> -->
+                                                <mat-form-field appearance="outline" class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber"
+                                                    [ngClass]="{'error-red':  errorMesArr.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}"
+                                                *ngIf="control.type !='dropdown' &&  control?.type!='date'  &&  control?.type!='datetime' && control?.label!='Description' && control.type !='dynamicdropdown' && !control?.hideField" >
+                                                    <mat-label [matTooltip]="control?.label?.length>26 ? control?.label : ''" matTooltipPosition="above" matTooltipClass="custom__tooltip-normal" [ngClass]="{'small_font-size' : !defaultLayout}" class="text-capitalize">{{ control.label | titlecase}} <span class="colored__red" *ngIf="control.isRequired">*</span></mat-label>
+                                                <input matInput [formControlName]="control.name" [value]="control.value"
+                                                    [type]="(control.type?.toLowerCase() == 'integer' || control.type?.toLowerCase() == 'number' || control.type?.toLowerCase() == 'contactnumber')?'number':'text'"
+                                                        [placeholder]="control?.label" [ngClass]="{'small_font-size' : !defaultLayout}"
+                                                    [maxlength]="(control.characterLimit!=0 && control.characterLimit)?control.characterLimit:1000"
+                                                    (input)="enableDiableFromFieldDataPush($event.target.value,control)" min="0" [readonly]="control?.isDisableField"/>
+                                                <!-- <span matSuffix class="lookup__field--icon" *ngIf="showImages"
+                                                            [ngClass]="{'bg__locobuzz':( lookupdata == 'email'+'Look'),'bg__green':( lookupdata == 'email'+'Found'),'bg__red--dark':( lookupdata == 'email'+'LookNotFound')}">
+                                                            <img class="w-25 h-25" [src]="showImages" alt="">
+                                                        </span> -->
+                                            </mat-form-field>
+                                                <mat-form-field appearance="outline" class="material__select material__select--adaptive mr-10" *ngIf="control?.label=='Description' && !control?.hideField"
+                                                    [ngClass]="{'error-red':  errorMesArr.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}">
+                                                    <mat-label [ngClass]="{'small_font-size' : !defaultLayout}" class="text-capitalize">{{control?.label  | titlecase}} <span class="colored__red" *ngIf="control.isRequired">*</span></mat-label>
+                                                    <textarea matInput class="previewMenu__textarea" [value]="control.value" [formControlName]="control.name"
+                                                        (input)="enableDiableFromFieldDataPush($event.target.value,control)" [ngClass]="{'small_font-size' : !defaultLayout}"></textarea>
+                                            </mat-form-field>
+                                                <mat-form-field appearance="outline" class="previewMenu__push--item mr-10 account-profile__matinputnumber custom__block--calendar report__calendar--single bottom"
+                                                    *ngIf="(control?.type?.toLowerCase()=='date' || control?.type?.toLowerCase()=='datetime') && !control?.hideField"
+                                                    [ngClass]="{'error-red':  errorMesArr.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}">
+                                                    <mat-label [ngClass]="{'small_font-size' : !defaultLayout}" class="text-capitalize">{{control?.label  | titlecase}} <span class="colored__red" *ngIf="control.isRequired">*</span></mat-label>
+                                            <input type="text" [value]="control.value" #scheduleDateTime matInput ngxDaterangepickerMd  [formControlName]="control.name" [autoApply]="false"
+                                                    [closeOnAutoApply]="false" [singleDatePicker]="true" [timePicker]="true" autocomplete="off" readonly [ngClass]="{'small_font-size' : !defaultLayout}"
+                                                    (datesUpdated)="enableDiableFromFieldDataPush($event,control)" [locale]="{format: 'DD-MM-YYYY hh:mm A'}"/>
+                                                    <mat-icon class="ngx-daterangepicker-action border-radius-50 cursor-pointer" matSuffix (click)="scheduleDateTime?.click()">
+                                                        date_range
+                                                    </mat-icon>
+                                                </mat-form-field>
+                                                <ng-container *ngIf="control.type =='dropdown' && !control?.hideField">
+                                                <mat-form-field class="material__select arrow material__select--adaptive h-55 previewMenu__push--item mr-10"
+                                                    appearance="outline"  [ngClass]="{'error-red':  errorMesArr.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}">
+                                                    <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ control.label | titlecase}} <span class="colored__red" *ngIf="control.isRequired">*</span></mat-label>
+                                                <mat-select [matTooltip]="control?.label?.length>26 ? control?.label : ''" matTooltipPosition="above" matTooltipClass="custom__tooltip-normal" [(value)]="control.value" (openedChange)="onPanelOpen($event)"
+                                                        (selectionChange)="changeTicketFirstLevelDropdown($event.value,control,control.dropdowndata);checkFieldRequirement(control, mainObj?.fields);resetDependantFieldsRecursively(control,mainObj?.fields)">
+                                                        <div *ngIf="control?.searchDropDown?.length>10" class="search account-profile__brandsearchinput pb-5 px-1 position-sticky z-index-1 bg__white">
+                                                            <mat-form-field appearance="outline" class="material__select w-300 p-0">
+                                                                <input #searchTextboxControl (keyup)="showNoRecordFoundOnSearch(searchTextboxControl?.value,control)"
+                                                                        (keydown)="_handleKeydown($event)" autocomplete="off" placeholder="{{'Search' | translate}}" aria-label="Search" matInput
+                                                                        (keydown)="$event.stopPropagation()" [ngClass]="{'small_font-size' : !defaultLayout}" />
+                                                                    <button matSuffix mat-icon-button>
+                                                                    <mat-icon class="material-icons-outlined">search</mat-icon>
+                                                                </button>
+                                                            </mat-form-field>
+                                                        </div>
+                                                        <!-- <div class="px-12 pb-5">
+                                                            <mat-form-field appearance="outline" class="
+                                                                                                                                outline--none
+                                                                                                                                material__select material__select--infix material__select--adaptive
+                                                                                                                                pt-10
+                                                                                                                                h-54
+                                                                                                                              ">
+                                                                <input #searchTextboxControl (keyup)="showNoRecordFoundOnSearch(searchTextboxControl?.value,control)"
+                                                                    (keydown)="_handleKeydown($event)" autocomplete="off" placeholder="Search" aria-label="Search" matInput
+                                                                    (keydown)="$event.stopPropagation()" />
+                                                                <mat-icon class="tree-search">search</mat-icon>
+                                                            </mat-form-field>
+                                                        </div> -->
+                                                        
+                                                                <mat-option [value]="item.Value" [ngClass]="{'small_font-size h-30' : !defaultLayout}"
+                                                                *ngFor="let item of control.dropdowndata;trackBy:trackByName;let i=index;">
+                                                                <span *ngIf="item.Value.length<=27">{{item.Value
+                                                                    }}</span>
+                                                                <span matTooltip={{item.Value}} matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+                                                                    *ngIf="item.Value.length>27">{{item?.Value?.substring(0,27) + '...'
+                                                                    }}</span>
+                                                                </mat-option>
+
+                                                        <mat-option *ngIf="control.dropdowndata?.length==0">{{'No-Record-Found' | translate}}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <ng-container *ngIf="(control?.dropdowndata?.index>=0 && control?.dropdowndata[control?.dropdowndata?.index]?.DropDownData?.length>0 ||
+                                                        control?.index>=0 &&  control?.dropdowndata[control?.index]?.DropDownData?.length>0
+                                                            )">
+                                                    <mat-form-field appearance="outline"
+                                                    class="material__select arrow material__select--adaptive h-55 previewMenu__push--item  mr-10"
+                                                        [ngClass]="{'error-red':  control.value2=='' && control.isRequired,'element__disable':!control.value, 'small_font-size' : !defaultLayout}">
+                                                        <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{control?.dropdowndata[control?.dropdowndata?.index>=0?control?.dropdowndata?.index:control?.index]?.DropDownName
+                                                        | titlecase}} <span class="colored__red" *ngIf="control.isRequired">*</span></mat-label>
+                                                        <mat-select (selectionChange)="changeTicketSecondLevelDropdown($event.value,control,control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData)" [(value)]="control.value2" >
+                                                        <div *ngIf="control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.searchDropDown?.length>10" class="search account-profile__brandsearchinput pb-5 px-1">
+                                                            <mat-form-field appearance="outline" class="material__select w-300 p-0">
+                                                                    <input #searchTextboxControl [ngClass]="{'small_font-size' : !defaultLayout}"
+                                                                    (keyup)="secondLevelshowNoRecordFoundOnSearch(searchTextboxControl?.value,control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index])"
+                                                                        (keydown)="_handleKeydown($event)" autocomplete="off" placeholder="{{'Search' | translate}}" aria-label="Search" matInput
+                                                                    (keydown)="$event.stopPropagation()" />
+                                                                <button  matSuffix mat-icon-button>
+                                                                    <mat-icon class="material-icons-outlined">search</mat-icon>
+                                                                </button>
+                                                            </mat-form-field>
+                                                        </div>
+                                                        <!-- <div class="px-12 pb-5">
+                                                            <mat-form-field appearance="outline"
+                                                                class="
+                                                                                                                                                                                        outline--none
+                                                                                                                                                                                        material__select material__select--infix material__select--adaptive
+                                                                                                                                                                                        pt-10
+                                                                                                                                                                                        h-54
+                                                                                                                                                                                      ">
+                                                                <input #searchTextboxControl (keyup)="secondLevelshowNoRecordFoundOnSearch(searchTextboxControl?.value,control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index])"
+                                                                    (keydown)="_handleKeydown($event)" autocomplete="off" placeholder="Search" aria-label="Search" matInput
+                                                                    (keydown)="$event.stopPropagation()" />
+                                                                <mat-icon class="tree-search">search</mat-icon>
+                                                            </mat-form-field>
+                                                        </div> -->
+                                                        <!--  -->
+                                                                                                                <cdk-virtual-scroll-viewport *ngIf="control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.searchDropDown?.length>10" itemSize="10"
+                                                                                                                    [ngStyle]="{'height': control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData?.length==3?'145px':control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData?.length==4?'180px':control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData?.length==2?'90px':control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData?.length==1?'50px':
+                                                                                                                    control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData?.length==0?'':'200px'}">
+                                                            <mat-option [value]="is.Value" [ngClass]="{'small_font-size h-30' : !defaultLayout}"
+                                                            *cdkVirtualFor="let is of control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData;let i=index;"
+                                                           >
+                                                        <span *ngIf="is.Value.length<=27">{{is.Value
+                                                            }}</span>
+                                                        <span matTooltip={{is.Value}} matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+                                                            *ngIf="is.Value.length>27">{{is?.Value?.substring(0,27) + '...'
+                                                            }}</span>
+                                                        </mat-option>
+                                                            </cdk-virtual-scroll-viewport>
+                                                            <ng-container *ngIf="control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.searchDropDown?.length<=10">
+                                                                                                                            <mat-option [value]="is.Value" [ngClass]="{'small_font-size h-30' : !defaultLayout}"
+                                                                                                                            *ngFor="let is of control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData;let i=index;">
+                                                                                                                        
+                                                                                                                            <span *ngIf="is.Value.length<=27">{{is.Value
+                                                                                                                                }}</span>
+                                                                                                                            <span matTooltip={{is.Value}} matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+                                                                                                                                *ngIf="is.Value.length>27">{{is?.Value?.substring(0,27) + '...'
+                                                                                                                                }}</span>
+                                                                                                                            </mat-option>
+                                                            </ng-container>
+                                                            
+                                                                                                                    <mat-option *ngIf="control?.dropdowndata[control.dropdowndata.index>=0?control.dropdowndata.index:control?.index]?.DropDownData?.length==0">No Record Found</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </ng-container>
+                                    <ng-container *ngIf="(
+                                      (control?.dropdowndata?.index >= 0 && control?.dropdowndata?.indexOne >= 0 && 
+                                       control?.dropdowndata[control?.dropdowndata?.index]?.DropDownData[control?.dropdowndata?.indexOne]?.DropDownData?.length > 0) ||
+                                      (control?.indexOne >= 0 && control?.index >= 0 && 
+                                       control?.dropdowndata[control?.index]?.DropDownData[control?.indexOne]?.DropDownData?.length > 0)
+                                    )">
+                                                    <mat-form-field class="material__select arrow material__select--adaptive h-55 previewMenu__push--item  mr-10" appearance="outline"
+                                                        [ngClass]="{ 'error-red': control.isRequired && control.value3, 'element__disable': !control.value2, 'small_font-size' : !defaultLayout }">                                            
+                                                        <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">
+                                                {{
+                                                control.dropdowndata[
+                                                control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                                ]?.DropDownData[
+                                                control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                                ]?.DropDownName | titlecase
+                                                }}
+                                                <span class="colored__red" *ngIf="control.isRequired">*</span>
+                                            </mat-label>
+                                    
+                                            <mat-select [(value)]="control.value3" (selectionChange)="changeTicketThirdLevelDropdown(
+                                            $event.value,
+                                            control,
+                                            control.dropdowndata[
+                                              control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                            ]?.DropDownData[
+                                              control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                                        ]?.DropDownData)">                                            
+                                                <div *ngIf="control.dropdowndata[
+                                            control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                          ]?.DropDownData[
+                                            control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                          ]?.searchDropDown?.length > 10" class="search account-profile__brandsearchinput pb-5 px-1">
+                                                    <mat-form-field appearance="outline" class="material__select w-300 p-0">
+                                                                    <input [ngClass]="{'small_font-size' : !defaultLayout}" #searchTextboxControl (keyup)="secondLevelshowNoRecordFoundOnSearch(
+                                                  searchTextboxControl?.value,
+                                                  control.dropdowndata[
+                                                    control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                                  ]?.DropDownData[
+                                                    control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                                  ]
+                                                            )" (keydown)="_handleKeydown($event)" autocomplete="off" placeholder="{{'Search' | translate}}" aria-label="Search" matInput
+                                                            (keydown)="$event.stopPropagation()" />
+                                                        <button matSuffix mat-icon-button>
+                                                            <mat-icon class="material-icons-outlined">search</mat-icon>
+                                                        </button>
+                                                    </mat-form-field>
+                                                </div>
+                                    
+                                                <cdk-virtual-scroll-viewport *ngIf="control.dropdowndata[
+                                              control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                            ]?.DropDownData[
+                                              control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                            ]?.searchDropDown?.length > 10" itemSize="10" [ngStyle]="{
+                                              'height': 
+                                                control.dropdowndata[
+                                                  control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                                ]?.DropDownData[
+                                                  control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                                ]?.DropDownData?.length === 3 ? '145px' :
+                                                control.dropdowndata[
+                                                  control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                                ]?.DropDownData[
+                                                  control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                                ]?.DropDownData?.length === 4 ? '180px' :
+                                                control.dropdowndata[
+                                                  control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                                ]?.DropDownData[
+                                                  control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                                ]?.DropDownData?.length === 2 ? '90px' :
+                                                control.dropdowndata[
+                                                  control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                                ]?.DropDownData[
+                                                  control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                                ]?.DropDownData?.length === 1 ? '50px' :
+                                                control.dropdowndata[
+                                                  control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                                ]?.DropDownData[
+                                                  control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                                ]?.DropDownData?.length === 0 ? '' : '200px'
+                                            }">
+                                                    <mat-option [value]="is.Value" *cdkVirtualFor="let is of control.dropdowndata[
+                                                control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                              ]?.DropDownData[
+                                                control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                              ]?.DropDownData; let i = index">
+                                                        {{ is.Value }}
+                                                    </mat-option>
+                                                </cdk-virtual-scroll-viewport>
+                                    
+                                                <ng-container *ngIf="control.dropdowndata[
+                                            control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                          ]?.DropDownData[
+                                            control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                          ]?.searchDropDown?.length <= 10">
+                                                    <mat-option [value]="is.Value" *ngFor="let is of control.dropdowndata[
+                                                control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                              ]?.DropDownData[
+                                                control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                              ]?.DropDownData; let i = index">
+                                                        <span *ngIf="is.Value.length <= 27">{{ is.Value }}</span>
+                                                        <span *ngIf="is.Value.length > 27" [matTooltip]="is.Value" matTooltipPosition="above"
+                                                            matTooltipClass="custom__tooltip-normal">{{ is?.Value?.substring(0, 27) + '...' }}</span>
+                                                    </mat-option>
+                                                </ng-container>
+                                    
+                                                <mat-option *ngIf="control.dropdowndata[
+                                              control.dropdowndata?.index >= 0 ? control.dropdowndata?.index : control?.index
+                                            ]?.DropDownData[
+                                              control.dropdowndata?.indexOne >= 0 ? control.dropdowndata?.indexOne : control?.indexOne
+                                                        ]?.DropDownData?.length === 0">{{'No-Record-Found' | translate}}</mat-option>
+
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </ng-container>
+                                        <ng-container *ngIf="(
+                                          (control?.dropdowndata?.index >= 0 && control?.dropdowndata?.indexOne >= 0 && control?.dropdowndata?.indexTwo >= 0 && control?.dropdowndata[control.dropdowndata.index]?.DropDownData[control.dropdowndata.indexOne]?.DropDownData[control.dropdowndata.indexTwo]?.DropDownData?.length > 0) ||
+                                          (control?.indexOne >= 0 && control?.index >= 0 && control?.dropdowndata[control.index]?.DropDownData[control.indexOne]?.DropDownData[control.dropdowndata.indexTwo]?.DropDownData?.length > 0)
+                                        )">
+                                            <mat-form-field class="material__select arrow material__select--adaptive h-55 previewMenu__push--item  mr-10"
+                                                appearance="outline"
+                                                        [ngClass]="{'error-red': control.isRequired && control.value4, 'element__disable': !control.value3, 'small_font-size' : !defaultLayout}">
+                                        
+                                                        <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">
+                                                    {{
+                                                    control.dropdowndata[
+                                                    control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                                    ].DropDownData[
+                                                    control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                                    ].DropDownData[
+                                                    control.dropdowndata?.indexTwo >= 0 ? control.dropdowndata.indexTwo : control?.indexTwo
+                                                    ].DropDownName | titlecase
+                                                    }}
+                                                    <span class="colored__red" *ngIf="control.isRequired">*</span>
+                                                </mat-label>
+                                        
+                                                <mat-select [(value)]="control.value4" (selectionChange)="changeTicketFourthLevelDropdown($event.value, control, control.dropdowndata[
+                                                control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                              ].DropDownData[
+                                                control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                              ].DropDownData[
+                                                control.dropdowndata?.indexTwo >= 0 ? control.dropdowndata.indexTwo : control?.indexTwo
+                                              ].DropDownData)">
+                                        
+                                                    <div *ngIf="control.dropdowndata[
+                                                  control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                                ].DropDownData[
+                                                  control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                                ].DropDownData[
+                                                  control.dropdowndata?.indexTwo >= 0 ? control.dropdowndata.indexTwo : control?.indexTwo
+                                                ]?.searchDropDown?.length > 10" class="search account-profile__brandsearchinput pb-5 px-1">
+                                        
+                                                                <mat-form-field appearance="outline" class="material__select w-300 p-0" [ngClass]="{'small_font-size' : !defaultLayout}">
+                                                                    <input #searchTextboxControl [ngClass]="{'small_font-size' : !defaultLayout}" (keyup)="secondLevelshowNoRecordFoundOnSearch(searchTextboxControl?.value, control.dropdowndata[
+                                                      control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                                    ].DropDownData[
+                                                      control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                                    ].DropDownData[
+                                                      control.dropdowndata?.indexTwo >= 0 ? control.dropdowndata.indexTwo : control?.indexTwo
+                                                            ])" (keydown)="_handleKeydown($event)" autocomplete="off" placeholder="{{'Search' | translate}}" aria-label="Search" matInput
+                                                                (keydown)="$event.stopPropagation()" />
+                                                            <button matSuffix mat-icon-button>
+                                                                <mat-icon class="material-icons-outlined">search</mat-icon>
+                                                            </button>
+                                                        </mat-form-field>
+                                                    </div>
+                                        
+                                                    <cdk-virtual-scroll-viewport *ngIf="control.dropdowndata[
+                                                  control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                                ].DropDownData[
+                                                  control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                                ].DropDownData[
+                                                  control.dropdowndata?.indexTwo >= 0 ? control.dropdowndata.indexTwo : control?.indexTwo
+                                                ]?.searchDropDown?.length > 10" itemSize="10" [ngStyle]="{
+                                                  'height':
+                                                    control.dropdowndata[
+                                                      control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                                    ].DropDownData[
+                                                      control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                                    ].DropDownData?.length == 3
+                                                      ? '145px'
+                                                      : control.dropdowndata[
+                                                          control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                                        ].DropDownData[
+                                                          control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                                        ].DropDownData?.length == 4
+                                                      ? '180px'
+                                                      : control.dropdowndata[
+                                                          control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                                        ].DropDownData[
+                                                          control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                                        ].DropDownData?.length == 2
+                                                      ? '90px'
+                                                      : control.dropdowndata[
+                                                          control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                                        ].DropDownData[
+                                                          control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                                        ].DropDownData?.length == 1
+                                                      ? '50px'
+                                                      : '200px'
+                                                }">
+                                                        <mat-option [value]="is.Value" *cdkVirtualFor="let is of control.dropdowndata[
+                                                    control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                                  ].DropDownData[
+                                                    control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                                  ].DropDownData[
+                                                    control.dropdowndata?.indexTwo >= 0 ? control.dropdowndata.indexTwo : control?.indexTwo
+                                                  ].DropDownData; let i = index;">
+                                                            {{ is.Value }}
+                                                        </mat-option>
+                                                    </cdk-virtual-scroll-viewport>
+                                        
+                                                    <ng-container *ngIf="control.dropdowndata[
+                                                control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                              ].DropDownData[
+                                                control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                              ].DropDownData[
+                                                control.dropdowndata?.indexTwo >= 0 ? control.dropdowndata.indexTwo : control?.indexTwo
+                                              ]?.searchDropDown?.length <= 10">
+                                                        <mat-option [value]="is.Value" *ngFor="let is of control.dropdowndata[
+                                                    control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                                  ].DropDownData[
+                                                    control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                                  ].DropDownData[
+                                                    control.dropdowndata?.indexTwo >= 0 ? control.dropdowndata.indexTwo : control?.indexTwo
+                                                  ].DropDownData; let i = index;">
+                                                            <span *ngIf="is.Value.length <= 27">{{ is.Value }}</span>
+                                                            <span matTooltip="{{ is.Value }}" matTooltipPosition="above"
+                                                                matTooltipClass="custom__tooltip-normal" *ngIf="is.Value.length > 27">{{ is.Value.substring(0,
+                                                                27) + '...' }}</span>
+                                                        </mat-option>
+                                                    </ng-container>
+                                        
+                                                    <mat-option *ngIf="control.dropdowndata[
+                                                control.dropdowndata?.index >= 0 ? control.dropdowndata.index : control?.index
+                                              ].DropDownData[
+                                                control.dropdowndata?.indexOne >= 0 ? control.dropdowndata.indexOne : control?.indexOne
+                                              ].DropDownData[
+                                                control.dropdowndata?.indexTwo >= 0 ? control.dropdowndata.indexTwo : control?.indexTwo
+                                                    ].DropDownData?.length == 0">{{'No-Record-Found' | translate}}</mat-option>
+
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </ng-container>
+                                        <ng-container *ngIf="(
+                                          control?.dropdowndata?.index >= 0 && 
+                                          control?.dropdowndata?.indexOne >= 0 && 
+                                          control?.dropdowndata?.indexTwo >= 0 &&
+                                          control?.dropdowndata?.indexThree >= 0 &&
+                                          (
+                                            control?.dropdowndata[
+                                              control.dropdowndata.index >= 0 ? control.dropdowndata.index : control.index
+                                            ]?.DropDownData[
+                                              control.dropdowndata.indexOne >= 0 ? control.dropdowndata.indexOne : control.indexOne
+                                            ]?.DropDownData[
+                                              control.dropdowndata.indexTwo >= 0 ? control.dropdowndata.indexTwo : control.indexTwo
+                                            ]?.DropDownData[
+                                              control.dropdowndata.indexThree >= 0 ? control.dropdowndata.indexThree : control.indexThree
+                                            ]?.DropDownData?.length > 0
+                                          )
+                                        ) || (
+                                          control?.index >= 0 && 
+                                          control?.indexOne >= 0 && 
+                                          control?.dropdowndata[
+                                            control.index >= 0 ? control.index : control.dropdowndata.index
+                                          ]?.DropDownData[
+                                            control.indexOne >= 0 ? control.indexOne : control.dropdowndata.indexOne
+                                          ]?.DropDownData[
+                                            control.dropdowndata.indexTwo
+                                          ]?.DropDownData[
+                                            control.dropdowndata.indexThree
+                                          ]?.DropDownData?.length > 0
+                                        )">
+                                            <mat-form-field class="material__select arrow material__select--adaptive h-55 previewMenu__push--item mr-10"
+                                                appearance="outline"
+                                                        [ngClass]="{'error-red': control.isRequired && control.value5, 'element__disable': !control.value4, 'small_font-size' : !defaultLayout}">
+                                                        <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">
+                                                    {{
+                                                    control.dropdowndata[
+                                                    control.dropdowndata.index >= 0 ? control.dropdowndata.index : control.index
+                                                    ]?.DropDownData[
+                                                    control.dropdowndata.indexOne >= 0 ? control.dropdowndata.indexOne : control.indexOne
+                                                    ]?.DropDownData[
+                                                    control.dropdowndata.indexTwo >= 0 ? control.dropdowndata.indexTwo : control.indexTwo
+                                                    ]?.DropDownData[
+                                                    control.dropdowndata.indexThree >= 0 ? control.dropdowndata.indexThree : control.indexThree
+                                                    ]?.DropDownName | titlecase
+                                                    }}
+                                                    <span class="colored__red" *ngIf="control.isRequired">*</span>
+                                                </mat-label>
+                                        
+                                                <mat-select [(value)]="control.value5" (selectionChange)="changeTicketFifthLevelDropdown(
+                                                $event.value, control,
+                                                control.dropdowndata[
+                                                  control.dropdowndata.index >= 0 ? control.dropdowndata.index : control.index
+                                                ]?.DropDownData[
+                                                  control.dropdowndata.indexOne >= 0 ? control.dropdowndata.indexOne : control.indexOne
+                                                ]?.DropDownData[
+                                                  control.dropdowndata.indexTwo >= 0 ? control.dropdowndata.indexTwo : control.indexTwo
+                                                ]?.DropDownData[
+                                                  control.dropdowndata.indexThree >= 0 ? control.dropdowndata.indexThree : control.indexThree
+                                                ]?.DropDownData
+                                              )">
+                                        
+                                                    <!-- Search box -->
+                                                    <div *ngIf="control.dropdowndata[
+                                                control.dropdowndata.index >= 0 ? control.dropdowndata.index : control.index
+                                              ]?.DropDownData[
+                                                control.dropdowndata.indexOne >= 0 ? control.dropdowndata.indexOne : control.indexOne
+                                              ]?.DropDownData[
+                                                control.dropdowndata.indexTwo >= 0 ? control.dropdowndata.indexTwo : control.indexTwo
+                                              ]?.DropDownData[
+                                                control.dropdowndata.indexThree >= 0 ? control.dropdowndata.indexThree : control.indexThree
+                                              ]?.searchDropDown?.length > 10" class="search account-profile__brandsearchinput pb-5 px-1">
+                                                                <mat-form-field appearance="outline" class="material__select w-300 p-0" [ngClass]="{'small_font-size' : !defaultLayout}">
+                                                                    <input [ngClass]="{'small_font-size' : !defaultLayout}" #searchTextboxControl matInput placeholder="Search" autocomplete="off"
+                                                                (keydown)="_handleKeydown($event)" (keyup)="secondLevelshowNoRecordFoundOnSearch(
+                                                      searchTextboxControl?.value,
+                                                      control.dropdowndata[
+                                                        control.dropdowndata.index >= 0 ? control.dropdowndata.index : control.index
+                                                      ]?.DropDownData[
+                                                        control.dropdowndata.indexOne >= 0 ? control.dropdowndata.indexOne : control.indexOne
+                                                      ]?.DropDownData[
+                                                        control.dropdowndata.indexTwo >= 0 ? control.dropdowndata.indexTwo : control.indexTwo
+                                                      ]?.DropDownData[
+                                                        control.dropdowndata.indexThree >= 0 ? control.dropdowndata.indexThree : control.indexThree
+                                                      ])" (keydown)="$event.stopPropagation()" />
+                                                            <button matSuffix mat-icon-button>
+                                                                <mat-icon class="material-icons-outlined">search</mat-icon>
+                                                            </button>
+                                                        </mat-form-field>
+                                                    </div>
+                                        
+                                                    <!-- Virtual scroll -->
+                                                    <cdk-virtual-scroll-viewport *ngIf="control.dropdowndata[
+                                                control.dropdowndata.index >= 0 ? control.dropdowndata.index : control.index
+                                              ]?.DropDownData[
+                                                control.dropdowndata.indexOne >= 0 ? control.dropdowndata.indexOne : control.indexOne
+                                              ]?.DropDownData[
+                                                control.dropdowndata.indexTwo >= 0 ? control.dropdowndata.indexTwo : control.indexTwo
+                                              ]?.DropDownData[
+                                                control.dropdowndata.indexThree >= 0 ? control.dropdowndata.indexThree : control.indexThree
+                                              ]?.searchDropDown?.length > 10" itemSize="10" [ngStyle]="{'height': '200px'}">
+                                                        <mat-option [value]="item.Value" *cdkVirtualFor="let item of control.dropdowndata[
+                                                  control.dropdowndata.index >= 0 ? control.dropdowndata.index : control.index
+                                                ]?.DropDownData[
+                                                  control.dropdowndata.indexOne >= 0 ? control.dropdowndata.indexOne : control.indexOne
+                                                ]?.DropDownData[
+                                                  control.dropdowndata.indexTwo >= 0 ? control.dropdowndata.indexTwo : control.indexTwo
+                                                ]?.DropDownData[
+                                                  control.dropdowndata.indexThree >= 0 ? control.dropdowndata.indexThree : control.indexThree
+                                                ]?.DropDownData">
+                                                            {{item.Value}}
+                                                        </mat-option>
+                                                    </cdk-virtual-scroll-viewport>
+                                        
+                                                    <!-- Standard list -->
+                                                    <ng-container *ngIf="control.dropdowndata[
+                                                control.dropdowndata.index >= 0 ? control.dropdowndata.index : control.index
+                                              ]?.DropDownData[
+                                                control.dropdowndata.indexOne >= 0 ? control.dropdowndata.indexOne : control.indexOne
+                                              ]?.DropDownData[
+                                                control.dropdowndata.indexTwo >= 0 ? control.dropdowndata.indexTwo : control.indexTwo
+                                              ]?.DropDownData[
+                                                control.dropdowndata.indexThree >= 0 ? control.dropdowndata.indexThree : control.indexThree
+                                              ]?.searchDropDown?.length <= 10">
+                                                        <mat-option [value]="item.Value" *ngFor="let item of control.dropdowndata[
+                                                  control.dropdowndata.index >= 0 ? control.dropdowndata.index : control.index
+                                                ]?.DropDownData[
+                                                  control.dropdowndata.indexOne >= 0 ? control.dropdowndata.indexOne : control.indexOne
+                                                ]?.DropDownData[
+                                                  control.dropdowndata.indexTwo >= 0 ? control.dropdowndata.indexTwo : control.indexTwo
+                                                ]?.DropDownData[
+                                                  control.dropdowndata.indexThree >= 0 ? control.dropdowndata.indexThree : control.indexThree
+                                                ]?.DropDownData">
+                                                            <span *ngIf="item.Value.length <= 27">{{ item.Value }}</span>
+                                                            <span *ngIf="item.Value.length > 27" matTooltip="{{ item.Value }}" matTooltipPosition="above"
+                                                                matTooltipClass="custom__tooltip-normal">
+                                                                {{ item.Value.substring(0, 27) + '...' }}
+                                                            </span>
+                                                        </mat-option>
+                                                    </ng-container>
+                                        
+                                                    <!-- No record found -->
+                                                    <mat-option *ngIf="control.dropdowndata[
+                                                control.dropdowndata.index >= 0 ? control.dropdowndata.index : control.index
+                                              ]?.DropDownData[
+                                                control.dropdowndata.indexOne >= 0 ? control.dropdowndata.indexOne : control.indexOne
+                                              ]?.DropDownData[
+                                                control.dropdowndata.indexTwo >= 0 ? control.dropdowndata.indexTwo : control.indexTwo
+                                              ]?.DropDownData[
+                                                control.dropdowndata.indexThree >= 0 ? control.dropdowndata.indexThree : control.indexThree
+                                              ]?.DropDownData?.length == 0">
+                                                            {{'No-Record-Found' | translate}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </ng-container>
+                                        <ng-container *ngIf="(
+                                          control?.dropdowndata?.index >= 0 &&
+                                          control?.dropdowndata?.indexOne >= 0 &&
+                                          control?.dropdowndata?.indexTwo >= 0 &&
+                                          control?.dropdowndata?.indexThree >= 0 &&
+                                          control?.dropdowndata?.indexFour >= 0 &&
+                                          (
+                                            control?.dropdowndata?.[control.dropdowndata.index]
+                                              ?.DropDownData?.[control.dropdowndata.indexOne]
+                                              ?.DropDownData?.[control.dropdowndata.indexTwo]
+                                              ?.DropDownData?.[control.dropdowndata.indexThree]
+                                              ?.DropDownData?.[control.dropdowndata.indexFour]
+                                              ?.DropDownData?.length > 0
+                                          )
+                                        )">
+                                            <mat-form-field class="material__select arrow material__select--adaptive h-55 previewMenu__push--item mr-10"
+                                                appearance="outline" [ngClass]="{
+                                              'error-red': control?.isRequired && control.value6,
+                                                    'element__disable': !control.value5, 'small_font-size' : !defaultLayout
+                                            }">
+                                                        <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">
+                                                    {{
+                                                    control?.dropdowndata?.[control.dropdowndata.index]
+                                                    ?.DropDownData?.[control.dropdowndata.indexOne]
+                                                    ?.DropDownData?.[control.dropdowndata.indexTwo]
+                                                    ?.DropDownData?.[control.dropdowndata.indexThree]
+                                                    ?.DropDownData?.[control.dropdowndata.indexFour]
+                                                    ?.DropDownName || ''
+                                                    | titlecase }}
+                                                    <span class="colored__red" *ngIf="control?.isRequired">*</span>
+                                                </mat-label>
+                                        
+                                                <mat-select [(value)]="control.value6" (selectionChange)="changeTicketSixthLevelDropdown($event.value, control,
+                                                control?.dropdowndata?.[control.dropdowndata.index]
+                                                  ?.DropDownData?.[control.dropdowndata.indexOne]
+                                                  ?.DropDownData?.[control.dropdowndata.indexTwo]
+                                                  ?.DropDownData?.[control.dropdowndata.indexThree]
+                                                  ?.DropDownData?.[control.dropdowndata.indexFour]?.DropDownData)">
+                                        
+                                                    <!-- Search box -->
+                                                    <div *ngIf="(
+                                                control?.dropdowndata?.[control.dropdowndata.index]
+                                                  ?.DropDownData?.[control.dropdowndata.indexOne]
+                                                  ?.DropDownData?.[control.dropdowndata.indexTwo]
+                                                  ?.DropDownData?.[control.dropdowndata.indexThree]
+                                                  ?.DropDownData?.[control.dropdowndata.indexFour]
+                                                  ?.DropDownData?.length > 10
+                                              )" class="search account-profile__brandsearchinput pb-5 px-1">
+                                                                <mat-form-field [ngClass]="{'small_font-size' : !defaultLayout}" appearance="outline" class="material__select w-300 p-0">
+                                                                    <input [ngClass]="{'small_font-size' : !defaultLayout}" #searchTextboxControl matInput placeholder="{{'Search' | translate}}" autocomplete="off"
+                                                                (keydown)="_handleKeydown($event)" (keyup)="secondLevelshowNoRecordFoundOnSearch(searchTextboxControl?.value,
+                                                      control?.dropdowndata?.[control.dropdowndata.index]
+                                                        ?.DropDownData?.[control.dropdowndata.indexOne]
+                                                        ?.DropDownData?.[control.dropdowndata.indexTwo]
+                                                        ?.DropDownData?.[control.dropdowndata.indexThree]
+                                                        ?.DropDownData?.[control.dropdowndata.indexFour])" (keydown)="$event.stopPropagation()" />
+                                                            <button matSuffix mat-icon-button>
+                                                                <mat-icon class="material-icons-outlined">search</mat-icon>
+                                                            </button>
+                                                        </mat-form-field>
+                                                    </div>
+                                        
+                                                    <!-- Virtual scroll -->
+                                                    <cdk-virtual-scroll-viewport *ngIf="(
+                                                  control?.dropdowndata?.[control.dropdowndata.index]
+                                                    ?.DropDownData?.[control.dropdowndata.indexOne]
+                                                    ?.DropDownData?.[control.dropdowndata.indexTwo]
+                                                    ?.DropDownData?.[control.dropdowndata.indexThree]
+                                                    ?.DropDownData?.[control.dropdowndata.indexFour]
+                                                    ?.DropDownData?.length > 10
+                                                )" itemSize="10" [ngStyle]="{'height': '200px'}">
+                                                        <mat-option [value]="item.Value" *cdkVirtualFor="let item of control?.dropdowndata?.[control.dropdowndata.index]
+                                                    ?.DropDownData?.[control.dropdowndata.indexOne]
+                                                    ?.DropDownData?.[control.dropdowndata.indexTwo]
+                                                    ?.DropDownData?.[control.dropdowndata.indexThree]
+                                                    ?.DropDownData?.[control.dropdowndata.indexFour]
+                                                    ?.DropDownData">
+                                                            {{ item.Value }}
+                                                        </mat-option>
+                                                    </cdk-virtual-scroll-viewport>
+                                        
+                                                    <!-- Standard list -->
+                                                    <ng-container *ngIf="(
+                                                control?.dropdowndata?.[control.dropdowndata.index]
+                                                  ?.DropDownData?.[control.dropdowndata.indexOne]
+                                                  ?.DropDownData?.[control.dropdowndata.indexTwo]
+                                                  ?.DropDownData?.[control.dropdowndata.indexThree]
+                                                  ?.DropDownData?.[control.dropdowndata.indexFour]
+                                                  ?.DropDownData?.length <= 10
+                                              )">
+                                                        <mat-option [value]="item.Value" *ngFor="let item of control?.dropdowndata?.[control.dropdowndata.index]
+                                                    ?.DropDownData?.[control.dropdowndata.indexOne]
+                                                    ?.DropDownData?.[control.dropdowndata.indexTwo]
+                                                    ?.DropDownData?.[control.dropdowndata.indexThree]
+                                                    ?.DropDownData?.[control.dropdowndata.indexFour]
+                                                    ?.DropDownData">
+                                                            <span *ngIf="item.Value.length <= 27">{{ item.Value }}</span>
+                                                            <span *ngIf="item.Value.length > 27" matTooltip="{{ item.Value }}" matTooltipPosition="above"
+                                                                matTooltipClass="custom__tooltip-normal">
+                                                                {{ item.Value.substring(0, 27) + '...' }}
+                                                            </span>
+                                                        </mat-option>
+                                                    </ng-container>
+                                        
+                                                    <!-- No record found -->
+                                                    <mat-option *ngIf="(
+                                                control?.dropdowndata?.[control.dropdowndata.index]
+                                                  ?.DropDownData?.[control.dropdowndata.indexOne]
+                                                  ?.DropDownData?.[control.dropdowndata.indexTwo]
+                                                  ?.DropDownData?.[control.dropdowndata.indexThree]
+                                                  ?.DropDownData?.[control.dropdowndata.indexFour]
+                                                  ?.DropDownData?.length == 0
+                                              )">
+                                                                {{'No-Record-Found' | translate}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </ng-container>
+                                        <!-- </div> -->
+                                    </ng-container>
+                                        <mat-form-field class="material__select arrow material__select--adaptive h-55 previewMenu__push--item mr-10"
+                                            appearance="outline" *ngIf="control.type =='dynamicdropdown' && !control?.hideField"
+                                            [ngClass]="{'error-red':  errorMesArr.includes(control?.label),'element__disable':control?.isDisableField, 'small_font-size' : !defaultLayout}">
+                                        
+                                            <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ control.label | titlecase}} <span
+                                                    class="colored__red" *ngIf="control.isRequired">*</span></mat-label>
+                                            <mat-select [matTooltip]="control?.label?.length>26 ? control?.label : ''" matTooltipPosition="above"
+                                                matTooltipClass="custom__tooltip-normal" (selectionChange)="resetDependantFields(control,mainObj?.fields)"
+                                                [compareWith]="compareValuesParams" [(value)]="control.value"
+                                                (openedChange)="onDynamicDropdownPanel($event,control,mainObj?.fields)">
+                                                <!-- Optional: disable interaction while loading -->
+                                                <mat-option *ngIf="!control.isDataLoaded && control.dropdowndata?.length==0" disabled>Loading...</mat-option>
+                                        
+                                                <div *ngIf="control?.searchDropDown?.length>10"
+                                                    class="search account-profile__brandsearchinput pb-5 px-1 position-sticky z-index-1 bg__white">
+                                                    <mat-form-field appearance="outline" class="material__select w-300 p-0">
+                                                        <input #searchTextboxControl (keyup)="searchDynamicDropdown(searchTextboxControl?.value,control)"
+                                                            (keydown)="_handleKeydown($event)" autocomplete="off" placeholder="Search" aria-label="Search"
+                                                            matInput (keydown)="$event.stopPropagation()" [ngClass]="{'small_font-size' : !defaultLayout}" />
+                                                        <button matSuffix mat-icon-button>
+                                                            <mat-icon class="material-icons-outlined">search</mat-icon>
+                                                        </button>
+                                                    </mat-form-field>
+                                                </div>
+                                                <mat-option [value]="" *ngIf="control.dropdowndata?.length>0 && !control.loading && control.isDataLoaded">Select
+                                                    Field
+                                                </mat-option>
+                                                <!-- <div class="px-12 pb-5">
+                                                                                                                                                            <mat-form-field appearance="outline" class="
+                                                                                                                                                                                                                                outline--none
+                                                                                                                                                                                                                                material__select material__select--infix material__select--adaptive
+                                                                                                                                                                                                                                pt-10
+                                                                                                                                                                                                                                h-54
+                                                                                                                                                                                                                            ">
+                                                                                                                                                                <input #searchTextboxControl (keyup)="showNoRecordFoundOnSearch(searchTextboxControl?.value,control)"
+                                                                                                                                                                    (keydown)="_handleKeydown($event)" autocomplete="off" placeholder="Search" aria-label="Search" matInput
+                                                                                                                                                                    (keydown)="$event.stopPropagation()" />
+                                                                                                                                                                <mat-icon class="tree-search">search</mat-icon>
+                                                                                                                                                            </mat-form-field>
+                                                                                                                                                        </div> -->
+                                                <mat-option [value]="item" [ngClass]="{'small_font-size h-30' : !defaultLayout}"
+                                                    *ngFor="let item of control.dropdowndata;trackBy:trackByName;let i=index;">
+                                                    <span *ngIf="item.value.length<=27">{{item.value
+                                                        }}</span>
+                                                    <span matTooltip={{item.value}} matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+                                                        *ngIf="item.value.length>27">{{item?.value?.substring(0,27) + '...'
+                                                        }}</span>
+                                                </mat-option>
+                                                <mat-option *ngIf="control.dropdowndata?.length==0 && !control.loading && control.isDataLoaded">No Record
+                                                    Found</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </ng-container>
+                                                                        </ng-container>
+
+                                                                        <div *ngIf="conversationDetails" class="conversation">
+                                                                            <mat-form-field appearance="outline" class="material__select material__select--adaptive "
+                                                                                style="opacity: 0.8; pointer-events: inherit!important;" [ngClass]="{'small_font-size' : !defaultLayout}">
+                                                                                <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">Conversation Details</mat-label>
+                                                                                <textarea matInput [ngModelOptions]="{ standalone: true }" [(ngModel)]="conversationDetails.fieldData"
+                                                                                    class="mt-10" [ngClass]="{'small_font-size' : !defaultLayout}"></textarea>
+                                                                            </mat-form-field>
+                                                                        </div>
+                                    <div class="conversation">
+                                        <mat-form-field appearance="outline" class="material__select material__select--adaptive element__disable"
+                                            style="opacity: 0.8; pointer-events: inherit!important;" [ngClass]="{'small_font-size' : !defaultLayout}">
+                                            <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{'Conversation-Log' | translate}}</mat-label>
+                                            <textarea matInput [value]="ConversationLog" readonly class="mt-10" [ngClass]="{'small_font-size' : !defaultLayout}"></textarea>
+                                        </mat-form-field>
+                                    </div>
+                                    <ng-container *ngIf="formAttachmentObj">
+                                        <a *ngIf="!srID" class="textarea-featured__foot--icon text__regular--sm " [ngClass]="{'mb-12': selectedNoteMedia?.length==0}" href="javascript:void(0)"
+                                            (click)="$event.stopPropagation();$event.preventDefault();openMediaDialog();">
+                                            <mat-icon fontSet="material-icons-outlined custom__icon--md">insert_photo</mat-icon>
+                                            <span>{{'Attach-Media' | translate}}</span>
+                                            <span *ngIf="selectedNoteMedia.length > 0">({{ selectedNoteMedia.length }})</span>
+                                        </a>
+                                        <span *ngIf="srID" class="text__title">{{'Attachment' | translate}}</span>
+                                        <div *ngIf="selectedNoteMedia?.length>0"
+                                            class="textarea-featured__foot--item--media pt-10 note-elem__attach mb-12">
+                                            <ng-container *ngFor="let ugc of selectedNoteMedia;index as i">
+                                                <span *ngIf="ugc.mediaType == 2" matTooltip="{{ugc?.displayFileName}}"
+                                                    class="textarea-featured__foot--item--icon w-70 h-60">
+                                                    <img  class="media__img--icon" [src]="ugc.mediaPath" alt="" />
+                                                    <span class="item__overlay">
+                                                        <mat-icon class="delete__img--icon" *ngIf="!srID"
+                                                            (click)="$event.stopPropagation();$event.preventDefault();removeSelectedNoteMedia(ugc)">delete_outline</mat-icon>
+                                                    </span>
+                                                </span>
+                                                <span *ngIf="ugc.mediaType == 3" matTooltip="{{ugc?.displayFileName}}"
+                                                    class="textarea-featured__foot--item--icon w-70 h-60">
+                                                    <video  class="media__img--icon">
+                                                        <source [src]="ugc.mediaPath" data-autoplay="false" type="video/m4v" />
+                                                        <source [src]="ugc.mediaPath" data-autoplay="false" type="video/mp4" />
+                                                        <source [src]="ugc.mediaPath" data-autoplay="false" type="video/mpeg" />
+                                                        <source [src]="ugc.mediaPath" data-autoplay="false" type="video/x-msvideo" />
+                                                        <source [src]="ugc.mediaPath" data-autoplay="false" type="video/x-ms-wmv" />
+                                                        <source [src]="ugc.mediaPath" data-autoplay="false" type="video/avi" />
+                                                    </video>
+                                                    <span class="item__overlay--video">
+                                                        <mat-icon class="delete__img--icon" *ngIf="!srID"
+                                                            (click)="$event.stopPropagation();$event.preventDefault();removeSelectedNoteMedia(ugc)">delete_outline</mat-icon>
+                                                        <mat-icon class="play__img--icon">play_circle_outline</mat-icon>
+                                                    </span>
+                                                </span>
+                                                <span matTooltip="{{ugc?.displayFileName}}"
+                                                    *ngIf="ugc.mediaType == mediaTypeEnum.PDF || ugc.mediaType == mediaTypeEnum.DOC || ugc.mediaType == mediaTypeEnum.EXCEL"
+                                                    class="textarea-featured__foot--item--icon w-70 h-60">
+                                                    <img  src="assets/images/account/pdf__icon.svg" style="object-fit: cover"
+                                                        *ngIf="ugc.mediaType == mediaTypeEnum.PDF" class="media__img--icon">
+                                                    <img  src="assets/images/account/doc__icon.svg" style="object-fit: cover"
+                                                        *ngIf="ugc.mediaType == mediaTypeEnum.DOC" class="media__img--icon">
+                                                    <img  src="assets/images/account/excl__icon.svg" style="object-fit: cover"
+                                                        *ngIf="ugc.mediaType == mediaTypeEnum.EXCEL" class="media__img--icon">
+                                                    <span class="item__overlay">
+                                                        <mat-icon class="delete__img--icon" *ngIf="!srID"
+                                                            (click)="$event.stopPropagation();$event.preventDefault();removeSelectedNoteMedia(ugc)">delete_outline</mat-icon>
+                                                    </span>
+                                                </span>
+                                            </ng-container>
+                                            <span class="textarea-featured__foot--item--icon block-center cursor-pointer w-70 h-60"
+                                                *ngIf="selectedNoteMedia.length > 0 && !srID"
+                                                (click)="$event.stopPropagation();$event.preventDefault();openMediaDialog();">
+                                                <mat-icon fontSet="material-icons-outlined" class="colored__locobuzz">add</mat-icon>
+                                            </span>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class="modal__foot pb-0">
+                                    <p *ngIf="reTryApiCallShow" [ngClass]="{'small_font-size' : !defaultLayout}"><mat-icon class="mr-5 colored__red--dark">warning</mat-icon>{{ErrorMessageAfterWebhook | titlecase}}</p>
+                                    <button mat-stroked-button class="textarea-featured__foot--item ml-auto mr-15"
+                                        [mat-dialog-close]="true" color="accent" [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout}">
+                                        {{'Cancel' | translate}}
+                                    </button>
+                                    <button mat-flat-button color="accent" (click)="SaveManaulpushCRMData()" [ngClass]="{'element__disable': timerButtonShow, 'small_font-size h-25 px-5' : !defaultLayout}" *ngIf="!timerButtonShow">
+                                        {{reTryApiCallShow?'Try Again':'Submit'}}
+                                    </button>
+                                    <button mat-flat-button color="accent" class="w-80" *ngIf="timerButtonShow">
+                                        <span class="timeload">{{counter}}</span>
+                                        <div class="loader-ring">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </button>
+                                    <!-- <button mat-flat-button color="accent" (click)="reTryApiCall()" *ngIf="reTryApiCallShow">
+                                                    Try Agian
+                                                </button> -->
+                                </div>
+                            </form>
+                        </mat-tab>
+                        <!-- <mat-tab label="CRM Updates">
+                                        <div class="previewMenu__updates">
+                                            <div class="previewMenu__updates--left border-right__light-grey">
+                                                <div class="head">Timeline</div>
+                                                <div class="body">
+                                                    <div class="body__item border-bottom__light-grey">
+                                                        <p class="colored__grey">Today</p>
+                                                        <div class="body__item--details">
+                                                            <div class="profile">
+                                                                <img src="assets/images/account/facebook.svg">
+                                                            </div>
+                                                            <span class="font-weight-600 mr-3">John Doe</span>
+                                                            <span class="text__light">responded on a agent message</span>
+                                                        </div>
+                                                        <div class="body__item--time">
+                                                            <mat-icon fontSet="material-icons-outlined" class="colored__grey s-16">
+                                                                schedule
+                                                            </mat-icon>
+                                                            <span class="ml-5 font-weight-500">12 Jul 2023, 12:30 PM</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="previewMenu__updates--right">
+                                                <div class="list-item border-bottom__light-grey">
+                                                    <div class="list-item__head">
+                                                        <span class="font-weight-600">Customer View</span>
+                                                        <mat-icon fontSet="material-icons-outlined"
+                                                            class="s-22 colored__red--dark cursor-pointer">
+                                                            delete
+                                                        </mat-icon>
+                                                    </div>
+                                                    <div class="list-item__fields">
+                                                        <div class="list-item__fields--name">
+                                                            <span>Account Name</span>
+                                                            <span>:</span>
+                                                        </div>
+                                                        <div class="list-item__fields--details">
+                                                            NA
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal__foot">
+                                            <button mat-stroked-button class="textarea-featured__foot--item ml-auto mr-15" color="accent">
+                                                Cancel
+                                            </button>
+                                            <button mat-flat-button color="accent">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </mat-tab> -->
+                    </mat-tab-group>
+                </div>
+            </div>
+        </div>
+    
+    <!-- </mat-menu> -->
+</div>
+<!-- <div class="modal__foot">
+    <p>
+        <mat-icon class="colored__yellow--dark s-20" fontSet="material-icons-outlined">info</mat-icon>
+        Ticket will update based on selected information.
+    </p>
+    <button class="ml-auto" mat-flat-button color="accent">
+        Update Details
+    </button>
+</div> -->

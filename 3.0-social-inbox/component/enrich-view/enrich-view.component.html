@@ -1,0 +1,73 @@
+<ng-container *ngIf="!sfdcTicketView">
+  <div class="modal modal__grouped enrich">
+    <div class="modal__grouped--item enrich__profile dynamic-crm__none">
+      <div class="modal__head arbic-enrichView">
+        <h3 class="modal__title font-semibold d-flex-items-center">
+          <a href="javascript:void(0)" mat-dialog-close>
+            <mat-icon class="mr-8" [ngClass]="{'small-icon-font-size' : !defaultLayout}">arrow_back</mat-icon>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'User-Enrich-View' | translate }}</span>
+          </a>
+        </h3>
+      </div>
+      <div class="modal__body" style="overflow: scroll">
+        <app-post-userprofile [showActions]="false" (setLoader)="getData($event)"></app-post-userprofile>
+        <app-component-loader
+      [loaderType]="loaderTypeEnum.profile"
+      *ngIf="showLoader"
+    ></app-component-loader>
+      </div>
+    </div>
+    <div class="modal__grouped--item enrich__overview dynamic-crm__enrich">
+      <ng-container *ngIf="!sfdcTicketView">
+      <div class="modal__head">
+        <h3 class="modal__title font-semibold" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'User-Overview' | translate }}</h3>
+        <span class="modal__action responsive__close--icon">
+          <mat-icon fontSet="material-icons-outlined" [ngClass]="{'small-icon-font-size' : !defaultLayout}" [mat-dialog-close]="false">close</mat-icon>
+        </span>
+      </div>
+      </ng-container>
+      <div class="modal__body">
+        <app-user-overview (setLoader)="getOverviewLoading($event)"></app-user-overview>
+        <app-component-loader class="mt-80"
+        *ngIf="showLoader"
+        [loaderType]="loaderTypeEnum.statsWithChart"
+          [statCountInRow]="3"
+          [statCountTotal]="6"
+        ></app-component-loader>
+      </div>
+    </div>
+    <div class="modal__grouped--item enrich__activities dynamic-crm__none">
+      <ng-container *ngIf="!sfdcTicketView">
+      <div class="modal__head">
+        <h3 class="modal__title font-semibold" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'User-Activities' | translate }}</h3>
+      </div>
+      </ng-container>
+      <div class="modal__body">
+        <app-user-activities></app-user-activities>
+      </div>
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngIf="sfdcTicketView">
+  <div class="modal modal__grouped enrich">
+    <div class="sfdc__close">
+        <mat-icon fontSet="material-icons-outlined" [mat-dialog-close]="false">close</mat-icon>
+    </div>
+    <mat-tab-group dynamicHeight class="sfdc__tab w-100-p">
+      <mat-tab class="sfdc__enrich--tab active" label="{{ 'User-Overview' | translate }}">
+          <div class="modal__grouped--item enrich__overview dynamic-crm__enrich">
+            <div class="modal__body">
+              <app-user-overview (setLoader)="getOverviewLoading($event)"></app-user-overview>
+            </div>
+          </div>
+      </mat-tab>
+      <mat-tab class="sfdc__enrich--tab" label="{{ 'User-Activities' | translate }}">
+          <div class="modal__grouped--item enrich__activities" style="max-width:100%">
+            <div class="modal__body">
+              <app-user-activities></app-user-activities>
+            </div>
+          </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</ng-container>

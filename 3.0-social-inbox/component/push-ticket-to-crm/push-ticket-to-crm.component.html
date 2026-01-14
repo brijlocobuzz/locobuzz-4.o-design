@@ -1,0 +1,302 @@
+<div class="modal__head">
+    <!-- <mat-icon fontSet="material-icons-outlined" [mat-dialog-close]="true" class="mr-10 cursor-pointer">arrow_back
+    </mat-icon> -->
+    <h3 class="modal__title">{{'Push-Ticket-To-CRM' | translate}}</h3>
+    <mat-icon fontSet="material-icons-outlined" [mat-dialog-close]="false" class="ml-auto cursor-pointer">
+        close</mat-icon>
+</div>
+<div class="modal__body">
+    <!-- <mat-menu #previewMenu="matMenu" class="mt-5 w-800" (click)="$event.stopPropagation()"> -->
+    <!-- //working for vagis for css changes  -->
+    <div class="sr__create">
+        <div class="sr__create__summary">
+            <app-post-userprofile [showActions]="false"></app-post-userprofile>
+        </div>
+        <div class="sr__create__options scroll">
+            <ng-container>
+            <div class="previewMenu" (click)="$event.stopPropagation()">
+                <div *ngIf="lookUpField?.length>0" class="stepper mb-6">
+                    <div class="stepper__wrapper">
+                        <div class="stepper__wrapper--list " [ngClass]="{'active':step==1}">
+                            <div class="step-counter" [ngClass]="{'bg__locobuzz colored__white': step==2}" [ngStyle]="{'border-color' : step==2 ? 'var(--color-locobuzz)' : ''}"> 1</div> <!--  bg__locobuzz colored__white  -->
+                            <div class="step-name text__title--fontxl colored__locobuzz" >{{'Search-in-CRM' | translate}}</div>
+                        </div>
+                        <div class="stepper__wrapper--list " [ngClass]="{'active':step==2}" > <!--  active  -->
+                            <div class="step-counter"> 2 </div>
+                            <div class="step-name text__title--fontxl " [ngClass]="{' colored__locobuzz':step==2}">{{'Create-Case' | translate}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                    <div *ngIf="step==2 && selectedcrmObj && lookUpFieldFlag" class="ref-strip mt-20">
+                        <mat-icon class="colored__yellow--dark s-22">refresh</mat-icon>
+                        <span>{{'Creating-new-case-with-customer-id' | translate}}: {{selectedcrmObj?.crmValue}}</span>
+                    </div>
+
+                <ng-container *ngIf="step==1">
+                    <div class="pt-10 ml-12">
+                        <ng-container *ngFor="let item of lookUpField">
+<mat-form-field class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber" appearance="outline">
+    <mat-label>{{item.locobuzzDisplayName}}</mat-label>
+    <input #inputRef type="text" matInput [(ngModel)]="item.locobuzzValue"  (keyup.enter)="!searchLoader?searchExitingAccount(inputRef.value,item):''"/>
+    <mat-icon matSuffix (click)="!searchLoader?searchExitingAccount(inputRef.value,item):''" fontSet="material-icons-outlined">search</mat-icon>
+</mat-form-field>
+</ng-container>
+</div>
+        <!-- <button (click)="step=2;selectedcrmObj=null"  mat-stroked-button type="button"
+            class="ml-auto colored__locobuzz" color="accent">
+            Skip
+        </button> -->
+        <mat-divider></mat-divider>
+        <div class="d-flex-items-center g-10 px-15 my-10">
+            <span class="d-flex g-10">
+                <img src="assets/images/account/info-button-grey.svg" class="w-15 h-15 mt-5 cursor-pointer">{{'You-can-skip-this-search-step-and-proceed-directly-to-creating-a-new-case' | translate}}
+            </span>
+            <button *ngIf="accountDetailsUIRenderList?.length == 0 && !searchLoader && step==1" type="button" class="ml-auto d-flex-items-center p-10 min-width-auto" mat-flat-button color="accent" (click)="step=2;selectedcrmObj=null">
+                <p class="colored__white">{{'Proceed-with-new-contact' | translate}}</p>
+            </button>
+                <span (click)="step=2;selectedcrmObj=null" *ngIf="accountDetailsUIRenderList?.length > 0 && !searchLoader && step==1"  class="colored__locobuzz font-size-12 ml-auto no-wrap cursor-pointer">
+                    <mat-icon class="s-22 mr-4">add</mat-icon>
+                    <span>{{'Proceed-with-new-contact' | translate}}</span>
+                </span>
+        </div>
+<div class="mx-12">
+    <app-component-loader *ngIf="searchLoader" class="lookup-detail__loader px-12" [postCountTotal]="1"
+        [loaderType]="loaderTypeEnum.box"></app-component-loader>
+    <div class="d-flex" *ngIf="accountDetailsUIRenderList?.length>0 && !searchLoader && step==1">
+    
+        <div class="lookup-detail__block no-bg p-0 ml-0 mr-0 w-100-p">
+            <mat-accordion class="accordian_headers" #accordion="matAccordion" [multi]="true"
+                *ngFor="let item of accountDetailsUIRenderList;let i=index">
+                <mat-expansion-panel class="mb-12" [expanded]="i==0?true:false">
+                    <mat-expansion-panel-header class="filter__accordian--header" [collapsedHeight]="'50px'"
+                        [expandedHeight]="'50px'">
+                        <mat-panel-title>
+                            <div class="lookup-detail__expandable">
+                                <p class="title">{{'Customer-Details' | translate}}</p>
+                                <span class="detail mr-10">{{'Customer-ID' | translate}}
+                                    :<span class="colored__locobuzz">{{item?.Id}}</span></span>
+                            </div>
+        
+                            <button (click)="createNewCase(item)" type="button"
+                                class="ml-auto d-flex-items-center p-10 min-width-auto" mat-flat-button color="accent"
+                                >
+                                <p class="colored__white">{{'Create-case-for-this-contact' | translate}}</p>
+                            </button>
+
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+    
+                    <div class="filter__accordian--body">
+                        <div class="filter__accordian--group pb-12 pr-12 pl-12">
+                            <ul class="lookup-detail__list">
+                                <li class="lookup-detail__list--li nonTree" *ngFor="let ele of item?.list">
+                                    <div class="lookup-detail__list--block nonTree-block">
+                                        <span class="title"> {{ ele.crmFieldName }}</span> <ng-container>:</ng-container>
+                                        <span class="name">{{
+                                            ele.crmValue }}</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+    </div>
+    <div class="noData block-center mt-150" *ngIf="accountDetailsUIRenderList?.length==0 && !searchLoader && step==1 && searchApiCalled">
+        <mat-icon>error_outline</mat-icon>
+        <p style="font-size: 30px">{{'No-data-found' | translate}}</p>
+    </div>
+</div>
+
+
+
+                </ng-container>
+
+                <ng-container *ngIf="step==2">
+                    <mat-tab-group [selectedIndex]="selectedTabIndex" [formGroup]="formFieldGroup">
+                        <mat-tab [label]=getLableName(arrayKey) *ngFor="let arrayKey of Object.keys(formFields)">
+                        <div [ngClass]="{'pointer-none': editFlag || (selectedcrmObj?.crmValue && arrayKey =='accountMapping')}" [formArrayName]="arrayKey">
+                            <div class="previewMenu__body pt-10" style="max-height: fit-content;min-height: fit-content; margin-bottom: 2rem;">
+                                <ng-container *ngFor="let newField of getFormArray(arrayKey); let i = index" [formGroupName]="i">
+                                    <!-- Only show fields that don't belong to any group (groupId: 0) -->
+                                    <ng-container *ngIf="!isFieldBelongsToAnyGroup(newField.get('locobuzzFieldName').value, newField.get('locobuzzFieldDataType').value, arrayKey)">
+                                    <mat-form-field [ngClass]="{'element__disable': newField.get('isNonEditable').value}" appearance="outline" class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber" *ngIf="((newField.get('locobuzzFieldDataType').value=='String' && newField.get('locobuzzFieldName').value!='CaseCategorization') || newField.get('locobuzzFieldDataType').value=='reference' || newField.get('locobuzzFieldDataType').value=='EmailId' || newField.get('locobuzzFieldDataType').value=='AlphaNumeric') || ((newField.get('locobuzzFieldDataType').value=='String' && newField.get('locobuzzFieldName').value!='CaseCategorization') || newField.get('locobuzzFieldDataType').value=='reference' || newField.get('locobuzzFieldDataType').value=='EmailId')">
+                                        <mat-label>{{newField.get('locobuzzDisplayName').value}}</mat-label>
+                                        <input #inputRef type="text" formControlName="locobuzzValue" matInput />
+                                    </mat-form-field>
+                                    <mat-form-field  [matTooltip]="newField.get('locobuzzValue').value" matTooltipPosition="above" matTooltipClass="custom-tooltip" [ngClass]="{'element__disable': newField.get('isNonEditable').value}" appearance="outline"
+                                        class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber"
+                                        *ngIf="(newField.get('locobuzzFieldName').value=='CaseCategorization')">
+                                        <mat-label>{{newField.get('locobuzzDisplayName').value}}</mat-label>
+                                        <input (click)="openCategoryDialog('ticketCategory')" #inputRef type="text" readonly formControlName="locobuzzValue" matInput />
+                                    </mat-form-field>
+                                    <mat-form-field [ngClass]="{'element__disable': newField.get('isNonEditable').value}" appearance="outline"
+                                        class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber"
+                                        *ngIf="(newField.get('locobuzzFieldDataType').value=='Integer' || newField.get('locobuzzFieldDataType').value=='ContactNumber')">
+                                        <mat-label>{{newField.get('locobuzzDisplayName').value}}</mat-label>
+                                        <input #inputRef type="text" appOnlyNumber [maxlength]="12" formControlName="locobuzzValue" matInput />
+                                    </mat-form-field>
+                                    <mat-form-field [ngClass]="{'element__disable': newField.get('isNonEditable').value}" *ngIf="newField.get('locobuzzFieldDataType').value=='Date' || newField.get('locobuzzFieldDataType').value=='Date'" appearance="outline"
+                                        class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber">
+                                        <mat-label
+                                            class="num-label text-capitalize">{{(newField.get('locobuzzDisplayName').value)?newField.get('LocobuzzDisplayName').value:newField.get('locobuzzDisplayName').value}}</mat-label>
+                                        <input type="text" #scheduleDateTime matInput ngxDaterangepickerMd [autoApply]="true" [closeOnAutoApply]="true"
+                                            [singleDatePicker]="true" [timePicker]="true" autocomplete="off" readonly [showClearButton]="true" />
+                                        <mat-icon class="ngx-daterangepicker-action border-radius-50 cursor-pointer" matSuffix
+                                            (click)="scheduleDateTime?.click()">
+                                            date_range
+                                        </mat-icon>
+                                    
+                                    </mat-form-field>
+                                    <mat-form-field [ngClass]="{'element__disable': newField.get('isNonEditable').value || newField.get('locobuzzDropdownDataUI').value?.length==0}" *ngIf="newField.get('locobuzzFieldDataType').value=='DropDown'"
+                                        class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber" appearance="outline">
+                                        <mat-label>{{(newField.get('locobuzzDisplayName'))?newField.get('locobuzzDisplayName').value:newField.get('locobuzzDisplayName').value}}
+                                                </mat-label>
+                                        <mat-select formControlName="locobuzzValue">
+                                            <div class="sticky-top sticky-top__ticketbrand p-10 pb-0">
+                                                <mat-form-field color="accent" class="material__input h-50 input-dark" appearance="outline">
+                                                    <mat-label>{{'Search' | translate}}</mat-label>
+                                                    <input matInput placeholder="Search..." #searchRef>
+                                                    <mat-icon matSuffix fontSet="material-icons-outlined">search</mat-icon>
+                                                </mat-form-field>
+                                            </div>
+                                            <mat-option (click)="dropDownEvent(item)" [ngClass]="{'hidden-option':((item?.Value)?.toLowerCase().toString().indexOf(searchRef.value.toLowerCase())==-1 && searchRef.value)}" *ngFor="let item of newField.get('locobuzzDropdownDataUI').value"  [value]="item.Value"> {{(item.Value)?item.Value:item.Value}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    </ng-container>
+                                </ng-container>
+
+                                <ng-container *ngFor="let group of arrayKey =='caseMapping'?caseDatafieldsGroups:arrayKey=='accountMapping'?contactDatafieldsGroups:[]">
+                                    <div class="d-flex-items-center mb-5 pt-10 border-top__light-grey">
+                                        <mat-icon [ngStyle]="{'color': group?.color}" class="d-flex-items-center font-size-18 justify-content__center">fiber_manual_record</mat-icon>
+                                        <p class="font-weight-600">{{group?.name}}</p>
+                                        ({{'Any' | translate}} {{group?.mandatoryFields=='0'?group?.fields?.length:group?.mandatoryFields==''?0:group?.mandatoryFields}} {{'out-of-the' | translate}} {{group?.fields?.length}} {{(group?.mandatoryFields=='0'?group?.fields?.length:group?.mandatoryFields==''?0:group?.mandatoryFields) == 1 ? ('field-is-mandatory' | translate) : ('fields-are-mandatory' | translate)}})
+                                        <!-- <p class="mx-5">(1 out of 4 mandatory fields)</p> -->
+                                    </div>
+                                    <ng-container *ngFor="let newField of getFormArray(arrayKey); let j = index"
+                                        [formGroupName]="j">
+                                        <ng-container *ngIf="isFieldInGroup(group?.fields, newField.get('locobuzzFieldName').value, newField.get('locobuzzFieldDataType').value)">
+                                        <mat-form-field [ngClass]="{'element__disable': newField.get('isNonEditable').value}" appearance="outline"
+                                            class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber"
+                                            *ngIf="((newField.get('locobuzzFieldDataType').value=='String' && newField.get('locobuzzFieldName').value!='CaseCategorization') || newField.get('locobuzzFieldDataType').value=='reference' || newField.get('locobuzzFieldDataType').value=='EmailId' || newField.get('locobuzzFieldDataType').value=='AlphaNumeric') || ((newField.get('locobuzzFieldDataType').value=='String' && newField.get('locobuzzFieldName').value!='CaseCategorization') || newField.get('locobuzzFieldDataType').value=='reference' || newField.get('locobuzzFieldDataType').value=='EmailId')">
+                                            <mat-label>{{newField.get('locobuzzDisplayName').value}}</mat-label>
+                                            <input #inputRef type="text" formControlName="locobuzzValue" matInput />
+                                        </mat-form-field>
+                                        <mat-form-field [matTooltip]="newField.get('locobuzzValue').value" matTooltipPosition="above"
+                                            matTooltipClass="custom-tooltip" [ngClass]="{'element__disable': newField.get('isNonEditable').value}"
+                                            appearance="outline" class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber"
+                                            *ngIf="(newField.get('locobuzzFieldName').value=='CaseCategorization')">
+                                            <mat-label>{{newField.get('locobuzzDisplayName').value}}</mat-label>
+                                            <input (click)="openCategoryDialog('ticketCategory')" #inputRef type="text" readonly
+                                                formControlName="locobuzzValue" matInput />
+                                        </mat-form-field>
+                                        <mat-form-field [ngClass]="{'element__disable': newField.get('isNonEditable').value}" appearance="outline"
+                                            class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber"
+                                            *ngIf="(newField.get('locobuzzFieldDataType').value=='Integer' || newField.get('locobuzzFieldDataType').value=='ContactNumber')">
+                                            <mat-label>{{newField.get('locobuzzDisplayName').value}}</mat-label>
+                                            <input #inputRef type="text" appOnlyNumber [maxlength]="12" formControlName="locobuzzValue" matInput />
+                                        </mat-form-field>
+                                        <mat-form-field [ngClass]="{'element__disable': newField.get('isNonEditable').value}"
+                                            *ngIf="newField.get('locobuzzFieldDataType').value=='Date' || newField.get('locobuzzFieldDataType').value=='Date'"
+                                            appearance="outline" class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber">
+                                            <mat-label
+                                                class="num-label text-capitalize">{{(newField.get('locobuzzDisplayName').value)?newField.get('LocobuzzDisplayName').value:newField.get('locobuzzDisplayName').value}}</mat-label>
+                                            <input type="text" #scheduleDateTime matInput ngxDaterangepickerMd [autoApply]="true"
+                                                [closeOnAutoApply]="true" [singleDatePicker]="true" [timePicker]="true" autocomplete="off" readonly
+                                                [showClearButton]="true" />
+                                            <mat-icon class="ngx-daterangepicker-action border-radius-50 cursor-pointer" matSuffix
+                                                (click)="scheduleDateTime?.click()">
+                                                date_range
+                                            </mat-icon>
+                                
+                                        </mat-form-field>
+                                        <mat-form-field
+                                            [ngClass]="{'element__disable': newField.get('isNonEditable').value || newField.get('locobuzzDropdownDataUI').value?.length==0}"
+                                            *ngIf="newField.get('locobuzzFieldDataType').value=='DropDown'"
+                                            class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber" appearance="outline">
+                                            <mat-label>{{(newField.get('locobuzzDisplayName'))?newField.get('locobuzzDisplayName').value:newField.get('locobuzzDisplayName').value}}
+                                            </mat-label>
+                                            <mat-select formControlName="locobuzzValue">
+                                                <div class="sticky-top sticky-top__ticketbrand p-10 pb-0">
+                                                    <mat-form-field color="accent" class="material__input h-50 input-dark" appearance="outline">
+                                                        <mat-label>{{'Search' | translate}}</mat-label>
+                                                        <input matInput placeholder="Search..." #searchRef>
+                                                        <mat-icon matSuffix fontSet="material-icons-outlined">search</mat-icon>
+                                                    </mat-form-field>
+                                                </div>
+                                                <mat-option (click)="dropDownEvent(item)"
+                                                    [ngClass]="{'hidden-option':((item?.Value)?.toLowerCase().toString().indexOf(searchRef.value.toLowerCase())==-1 && searchRef.value)}"
+                                                    *ngFor="let item of newField.get('locobuzzDropdownDataUI').value" [value]="item.Value">
+                                                    {{(item.Value)?item.Value:item.Value}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <div [ngClass]="{'pointer-none': editFlag || (selectedcrmObj?.crmValue && arrayKey =='accountMapping')}"
+                                            *ngIf="newField.get('locobuzzFieldType').value=='IntegrationCustom'" class="mx-12">
+                                            <p class="font-weight-600">{{'Default-Fields' | translate}}</p>
+                                            <div class="previewMenu__body pt-10 px-0 element__disable"
+                                                style="max-height: fit-content;min-height: fit-content; margin-bottom: 2rem;">
+                                                <ng-container *ngFor="let newField of getFormArray(arrayKey).controls; let i = index"
+                                                    [formGroupName]="i">
+                                                    <mat-form-field
+                                                        class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber mat-form-field__white"
+                                                        appearance="outline">
+                                                        <mat-label>{{(newField.get('locobuzzDisplayName'))?newField.get('locobuzzDisplayName').value:newField.get('locobuzzDisplayName').value}}</mat-label>
+                                                        <input type="string" matInput autocomplete="off" formControlName="locobuzzValue"
+                                                            placeholder="name" />
+                                                    </mat-form-field>
+                                                </ng-container>
+                                            </div>
+                                        </div>
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <div [ngClass]="{'pointer-none': editFlag || (selectedcrmObj?.crmValue && arrayKey =='accountMapping')}" [formArrayName]="arrayKey" *ngIf="checkIntegratedCustomFieldsOrNot(arrayKey)" class="mx-12">
+                            <p class="font-weight-600">{{'Default-Fields' | translate}}</p>
+                            <div class="previewMenu__body pt-10 px-0 element__disable"
+                                style="max-height: fit-content;min-height: fit-content; margin-bottom: 2rem;">
+                                <ng-container *ngFor="let newField of getFormArray(arrayKey).controls; let i = index" [formGroupName]="i">
+                                        <mat-form-field *ngIf="newField.get('locobuzzFieldType').value=='IntegrationCustom'"
+                                            class="material__select previewMenu__push--item mr-10 account-profile__matinputnumber mat-form-field__white" appearance="outline">
+                                            <mat-label>{{(newField.get('locobuzzDisplayName'))?newField.get('locobuzzDisplayName').value:newField.get('locobuzzDisplayName').value}}</mat-label>
+                                            <input type="string" matInput autocomplete="off" formControlName="locobuzzValue" placeholder="name" />
+                                        </mat-form-field>
+                                </ng-container>
+                            </div>
+                        </div>                        
+                        </mat-tab>
+                    </mat-tab-group>
+                </ng-container>
+            </div>
+            </ng-container>
+        </div>
+    </div>
+</div>
+<div class="modal__foot px-15">
+    
+                                        <p *ngIf="reTryApiCallShow && !editFlag"><mat-icon class="mr-5 colored__red--dark">warning</mat-icon>{{ErrorMessageAfterWebhook |
+                                            titlecase}}</p>
+    <div class="ml-auto">
+        <button [mat-dialog-close]="false" mat-stroked-button color="accent">
+            {{'Cancel' | translate}}
+        </button>
+        <button *ngIf="step==2 && lookUpField?.length>0 && !editFlag" (click)="backEvent()" class="mr-12" mat-stroked-button color="accent">
+            {{'Back' | translate}}
+        </button>
+        <button *ngIf="step==2 && !timerButtonShow && !editFlag" [ngClass]="{'element__disable': timerButtonShow}" (click)="saveForm()" mat-flat-button color="accent">
+            {{reTryApiCallShow?('Try-Again' | translate):('Submit' | translate)}}
+        </button>
+        <button mat-flat-button color="accent" class="w-80" *ngIf="step==2 && timerButtonShow">
+            <span class="timeload">{{counter}}</span>
+            <div class="loader-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </button>
+    </div>    
+</div>

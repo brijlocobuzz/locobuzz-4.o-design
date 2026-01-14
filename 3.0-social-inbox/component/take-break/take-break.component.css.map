@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,SAAS,CAAC;EACR,KAAK,EAAE,cAAc;EACrB,MAAM,EAAE,IAAI;CACb",
+    "sources": [
+        "take-break.component.scss"
+    ],
+    "names": [],
+    "file": "take-break.component.css"
+}

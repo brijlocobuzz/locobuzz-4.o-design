@@ -1,0 +1,734 @@
+@use 'app/@locobuzz/scss/partials/_breakpoints.scss' as breakpoints;
+.post {
+  &__body {
+    padding: 1rem;
+    // border-radius: 0px 0px 8px 8px;
+    @include breakpoints.media-breakpoint('xs') {
+      padding-bottom: 0px;
+    }
+
+    &--data {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      position: relative; 
+      &.sideby-side{
+        flex-direction: row!important;
+        & .post{
+          &__body{
+            &--media{
+              place-content:flex-end;
+            }
+          }
+        }
+      }
+      & .verified-buyer{
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        border-radius: 1rem;
+        background: rgb(94 209 66 / 10%);
+        padding: 0.1rem 0.6rem 0.1rem 0.4rem;
+        margin-left: 0.7rem;
+        & .mat-icon{
+          color: var(--color-green-light);
+        }
+      }
+    }
+
+    &--description {
+      white-space: pre-wrap;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    &--desctwitter {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 0.7rem;
+      & .profile-twitter {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+      }
+    }
+
+    &--content {
+      &:empty {
+        display: none;
+      }
+      margin-right: 0px !important;
+      flex: 1;
+      width: 100%;
+      //max-height: 200px;
+      // min-height: 36px;
+      //overflow: auto;
+      & .messages__attachFile--carousel {
+        & .carousel button.mat-mdc-icon-button {
+          top: 50% !important;
+          box-shadow: 0px 2px 3px 0px var(--color-light-grey);
+        }
+      }
+      & .carousel {
+        &__item {
+          display: flex;
+          // padding-left: 50px;
+          // padding-right: 50px;
+        }
+        &__content {
+          flex: 1;
+          position: relative;
+          padding-top: 0 !important;
+          min-height: 150px;
+        }
+        &__button {
+          // bottom: 0px;
+          // position: absolute;
+          & button {
+            margin: 7px;
+            margin-left: 0px;
+          }
+        }
+      }
+      & .app-store {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      & .tiktok-media{
+        height: 14rem;
+        object-fit: cover;
+      }
+    }
+
+    &--email {
+      display: flex;
+      align-items: flex-start;
+
+      &:not(:last-child) {
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+      }
+    }
+
+    &--profile {
+      margin-right: 1rem;
+    }
+
+    &--info {
+      flex: 1;
+    }
+
+    &--label {
+      font-weight: 500;
+    }
+
+    &--more {
+      position: relative;
+      margin-top: 20px;
+      min-height: 30px;
+      &:before {
+        content: '';
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      &:after {
+        content: '';
+        display: block;
+      }
+
+      & > span {
+        position: absolute;
+        top: -12px;
+        width: 30px;
+        height: 30px;
+        display: inline-block;
+        text-align: center;
+        border-radius: 50%;
+        padding: 4px;
+      }
+    }
+  }
+
+  &__status {
+    font-size: 12px;
+    padding: 3px 1rem;
+    border-radius: 16px 0 0 16px;
+    margin-right: -20px;
+
+    &--new {
+      background-color: var(--color-blue);
+      color: var(--color-white);
+    }
+    &--show {
+      background-color: var(--color-light-grey);
+      color: var(--color-light-text);
+      margin-right: -12px !important;
+    }
+  }
+
+  &__alert {
+    padding: 3px 8px;
+    border-radius: 4px;
+    &--label {
+      color: var(--color-yellow-dark);
+      font-weight: 500;
+    }
+
+    &--title {
+      font-weight: 500;
+    }
+    &--attachment {
+      padding: 0.3rem 0.4rem;
+      background-color: #FFF6D2 !important;
+      font-size: 1.1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 1rem;
+      font-weight: 500;
+      & .mat-icon {
+        font-size: 1.1rem;
+        width: 1.1rem;
+        min-width: 1.1rem;
+        max-width: 1.1rem;
+        height: 1.1rem;
+        min-height: 1.1rem;
+        max-height: 1.1rem;
+      }
+      &-pdficon {
+        padding: 0.2rem 0.3rem;
+        background: var(--color-red-dark);
+        font-size: 1.2rem;
+        color: white;
+        font-weight: 400;
+        border-radius: 0.4rem;
+      }
+    }
+  }
+
+  &__stat {
+    display: flex;
+    align-items: center;
+    margin-top: 0.8rem;
+    gap: 1rem;
+    // padding: 1rem 0;
+
+    &--value {
+      display: inline-block;
+      text-decoration: underline;
+      font-style: italic;
+      margin-right: 5px;
+    }
+
+    &--item {
+      display: flex;
+      align-items: center;
+      &:not(:last-child) {
+        // margin-right: 1rem;
+      }
+      & .no-underline {
+        text-decoration: inherit;
+      }
+    }
+  }
+
+  &__note {
+    padding: 1rem;
+    border-radius: 4px;
+    & table {
+      table-layout: fixed;
+      // width: 100%;
+    }
+    &--head {
+      display: flex;
+      align-items: center;
+
+      &:last-child {
+        margin-bottom: 1rem;
+      }
+    }
+    &--body {
+      display: flex;
+      flex: 1;
+      &--info {
+        flex: 1;
+      }
+      &--action {
+        display: flex;
+      }
+    }
+
+    &--title {
+      min-width: 100%;
+      font-weight: 500;
+      margin-bottom: 0;
+    }
+    & .ssreBtn {
+      display: flex;
+      align-items: center;
+      margin-top: 12px;
+    }
+    &.emailfriendly{
+      line-height: 1.3;
+      font-size: 1.4rem;
+    }
+  }
+  &__document{
+    &--files{
+      &.files{
+        height: 10rem;
+        width: 10rem;
+        margin: 0px!important;
+        padding: 0px!important;
+        margin-top: 1rem!important;
+        position: relative;
+      }
+      &-icon{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 7rem;
+        &.img{
+          & .img{
+            width: 100%;
+            height: 100%;
+          }
+        }
+        & .img{
+          width: 3.5rem;
+        }
+      }
+      &-name{
+        display: flex;
+        align-items: center;
+        background: rgba(59, 81, 117, 0.8);
+        color: var(--color-white);
+        padding: 0.2rem 0.7rem;
+        height: 3rem;
+        & .document{
+          max-width: 10rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          height: 2rem;
+        }
+      }
+      &-attach{
+        &.attach{
+          &__wrapper{
+            flex-direction: column;
+            max-width: 100%!important;
+          }
+        }
+      }
+      &-download{
+        & .mat-icon{
+          &.icon{
+            color: var(--color-white);
+            background: hsl(219deg 81% 48% / 80%);
+            border-radius: 50%;
+          }
+        }
+      }
+    }
+  }
+}
+
+.likeUnlikeBlock--check {
+  & .mat-icon {
+    color: var(--color-light-grey) !important;
+  }
+
+  &.active .mat-icon {
+    color: var(--color-green) !important;
+  }
+}
+
+.dark__text__random {
+  font-size: 17px;
+}
+.document {
+  max-height: 100px;
+  margin-right: 10px;
+}
+
+/* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+::ng-deep .mat-slider-wrapper {
+  /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+  .mat-slider-thumb-container {
+    /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+    /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+    /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+    .mat-slider-thumb-label {
+      width: 50px;
+      height: 50px;
+      top: -62px;
+      right: -25px;
+    }
+    /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+    /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+    /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version.*/
+    .mat-slider-thumb {
+      cursor: pointer
+    }
+  }
+}
+.ellipsis{
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.messages{
+  &__attachFile {
+    padding: 0.2rem 0.5rem;
+    display: inline-block;
+    background: var(--color-white);
+    border-radius: 15px 15px 15px 15px;
+    position: relative;
+    // margin-bottom: 0.5rem;
+    margin-top: 0.2em;
+    height: fit-content;
+    &--map {
+      padding: 0.5rem;
+    }
+
+    & object {
+      width: 190px;
+      height: 150px;
+    }
+
+    & img {
+      width: 25px;
+    }
+
+    &--foot {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      height: 49px;
+      border-radius: 15px;
+
+      &--textMessage {
+        position: absolute;
+        bottom: 4px;
+        left: 9px;
+      }
+    }
+
+    &--download {
+      color: var(--color-white) !important;
+      margin-left: 0.7rem;
+    }
+
+    &--name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 135px;
+      flex: 0 0 135px;
+    }
+
+    &--audio {
+      max-width: 200px;
+      height: 3rem;
+    }
+
+    &--pdfFile {
+      background: rgb(45 62 92 / 70%);
+      color: #fff;
+      width: 100%;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      height: 43px;
+      align-items: center;
+      position: absolute;
+      bottom: 34px;
+      left: 0;
+      z-index: 1;
+      backdrop-filter: blur(9px);
+
+      & span {
+        & img {
+          width: 22px;
+          margin-right: 9px;
+          margin-left: 9px;
+        }
+      }
+
+      & .mat-icon {
+        margin-right: 10px;
+        cursor: pointer;
+        font-family: 'Material Icons Outlined';
+      }
+    }
+
+    &--file {
+      background: rgb(45 62 92 / 60%);
+      color: #fff;
+      width: 100%;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      height: 43px;
+      align-items: center;
+      margin-bottom: 0.2rem;
+      margin-top: 0.5rem;
+      overflow: hidden;
+
+      & span {
+        & img {
+          width: 22px;
+          min-width: 22px;
+          margin-right: 9px;
+          margin-left: 9px;
+        }
+      }
+
+      & .mat-icon {
+        margin-right: 10px;
+        cursor: pointer;
+        font-family: 'Material Icons Outlined';
+      }
+    }
+
+    &--audio {
+      & .audio {
+        &__slider {
+          & progress {
+            display: none;
+          }
+
+          & .slider {
+            display: flex;
+            padding: 0;
+            background: var(--color-light-grey);
+            border-radius: 30px;
+            border-color: transparent;
+            height: 5px;
+
+            &::-webkit-slider-thumb {
+              -webkit-appearance: none;
+              width: 10px;
+              height: 10px;
+            }
+          }
+        }
+      }
+    }
+
+    &--carousel {
+      display: inline-block;
+      width: 500px;
+
+      & img {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        object-fit: cover;
+      }
+    }
+  }
+}
+.title-case-text {
+  text-transform: capitalize;
+}
+.rating_wrap{
+    flex-wrap: wrap;
+    margin-left: 0.4rem;
+}
+.emoji-hover:hover{
+    transform: scale(1) !important;
+}
+.user-chat-box {
+  height: fit-content;
+  width: 100%;
+  background-color: var(--color-white);
+  padding: 0.6rem;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1607843137);
+  position: relative;
+  border-radius: 0px 15px 15px 15px;
+}
+
+.bot-prev-msg-box {
+  height: 6rem;
+  width: 100%;
+  background-color: #faf8ff;
+  border-radius: 0.5rem;
+  // margin-bottom: 0.6rem;
+}
+
+.bot-msg-box-sidebar {
+  width: 0.5rem;
+  height: 100%;
+  border-radius: 0.5rem 0 0 0.5rem;
+  background-color: #1657cb;
+  height: 6rem;
+}
+
+.isBrandPost_bg{
+  background-color: var(--color-light-text) !important;
+}
+.isBrandPost_color{
+  color: var(--color-light-text) !important;
+}
+
+
+.bot-name-tag {
+  color: var(--color-locobuzz);
+  width: fit-content;
+  position: absolute;
+  top: 1.1rem;
+  left: 1.8rem;
+  font-weight: 600;
+}
+
+.bot-name-tag_img {
+  color: var(--color-locobuzz);
+  width: fit-content;
+  // position: absolute;
+  margin-left: 8px;
+  // top: 1.1rem;
+  // left: 1.8rem;
+  font-weight: 600;
+}
+
+.bot-name-tag_img_title {
+  width: fit-content;
+  // position: absolute;
+  margin-left: 8px;
+  // margin-top: 20px;
+  font-size: 12px;
+  color: gray;
+}
+.bot-prev-msg-text {
+  // color: black;
+  width: fit-content;
+  position: absolute;
+  top: 2.8rem;
+  left: 1.8rem;
+  // font-weight: 500;
+  color: gray;
+}
+
+.reply-img-preview {
+  height: 5rem;
+  border-radius: 0.5rem;
+  display: inline-flex;
+
+  img {
+    height: 100%;
+    width: 100%;
+    border-radius: 0.5rem;
+  }
+}
+
+.reply-video-preview {
+  // width: 10.5rem;
+  border-radius: 0.5rem;
+  display: inline-flex;
+
+  img {
+    height: 100%;
+    width: 100%;
+    border-radius: 0.5rem;
+  }
+}
+
+.colored-bg-gray{
+  background-color: #e7e7e7 !important;
+}
+.colored-gray{
+  color: #696666 !important;
+}
+.dollar_icon{
+  position: relative;
+  font-size: 19px;
+  top: 3px;
+}
+
+.workflow-note-container {
+  background: linear-gradient(90deg, rgba(254, 217, 240, 1) 0%, rgba(218, 203, 242, 1) 100%);
+}
+
+.flex-direction-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-pill {
+  background-color: #faf8ff;
+  border: 0.1rem var(--color-grey) solid;
+  border-radius: 0.5rem;
+}
+
+.horizDiv{
+  display:flex;
+}
+.note-attachment{
+    background: rgb(255, 246, 210);
+    width: fit-content;
+    border-radius: 0.6rem;
+    margin-top: 1rem;
+    &__attached{
+      padding: 3px 8px;
+      padding-bottom: 0.7rem;
+    }
+  }
+.bg-number{
+    background: rgb(244 255 3 / 20%);
+    width: fit-content;
+    border-radius: 0.3rem;
+}
+.horizDiv{
+  display:flex;
+}
+
+[dir="rtl"] {
+  text-align: right !important;
+  direction: rtl !important;
+}
+
+[dir="ltr"] {
+  text-align: left !important;
+  direction: ltr !important;
+}
+.flex-full{
+  flex: 1;
+}
+
+.emoji_aligment{
+    display: flex;
+    align-items: center;
+}
+.rating-builder__nps .list {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  font-size: 1.4rem !important;
+  padding: 0 !important;
+}
+.select-nps{
+  height: 3rem !important;
+}
+
+.rating-builder__wrapper{
+   align-items: unset !important;
+   justify-content: unset !important;
+}

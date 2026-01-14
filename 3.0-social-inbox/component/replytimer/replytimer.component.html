@@ -1,0 +1,45 @@
+<ng-container
+  *ngIf="postType === PostsType.Tickets || postType === PostsType.Mentions && replyexpirydays"
+>
+  <div class="days__reply custom__tooltip--trigger"
+      matTooltip="{{'You-have-x-remaining-to-reply' | translate:{days: replyexpirydays} }}"
+      matTooltipPosition="above"
+      matTooltipClass="custom-tooltip">
+    <div class="days__reply--icon">
+      <mat-icon
+        class="post__foot--icon mr-0"
+        fontSet="material-icons-outlined"
+        aria-hidden="false"
+        aria-label="cancel"
+        >reply</mat-icon
+      >
+    </div>
+    <span class="days__reply--text">{{ replyexpirydays }} {{'remaining' | translate}}</span>
+    <!-- <div class="custom__tooltip--hover custom__tooltip--category">
+        <div class="custom__tooltip--item">
+          <span class="custom__tooltip--label">
+            <mat-icon fontSet="material-icons-outlined">reply</mat-icon
+            >Reply
+          </span>
+          <span class="custom__tooltip--value text-none colored__red--dark"
+            >You have {{ replyexpirydays }} remaining to reply
+          </span>
+        </div>
+      </div> -->
+  </div>
+</ng-container>
+
+<ng-container *ngIf="postType === PostsType.TicketHistory">
+  <span class="d-flex-items-center g-5">
+  <span class="days__reply--icon">
+    <mat-icon
+      fontSet="material-icons-outlined"
+      aria-hidden="false"
+      aria-label="cancel" class="s-18"
+      >reply</mat-icon
+    >
+  </span>
+  <span class="days__reply--text">{{showShortNote ? ('expiry-short-message' | translate:{replyexpirydays: replyexpirydays}) : ('expiry-message' | translate:{replyexpirydays: replyexpirydays}) }}</span>
+</span>
+</ng-container>
+
