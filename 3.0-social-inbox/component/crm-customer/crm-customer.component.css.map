@@ -1,9 +1,0 @@
-{
-    "version": 3,
-    "mappings": "AAAA,AAAA,cAAc,CAAC;EACb,KAAK,EAAE,eAAe;EACtB,UAAU,EAAE,eAAe;CAC5B;;AAED,AAAA,UAAU,CAAC;EACT,YAAY,EAAE,eAAe;CAC9B;;AAED,AAAA,eAAe,CAAC;EACd,UAAU,EAAE,yBAAyB,CAAC,UAAU;CACjD",
-    "sources": [
-        "crm-customer.component.scss"
-    ],
-    "names": [],
-    "file": "crm-customer.component.css"
-}

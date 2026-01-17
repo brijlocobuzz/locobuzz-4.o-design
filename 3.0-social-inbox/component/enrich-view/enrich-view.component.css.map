@@ -1,9 +1,0 @@
-{
-    "version": 3,
-    "mappings": "AACG,AAAD,iBAAW,CAAC;EACV,IAAI,EAAE,gBAAgB;CACvB;;AACA,AAAD,iBAAW,CAAC;EAEV,UAAU,EAAE,IAAI;EAChB,SAAS,EAAE,GAAG;CACf;;AACA,AAAD,mBAAa,CAAC;EAGZ,SAAS,EAAE,GAAG;CACf;;AACA,AAAD,gBAAU,CAAC;EACT,KAAK,EAAE,GAAG;EACV,SAAS,EAAE,GAAG;CACf",
-    "sources": [
-        "enrich-view.component.scss"
-    ],
-    "names": [],
-    "file": "enrich-view.component.css"
-}

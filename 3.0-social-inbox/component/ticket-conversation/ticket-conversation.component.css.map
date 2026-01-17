@@ -1,9 +1,0 @@
-{
-    "version": 3,
-    "mappings": "AAAA,AAAA,KAAK;AACL,WAAW,CAAC;EACV,KAAK,EAAE,GAAG;EACV,WAAW,EAAE,IAAI;CAClB;;AACD,AAAA,WAAW,CAAC;EACV,aAAa,EAAE,GAAG;CAQnB;;AATD,AAGE,WAHS,GAGP,SAAS,CAAC;EACV,aAAa,EAAE,GAAG;EAClB,YAAY,EAAE,IAAI;EAClB,WAAW,EAAE,IAAI;EACjB,eAAe,EAAE,SAAS;CAC3B",
-    "sources": [
-        "ticket-conversation.component.scss"
-    ],
-    "names": [],
-    "file": "ticket-conversation.component.css"
-}
