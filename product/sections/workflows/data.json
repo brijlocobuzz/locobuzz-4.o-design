@@ -1,0 +1,876 @@
+{
+  "_meta": {
+    "models": {
+      "workflows": "Automation rules that automatically route, respond to, or act on mentions, tickets, and other events based on triggers and conditions.",
+      "workflowNodes": "Individual building blocks in the visual workflow canvas - each node represents a trigger, condition, action, or delay.",
+      "nodeConnections": "Links between nodes that define the flow path, including if-else branching logic.",
+      "conditions": "Detailed logic rules that determine when a workflow should execute, including AI classifiers and attribute filters.",
+      "workflowVersions": "Historical snapshots of workflow configurations, allowing you to track changes and rollback if needed.",
+      "executionLogs": "Records of when workflows ran, which path they took, and whether they succeeded or failed.",
+      "users": "Team members who create and manage workflows.",
+      "teams": "Groups of users that workflows can assign work to."
+    },
+    "relationships": [
+      "Each Workflow has a rank (priority) - only the highest-ranked matching workflow executes",
+      "Workflows contain multiple WorkflowNodes connected by NodeConnections",
+      "Condition nodes have detailed Condition configurations with AI classifiers",
+      "Workflows have WorkflowVersions tracking all changes over time",
+      "ExecutionLogs record when Workflows ran and their outcomes",
+      "Workflows can route to Users or Teams as configured in Action nodes"
+    ]
+  },
+  "workflows": [
+    {
+      "workflowId": "wf-001",
+      "name": "Crisis Escalation - Negative Instagram",
+      "description": "Route high-priority negative mentions from Instagram to crisis management team with Slack notification",
+      "rank": 1,
+      "isActive": true,
+      "createdAt": "2024-12-10T09:00:00Z",
+      "createdBy": "user-002",
+      "updatedAt": "2025-01-15T14:30:00Z",
+      "currentVersion": 3,
+      "trigger": {
+        "event": "new_mention",
+        "channels": ["Instagram"]
+      },
+      "actions": [
+        {
+          "type": "route",
+          "description": "Route to crisis team",
+          "config": {
+            "type": "route",
+            "routingStrategy": "team_assignment",
+            "assigneeType": "team",
+            "assigneeId": "team-001"
+          }
+        },
+        {
+          "type": "notification",
+          "description": "Send Slack notification",
+          "config": {
+            "type": "notification",
+            "notificationChannel": "slack",
+            "notificationRecipients": ["#crisis-team"]
+          }
+        }
+      ],
+      "executionStats": {
+        "totalRuns": 247,
+        "successfulRuns": 232,
+        "failedRuns": 15,
+        "successRate": 94,
+        "lastExecutedAt": "2025-01-31T16:20:00Z",
+        "averageExecutionTime": 450
+      },
+      "tags": ["crisis", "instagram", "high-priority"]
+    },
+    {
+      "workflowId": "wf-002",
+      "name": "Auto-Respond FAQ Questions",
+      "description": "Automatically respond to common FAQ questions with pre-approved templates",
+      "rank": 2,
+      "isActive": true,
+      "createdAt": "2025-01-05T11:30:00Z",
+      "createdBy": "user-001",
+      "updatedAt": "2025-01-20T10:15:00Z",
+      "currentVersion": 2,
+      "trigger": {
+        "event": "new_mention"
+      },
+      "actions": [
+        {
+          "type": "auto_response",
+          "description": "Send automated FAQ response",
+          "config": {
+            "type": "auto_response",
+            "responseTemplate": "Thank you for your inquiry! Our product is available for purchase at..."
+          }
+        }
+      ],
+      "executionStats": {
+        "totalRuns": 1842,
+        "successfulRuns": 1805,
+        "failedRuns": 37,
+        "successRate": 98,
+        "lastExecutedAt": "2025-01-31T17:05:00Z",
+        "averageExecutionTime": 320
+      },
+      "tags": ["auto-response", "faq", "customer-service"]
+    },
+    {
+      "workflowId": "wf-003",
+      "name": "Round Robin Assignment - General Queries",
+      "description": "Distribute general customer queries evenly across available agents",
+      "rank": 3,
+      "isActive": true,
+      "createdAt": "2024-11-22T08:45:00Z",
+      "createdBy": "user-003",
+      "updatedAt": "2024-12-15T16:00:00Z",
+      "currentVersion": 1,
+      "trigger": {
+        "event": "new_ticket"
+      },
+      "actions": [
+        {
+          "type": "route",
+          "description": "Round robin assignment",
+          "config": {
+            "type": "route",
+            "routingStrategy": "round_robin"
+          }
+        }
+      ],
+      "executionStats": {
+        "totalRuns": 5634,
+        "successfulRuns": 5578,
+        "failedRuns": 56,
+        "successRate": 99,
+        "lastExecutedAt": "2025-01-31T17:10:00Z",
+        "averageExecutionTime": 280
+      },
+      "tags": ["routing", "round-robin", "general"]
+    },
+    {
+      "workflowId": "wf-004",
+      "name": "SLA Breach Escalation",
+      "description": "Escalate tickets to team lead when first response SLA is breached",
+      "rank": 4,
+      "isActive": true,
+      "createdAt": "2024-10-15T13:20:00Z",
+      "createdBy": "user-002",
+      "updatedAt": "2025-01-10T09:30:00Z",
+      "currentVersion": 4,
+      "trigger": {
+        "event": "sla_breach"
+      },
+      "actions": [
+        {
+          "type": "route",
+          "description": "Escalate to team lead",
+          "config": {
+            "type": "route",
+            "routingStrategy": "team_assignment",
+            "assigneeType": "user",
+            "assigneeId": "user-002"
+          }
+        },
+        {
+          "type": "notification",
+          "description": "Email notification",
+          "config": {
+            "type": "notification",
+            "notificationChannel": "email",
+            "notificationRecipients": ["teamlead@company.com"]
+          }
+        }
+      ],
+      "executionStats": {
+        "totalRuns": 89,
+        "successfulRuns": 89,
+        "failedRuns": 0,
+        "successRate": 100,
+        "lastExecutedAt": "2025-01-30T22:15:00Z",
+        "averageExecutionTime": 510
+      },
+      "tags": ["sla", "escalation", "urgent"]
+    },
+    {
+      "workflowId": "wf-005",
+      "name": "Product Review to CRM",
+      "description": "Push product reviews to Salesforce for product team analysis",
+      "rank": 5,
+      "isActive": true,
+      "createdAt": "2024-12-01T10:00:00Z",
+      "createdBy": "user-004",
+      "updatedAt": "2025-01-08T11:45:00Z",
+      "currentVersion": 2,
+      "trigger": {
+        "event": "new_mention"
+      },
+      "actions": [
+        {
+          "type": "crm_push",
+          "description": "Push to Salesforce",
+          "config": {
+            "type": "crm_push",
+            "crmEndpoint": "https://api.salesforce.com/reviews",
+            "crmFields": {
+              "type": "ProductReview",
+              "sentiment": "{{sentiment}}",
+              "content": "{{content}}"
+            }
+          }
+        }
+      ],
+      "executionStats": {
+        "totalRuns": 412,
+        "successfulRuns": 396,
+        "failedRuns": 16,
+        "successRate": 96,
+        "lastExecutedAt": "2025-01-31T15:30:00Z",
+        "averageExecutionTime": 680
+      },
+      "tags": ["crm", "product", "integration"]
+    },
+    {
+      "workflowId": "wf-006",
+      "name": "Spam Filter - Auto Hide",
+      "description": "Automatically hide spam and promotional comments",
+      "rank": null,
+      "isActive": false,
+      "createdAt": "2024-09-20T14:15:00Z",
+      "createdBy": "user-003",
+      "updatedAt": "2024-11-05T16:20:00Z",
+      "currentVersion": 1,
+      "trigger": {
+        "event": "new_mention",
+        "channels": ["Facebook", "Instagram"]
+      },
+      "actions": [
+        {
+          "type": "moderation",
+          "description": "Auto-hide spam",
+          "config": {
+            "type": "moderation",
+            "moderationAction": "hide"
+          }
+        }
+      ],
+      "executionStats": {
+        "totalRuns": 2341,
+        "successfulRuns": 2037,
+        "failedRuns": 304,
+        "successRate": 87,
+        "lastExecutedAt": "2024-11-05T18:45:00Z",
+        "averageExecutionTime": 190
+      },
+      "tags": ["moderation", "spam", "auto-hide"]
+    }
+  ],
+  "workflowNodes": [
+    {
+      "workflowId": "wf-001",
+      "nodes": [
+        {
+          "id": "node-001-trigger",
+          "type": "trigger",
+          "label": "New Mention",
+          "position": { "x": 100, "y": 200 },
+          "config": {
+            "eventType": "new_mention",
+            "channels": ["instagram"]
+          }
+        },
+        {
+          "id": "node-001-cond-1",
+          "type": "condition",
+          "label": "Is Negative Sentiment?",
+          "position": { "x": 350, "y": 200 },
+          "config": {
+            "conditionId": "cond-001"
+          }
+        },
+        {
+          "id": "node-001-cond-2",
+          "type": "condition",
+          "label": "High Follower Count?",
+          "position": { "x": 600, "y": 150 },
+          "config": {
+            "conditionId": "cond-002"
+          }
+        },
+        {
+          "id": "node-001-action-1",
+          "type": "action",
+          "label": "Route to Crisis Team",
+          "position": { "x": 850, "y": 100 },
+          "config": {
+            "actionType": "route",
+            "routingMethod": "team",
+            "teamId": "team-crisis"
+          }
+        },
+        {
+          "id": "node-001-action-2",
+          "type": "action",
+          "label": "Send Slack Alert",
+          "position": { "x": 850, "y": 200 },
+          "config": {
+            "actionType": "notify",
+            "channel": "slack",
+            "recipients": ["user-002", "user-004"],
+            "message": "🚨 High-priority negative mention from influential user on Instagram"
+          }
+        },
+        {
+          "id": "node-001-action-3",
+          "type": "action",
+          "label": "Route to Social Team",
+          "position": { "x": 850, "y": 300 },
+          "config": {
+            "actionType": "route",
+            "routingMethod": "team",
+            "teamId": "team-social"
+          }
+        }
+      ]
+    },
+    {
+      "workflowId": "wf-002",
+      "nodes": [
+        {
+          "id": "node-002-trigger",
+          "type": "trigger",
+          "label": "New Mention",
+          "position": { "x": 100, "y": 200 },
+          "config": {
+            "eventType": "new_mention"
+          }
+        },
+        {
+          "id": "node-002-cond-1",
+          "type": "condition",
+          "label": "Is Purchase Inquiry?",
+          "position": { "x": 350, "y": 200 },
+          "config": {
+            "conditionId": "cond-003"
+          }
+        },
+        {
+          "id": "node-002-action-1",
+          "type": "action",
+          "label": "Auto-Reply with FAQ",
+          "position": { "x": 600, "y": 150 },
+          "config": {
+            "actionType": "auto_response",
+            "templateId": "template-faq-purchase",
+            "message": "Hi! Thanks for your interest. You can browse our products at [link]. We offer free shipping on orders over $50!"
+          }
+        },
+        {
+          "id": "node-002-action-2",
+          "type": "action",
+          "label": "Create Ticket",
+          "position": { "x": 600, "y": 250 },
+          "config": {
+            "actionType": "create_ticket",
+            "priority": "normal"
+          }
+        }
+      ]
+    },
+    {
+      "workflowId": "wf-003",
+      "nodes": [
+        {
+          "id": "node-003-trigger",
+          "type": "trigger",
+          "label": "Ticket Created",
+          "position": { "x": 100, "y": 200 },
+          "config": {
+            "eventType": "ticket_created"
+          }
+        },
+        {
+          "id": "node-003-cond-1",
+          "type": "condition",
+          "label": "Is Actionable?",
+          "position": { "x": 350, "y": 200 },
+          "config": {
+            "conditionId": "cond-004"
+          }
+        },
+        {
+          "id": "node-003-action-1",
+          "type": "action",
+          "label": "Round Robin Assignment",
+          "position": { "x": 600, "y": 150 },
+          "config": {
+            "actionType": "route",
+            "routingMethod": "round_robin",
+            "teamId": "team-support"
+          }
+        },
+        {
+          "id": "node-003-action-2",
+          "type": "action",
+          "label": "Mark as Non-Actionable",
+          "position": { "x": 600, "y": 250 },
+          "config": {
+            "actionType": "update_ticket",
+            "status": "closed",
+            "tags": ["non-actionable"]
+          }
+        }
+      ]
+    }
+  ],
+  "nodeConnections": [
+    {
+      "workflowId": "wf-001",
+      "connections": [
+        {
+          "from": "node-001-trigger",
+          "to": "node-001-cond-1",
+          "type": "default"
+        },
+        {
+          "from": "node-001-cond-1",
+          "to": "node-001-cond-2",
+          "type": "true",
+          "label": "Yes"
+        },
+        {
+          "from": "node-001-cond-1",
+          "to": "node-001-action-3",
+          "type": "false",
+          "label": "No"
+        },
+        {
+          "from": "node-001-cond-2",
+          "to": "node-001-action-1",
+          "type": "true",
+          "label": "Yes"
+        },
+        {
+          "from": "node-001-cond-2",
+          "to": "node-001-action-3",
+          "type": "false",
+          "label": "No"
+        },
+        {
+          "from": "node-001-action-1",
+          "to": "node-001-action-2",
+          "type": "default"
+        }
+      ]
+    },
+    {
+      "workflowId": "wf-002",
+      "connections": [
+        {
+          "from": "node-002-trigger",
+          "to": "node-002-cond-1",
+          "type": "default"
+        },
+        {
+          "from": "node-002-cond-1",
+          "to": "node-002-action-1",
+          "type": "true",
+          "label": "Yes"
+        },
+        {
+          "from": "node-002-action-1",
+          "to": "node-002-action-2",
+          "type": "default"
+        }
+      ]
+    },
+    {
+      "workflowId": "wf-003",
+      "connections": [
+        {
+          "from": "node-003-trigger",
+          "to": "node-003-cond-1",
+          "type": "default"
+        },
+        {
+          "from": "node-003-cond-1",
+          "to": "node-003-action-1",
+          "type": "true",
+          "label": "Yes"
+        },
+        {
+          "from": "node-003-cond-1",
+          "to": "node-003-action-2",
+          "type": "false",
+          "label": "No"
+        }
+      ]
+    }
+  ],
+  "conditions": [
+    {
+      "id": "cond-001",
+      "workflowId": "wf-001",
+      "nodeId": "node-001-cond-1",
+      "logicOperator": "AND",
+      "rules": [
+        {
+          "attribute": "sentiment",
+          "operator": "equals",
+          "value": "negative",
+          "type": "ai_classifier"
+        }
+      ]
+    },
+    {
+      "id": "cond-002",
+      "workflowId": "wf-001",
+      "nodeId": "node-001-cond-2",
+      "logicOperator": "OR",
+      "rules": [
+        {
+          "attribute": "author.follower_count",
+          "operator": "greater_than",
+          "value": 10000,
+          "type": "attribute"
+        },
+        {
+          "attribute": "author.is_verified",
+          "operator": "equals",
+          "value": true,
+          "type": "attribute"
+        }
+      ]
+    },
+    {
+      "id": "cond-003",
+      "workflowId": "wf-002",
+      "nodeId": "node-002-cond-1",
+      "logicOperator": "AND",
+      "rules": [
+        {
+          "attribute": "intent",
+          "operator": "equals",
+          "value": "purchase_inquiry",
+          "type": "ai_classifier"
+        },
+        {
+          "attribute": "actionability",
+          "operator": "equals",
+          "value": "actionable",
+          "type": "ai_classifier"
+        }
+      ]
+    },
+    {
+      "id": "cond-004",
+      "workflowId": "wf-003",
+      "nodeId": "node-003-cond-1",
+      "logicOperator": "AND",
+      "rules": [
+        {
+          "attribute": "actionability",
+          "operator": "equals",
+          "value": "actionable",
+          "type": "ai_classifier"
+        }
+      ]
+    }
+  ],
+  "workflowVersions": [
+    {
+      "workflowId": "wf-001",
+      "version": 3,
+      "createdAt": "2025-01-15T14:30:00Z",
+      "createdBy": "user-002",
+      "changeNote": "Added high follower count condition for better crisis detection",
+      "isCurrent": true
+    },
+    {
+      "workflowId": "wf-001",
+      "version": 2,
+      "createdAt": "2024-12-28T11:20:00Z",
+      "createdBy": "user-002",
+      "changeNote": "Updated Slack notification message template",
+      "isCurrent": false
+    },
+    {
+      "workflowId": "wf-001",
+      "version": 1,
+      "createdAt": "2024-12-10T09:00:00Z",
+      "createdBy": "user-002",
+      "changeNote": "Initial workflow creation",
+      "isCurrent": false
+    },
+    {
+      "workflowId": "wf-002",
+      "version": 2,
+      "createdAt": "2025-01-20T10:15:00Z",
+      "createdBy": "user-001",
+      "changeNote": "Improved FAQ response template with shipping info",
+      "isCurrent": true
+    },
+    {
+      "workflowId": "wf-002",
+      "version": 1,
+      "createdAt": "2025-01-05T11:30:00Z",
+      "createdBy": "user-001",
+      "changeNote": "Initial workflow creation",
+      "isCurrent": false
+    },
+    {
+      "workflowId": "wf-004",
+      "version": 4,
+      "createdAt": "2025-01-10T09:30:00Z",
+      "createdBy": "user-002",
+      "changeNote": "Changed escalation recipient from manager to team lead",
+      "isCurrent": true
+    }
+  ],
+  "executionLogs": [
+    {
+      "id": "exec-001",
+      "workflowId": "wf-001",
+      "executedAt": "2025-01-31T16:20:00Z",
+      "status": "success",
+      "triggerData": {
+        "eventType": "new_mention",
+        "mentionId": "mention-789",
+        "channel": "instagram",
+        "content": "Terrible experience at your downtown store. Staff was rude and coffee was cold!",
+        "author": {
+          "name": "@angryCoffeeUser",
+          "followerCount": 15200,
+          "isVerified": false
+        }
+      },
+      "pathTaken": [
+        "node-001-trigger",
+        "node-001-cond-1",
+        "node-001-cond-2",
+        "node-001-action-1",
+        "node-001-action-2"
+      ],
+      "conditionResults": [
+        {
+          "nodeId": "node-001-cond-1",
+          "passed": true,
+          "details": "Sentiment: negative (confidence: 0.92)"
+        },
+        {
+          "nodeId": "node-001-cond-2",
+          "passed": true,
+          "details": "Follower count 15,200 > 10,000"
+        }
+      ],
+      "actionsExecuted": [
+        {
+          "nodeId": "node-001-action-1",
+          "actionType": "route",
+          "result": "Routed to Crisis Management Team",
+          "assignedTo": "team-crisis"
+        },
+        {
+          "nodeId": "node-001-action-2",
+          "actionType": "notify",
+          "result": "Slack notification sent to 2 recipients",
+          "recipients": ["user-002", "user-004"]
+        }
+      ],
+      "executionTimeMs": 342
+    },
+    {
+      "id": "exec-002",
+      "workflowId": "wf-002",
+      "executedAt": "2025-01-31T17:05:00Z",
+      "status": "success",
+      "triggerData": {
+        "eventType": "new_mention",
+        "mentionId": "mention-790",
+        "channel": "facebook",
+        "content": "Do you ship to Canada? How much does shipping cost?",
+        "author": {
+          "name": "Sarah Miller",
+          "followerCount": 250,
+          "isVerified": false
+        }
+      },
+      "pathTaken": [
+        "node-002-trigger",
+        "node-002-cond-1",
+        "node-002-action-1",
+        "node-002-action-2"
+      ],
+      "conditionResults": [
+        {
+          "nodeId": "node-002-cond-1",
+          "passed": true,
+          "details": "Intent: purchase_inquiry (confidence: 0.89), Actionability: actionable"
+        }
+      ],
+      "actionsExecuted": [
+        {
+          "nodeId": "node-002-action-1",
+          "actionType": "auto_response",
+          "result": "Auto-reply sent successfully",
+          "messageId": "msg-456"
+        },
+        {
+          "nodeId": "node-002-action-2",
+          "actionType": "create_ticket",
+          "result": "Ticket created",
+          "ticketId": "ticket-789"
+        }
+      ],
+      "executionTimeMs": 215
+    },
+    {
+      "id": "exec-003",
+      "workflowId": "wf-001",
+      "executedAt": "2025-01-30T14:15:00Z",
+      "status": "partial_success",
+      "triggerData": {
+        "eventType": "new_mention",
+        "mentionId": "mention-785",
+        "channel": "instagram",
+        "content": "Not happy with my order. Expected better quality.",
+        "author": {
+          "name": "@customerX",
+          "followerCount": 450,
+          "isVerified": false
+        }
+      },
+      "pathTaken": [
+        "node-001-trigger",
+        "node-001-cond-1",
+        "node-001-cond-2",
+        "node-001-action-3"
+      ],
+      "conditionResults": [
+        {
+          "nodeId": "node-001-cond-1",
+          "passed": true,
+          "details": "Sentiment: negative (confidence: 0.78)"
+        },
+        {
+          "nodeId": "node-001-cond-2",
+          "passed": false,
+          "details": "Follower count 450 < 10,000 and not verified"
+        }
+      ],
+      "actionsExecuted": [
+        {
+          "nodeId": "node-001-action-3",
+          "actionType": "route",
+          "result": "Routed to Social Media Team",
+          "assignedTo": "team-social"
+        }
+      ],
+      "executionTimeMs": 198
+    },
+    {
+      "id": "exec-004",
+      "workflowId": "wf-004",
+      "executedAt": "2025-01-30T22:15:00Z",
+      "status": "success",
+      "triggerData": {
+        "eventType": "sla_breach",
+        "ticketId": "ticket-756",
+        "slaType": "first_response_time",
+        "breachTimeMinutes": 15
+      },
+      "pathTaken": [
+        "node-004-trigger",
+        "node-004-action-1",
+        "node-004-action-2"
+      ],
+      "conditionResults": [],
+      "actionsExecuted": [
+        {
+          "nodeId": "node-004-action-1",
+          "actionType": "reassign",
+          "result": "Reassigned to team lead",
+          "assignedTo": "user-005"
+        },
+        {
+          "nodeId": "node-004-action-2",
+          "actionType": "notify",
+          "result": "Email notification sent",
+          "recipients": ["user-005"]
+        }
+      ],
+      "executionTimeMs": 156
+    },
+    {
+      "id": "exec-005",
+      "workflowId": "wf-005",
+      "executedAt": "2025-01-31T15:30:00Z",
+      "status": "failed",
+      "triggerData": {
+        "eventType": "new_mention",
+        "mentionId": "mention-791",
+        "channel": "google_reviews",
+        "content": "Great product! The new coffee blend is amazing, highly recommend!",
+        "rating": 5
+      },
+      "pathTaken": [
+        "node-005-trigger",
+        "node-005-cond-1",
+        "node-005-action-1"
+      ],
+      "conditionResults": [
+        {
+          "nodeId": "node-005-cond-1",
+          "passed": true,
+          "details": "Review detected with product reference"
+        }
+      ],
+      "actionsExecuted": [
+        {
+          "nodeId": "node-005-action-1",
+          "actionType": "crm_push",
+          "result": "Failed - Salesforce API timeout",
+          "error": "Connection timeout after 10s"
+        }
+      ],
+      "executionTimeMs": 10234
+    }
+  ],
+  "users": [
+    {
+      "id": "user-001",
+      "name": "Sarah Chen",
+      "email": "sarah.chen@brewedawakenings.com",
+      "role": "Social Media Manager",
+      "avatar": "https://avatars.example.com/sarah.jpg"
+    },
+    {
+      "id": "user-002",
+      "name": "Marcus Johnson",
+      "email": "marcus.j@brewedawakenings.com",
+      "role": "Marketing Director",
+      "avatar": "https://avatars.example.com/marcus.jpg"
+    },
+    {
+      "id": "user-003",
+      "name": "Emily Rodriguez",
+      "email": "emily.r@brewedawakenings.com",
+      "role": "Customer Success Lead",
+      "avatar": "https://avatars.example.com/emily.jpg"
+    },
+    {
+      "id": "user-004",
+      "name": "David Kim",
+      "email": "david.kim@brewedawakenings.com",
+      "role": "Crisis Management Lead",
+      "avatar": "https://avatars.example.com/david.jpg"
+    },
+    {
+      "id": "user-005",
+      "name": "Lisa Patel",
+      "email": "lisa.patel@brewedawakenings.com",
+      "role": "Support Team Lead",
+      "avatar": "https://avatars.example.com/lisa.jpg"
+    }
+  ],
+  "teams": [
+    {
+      "id": "team-crisis",
+      "name": "Crisis Management Team",
+      "members": ["user-002", "user-004"]
+    },
+    {
+      "id": "team-social",
+      "name": "Social Media Team",
+      "members": ["user-001", "user-003"]
+    },
+    {
+      "id": "team-support",
+      "name": "Customer Support Team",
+      "members": ["user-003", "user-005"]
+    }
+  ]
+}

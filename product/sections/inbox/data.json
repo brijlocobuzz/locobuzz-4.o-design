@@ -1,0 +1,5801 @@
+{
+  "_meta": {
+    "models": {
+      "tickets": "Customer care cases created from social media conversations. Each ticket bundles related mentions from a customer and tracks resolution through assignment, status, and SLA timers.",
+      "mentions": "Original conversations captured from social media about the brand. Each mention includes the customer's message, platform details, and AI enrichments like sentiment and intent.",
+      "replies": "Agent or AI responses sent within ticket conversation threads. Represents outbound communication back to customers.",
+      "authors": "Customer social media identities on specific platforms. Includes follower count, verification status, and influence metrics.",
+      "contacts": "Unified customer profiles that link multiple author identities across platforms, matched by email or phone.",
+      "users": "Team members (agents, supervisors) who handle tickets. Includes role, status, and assignment information.",
+      "teams": "Groups of users with shared queue access and permissions for organizing agent workflows.",
+      "channels": "Social media platforms integrated with the system (Instagram, Facebook, X, etc.).",
+      "pages": "Specific social media pages within channels where conversations occur.",
+      "sidebarViews": "Filtered views and queues displayed in the left sidebar for organizing tickets (Triage, Status, Assignment, Custom queues).",
+      "aiSuggestions": "AI-recommended responses with confidence indicators and explanations for why the suggestion was made.",
+      "savedSearches": "User-created search queries with advanced syntax for quick access to specific ticket sets.",
+      "impactScores": "Computed customer risk scores blending follower count, engagement velocity, sentiment severity, and VIP tier."
+    },
+    "relationships": [
+      "Each Ticket is created from one or more Mentions and contains a conversation thread of Mentions and Replies",
+      "Authors create Mentions and link to unified Contact profiles",
+      "Contacts have multiple Authors representing their presence across social platforms",
+      "Tickets are assigned to Users or Teams and routed through sidebar views",
+      "Replies are sent by Users or AI Agents in response to Mentions within Tickets",
+      "Channels contain Pages where social conversations happen",
+      "Impact Scores are computed for each Contact based on their social cloud and interaction history"
+    ]
+  },
+  "currentUser": {
+    "id": "user-001",
+    "name": "Sarah Chen",
+    "email": "sarah.chen@locobuzz.com",
+    "role": "agent",
+    "avatarUrl": "https://i.pravatar.cc/150?img=5",
+    "status": "online",
+    "team": {
+      "id": "team-cx",
+      "name": "Customer Experience Team"
+    }
+  },
+  "sidebarViews": [
+    {
+      "id": "view-triage",
+      "category": "triage",
+      "name": "Needs Reply",
+      "icon": "alert-circle",
+      "count": 8,
+      "color": "red"
+    },
+    {
+      "id": "view-breaching",
+      "category": "triage",
+      "name": "Breaching Soon",
+      "icon": "clock",
+      "count": 3,
+      "color": "yellow"
+    },
+    {
+      "id": "view-vip-negative",
+      "category": "triage",
+      "name": "VIP + Negative",
+      "icon": "star",
+      "count": 1,
+      "color": "orange"
+    },
+    {
+      "id": "view-new",
+      "category": "status",
+      "name": "New",
+      "icon": "inbox",
+      "count": 5
+    },
+    {
+      "id": "view-open",
+      "category": "status",
+      "name": "Open",
+      "icon": "message-circle",
+      "count": 12
+    },
+    {
+      "id": "view-pending",
+      "category": "status",
+      "name": "Pending",
+      "icon": "pause-circle",
+      "count": 4
+    },
+    {
+      "id": "view-resolved",
+      "category": "status",
+      "name": "Resolved",
+      "icon": "check-circle",
+      "count": 23
+    },
+    {
+      "id": "view-assigned-me",
+      "category": "assignment",
+      "name": "Assigned to Me",
+      "icon": "user",
+      "count": 6
+    },
+    {
+      "id": "view-my-team",
+      "category": "assignment",
+      "name": "My Team",
+      "icon": "users",
+      "count": 15
+    },
+    {
+      "id": "view-unassigned",
+      "category": "assignment",
+      "name": "Unassigned",
+      "icon": "user-x",
+      "count": 3
+    },
+    {
+      "id": "view-overdue",
+      "category": "sla",
+      "name": "Overdue",
+      "icon": "alert-triangle",
+      "count": 2,
+      "color": "red"
+    },
+    {
+      "id": "view-due-soon",
+      "category": "sla",
+      "name": "Due Soon (<1h)",
+      "icon": "timer",
+      "count": 5,
+      "color": "yellow"
+    },
+    {
+      "id": "view-high-priority",
+      "category": "sla",
+      "name": "High Priority",
+      "icon": "flag",
+      "count": 4,
+      "color": "red"
+    },
+    {
+      "id": "queue-vip",
+      "category": "custom",
+      "name": "VIP Customers",
+      "icon": "crown",
+      "count": 3,
+      "color": "purple"
+    },
+    {
+      "id": "queue-complaints",
+      "category": "custom",
+      "name": "Product Complaints",
+      "icon": "alert-octagon",
+      "count": 7
+    }
+  ],
+  "savedSearches": [
+    {
+      "id": "search-001",
+      "name": "Negative sentiment today",
+      "query": "sentiment:negative AND created:today",
+      "lastUsed": "2024-12-31T09:30:00Z"
+    },
+    {
+      "id": "search-002",
+      "name": "Instagram DMs",
+      "query": "channel:instagram AND type:dm",
+      "lastUsed": "2024-12-31T08:15:00Z"
+    },
+    {
+      "id": "search-003",
+      "name": "Breaching SLA",
+      "query": "SLA:<60m OR status:breached",
+      "lastUsed": "2024-12-31T10:00:00Z"
+    }
+  ],
+  "tickets": [
+    {
+      "id": "ticket-001",
+      "ticketNumber": "TKT-2024-0001",
+      "status": "open",
+      "priority": "high",
+      "createdAt": "2024-12-31T08:15:00Z",
+      "updatedAt": "2024-12-31T09:45:00Z",
+      "assignedTo": {
+        "id": "user-001",
+        "name": "Sarah Chen",
+        "avatarUrl": "https://i.pravatar.cc/150?img=5"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-001",
+        "name": "Jessica Martinez",
+        "username": "@jessicam_designs",
+        "platform": "instagram",
+        "avatarUrl": "https://i.pravatar.cc/150?img=24",
+        "isVerified": false,
+        "followerCount": 45600,
+        "engagementRate": 4.2,
+        "bio": "Creative Director & Designer | Helping brands tell their story through visual design",
+        "followsBrand": true
+      },
+      "contact": {
+        "id": "contact-001",
+        "name": "Jessica Martinez",
+        "email": "jessica.martinez@email.com",
+        "phone": "+1-555-0123",
+        "company": "Martinez Designs LLC",
+        "jobTitle": "Creative Director",
+        "location": "Austin, TX",
+        "customerTier": "premium",
+        "preferredLanguage": "en",
+        "timezone": "America/Los_Angeles",
+        "previousInteractions": 3,
+        "lastContactDate": "2024-11-15T14:20:00Z",
+        "resolutionRate": 100
+      },
+      "impactScore": {
+        "score": 8.7,
+        "tier": "high",
+        "factors": {
+          "followerCount": 9.2,
+          "engagementVelocity": 8.5,
+          "sentimentSeverity": 7.8,
+          "vipStatus": 8.0
+        }
+      },
+      "channel": {
+        "id": "ch-instagram",
+        "name": "Instagram",
+        "platform": "instagram"
+      },
+      "page": {
+        "id": "page-locobuzz-ig",
+        "name": "Locobuzz CX Official",
+        "handle": "@locobuzzcx"
+      },
+      "interactionType": "dm",
+      "interactionTypeLabel": "Direct Message",
+      "sentiment": "negative",
+      "sentimentScore": -0.72,
+      "intent": "complaint",
+      "aspects": [
+        "delivery",
+        "product-quality"
+      ],
+      "signals": [
+        "urgent-escalation"
+      ],
+      "summaryChip": "Complaint \u2022 Delivery \u2022 Negative",
+      "messageSnippet": "I ordered the Premium package 2 weeks ago and still haven't received it. This is completely unacceptable...",
+      "unreadCount": 1,
+      "messageCount": {
+        "total": 3,
+        "fromCustomer": 2,
+        "fromBrand": 1
+      },
+      "replyStatus": "not-replied",
+      "lastSeenBy": null,
+      "sla": {
+        "firstResponse": {
+          "status": "due-soon",
+          "dueAt": "2024-12-31T10:15:00Z",
+          "remainingMinutes": 30,
+          "breached": false
+        },
+        "resolution": {
+          "status": "within-sla",
+          "dueAt": "2024-12-31T20:15:00Z",
+          "remainingMinutes": 630,
+          "breached": false
+        }
+      },
+      "tags": [
+        "delivery-issue",
+        "premium-customer"
+      ],
+      "hasAttachments": false,
+      "hasMedia": false,
+      "reasonSurfaced": "Due in 30m \u2022 High Impact Customer",
+      "classification": {
+        "categoryMap": {
+          "category": "Customer Service",
+          "subcategory": "Order Management",
+          "subSubcategory": "Delivery Issues",
+          "fullPath": "Customer Service > Order Management > Delivery Issues"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Delivery Experience",
+            "aspects": [
+              {
+                "name": "delivery-time",
+                "sentiment": "negative",
+                "sentimentScore": -0.85,
+                "customerOpinion": "completely unacceptable",
+                "customerWords": [
+                  "2 weeks",
+                  "still haven't received",
+                  "unacceptable"
+                ],
+                "entity": {
+                  "value": "Premium package",
+                  "type": "product",
+                  "category": "brand"
+                }
+              },
+              {
+                "name": "shipping-speed",
+                "sentiment": "negative",
+                "sentimentScore": -0.78,
+                "customerOpinion": "too slow",
+                "customerWords": [
+                  "2 weeks ago",
+                  "still waiting"
+                ]
+              }
+            ],
+            "overallSentiment": "negative",
+            "overallSentimentScore": -0.82
+          },
+          {
+            "groupName": "Product Quality",
+            "aspects": [
+              {
+                "name": "product-expectation",
+                "sentiment": "neutral",
+                "sentimentScore": 0.1,
+                "customerOpinion": "expecting premium quality",
+                "customerWords": [
+                  "Premium package"
+                ],
+                "entity": {
+                  "value": "Premium package",
+                  "type": "product-tier",
+                  "category": "brand"
+                }
+              }
+            ],
+            "overallSentiment": "neutral",
+            "overallSentimentScore": 0.1
+          }
+        ],
+        "entities": [
+          {
+            "value": "Premium package",
+            "type": "product",
+            "category": "brand",
+            "linkedAspects": [
+              "delivery-time",
+              "product-expectation"
+            ],
+            "sentiment": "negative",
+            "sentimentScore": -0.75
+          },
+          {
+            "value": "Locobuzz CX",
+            "type": "company",
+            "category": "brand",
+            "linkedAspects": [],
+            "sentiment": "negative",
+            "sentimentScore": -0.7
+          },
+          {
+            "value": "2 weeks",
+            "type": "duration",
+            "category": "ner",
+            "linkedAspects": [
+              "delivery-time"
+            ],
+            "metadata": {
+              "unit": "weeks",
+              "value": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-002",
+      "ticketNumber": "TKT-2024-0002",
+      "status": "open",
+      "priority": "high",
+      "createdAt": "2024-12-31T06:30:00Z",
+      "updatedAt": "2024-12-31T06:30:00Z",
+      "assignedTo": {
+        "id": "user-002",
+        "name": "Marcus Johnson",
+        "avatarUrl": "https://i.pravatar.cc/150?img=12"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-002",
+        "name": "Tech Insights Daily",
+        "username": "@techinsights",
+        "platform": "x",
+        "avatarUrl": "https://i.pravatar.cc/150?img=70",
+        "isVerified": true,
+        "followerCount": 234000,
+        "engagementRate": 6.8
+      },
+      "contact": {
+        "id": "contact-002",
+        "name": "Tech Insights Daily",
+        "email": "editorial@techinsights.com",
+        "phone": null,
+        "previousInteractions": 1,
+        "lastContactDate": "2024-08-10T11:00:00Z",
+        "resolutionRate": 100
+      },
+      "impactScore": {
+        "score": 9.4,
+        "tier": "vip",
+        "factors": {
+          "followerCount": 9.8,
+          "engagementVelocity": 9.2,
+          "sentimentSeverity": 8.9,
+          "vipStatus": 10.0
+        }
+      },
+      "channel": {
+        "id": "ch-x",
+        "name": "X (Twitter)",
+        "platform": "x"
+      },
+      "page": {
+        "id": "page-locobuzz-x",
+        "name": "Locobuzz CX",
+        "handle": "@LocobuzzCX"
+      },
+      "interactionType": "tagged-comment",
+      "interactionTypeLabel": "Tagged Comment",
+      "sentiment": "negative",
+      "sentimentScore": -0.68,
+      "intent": "complaint",
+      "aspects": [
+        "platform-reliability",
+        "data-accuracy"
+      ],
+      "signals": [
+        "media-escalation",
+        "public-complaint"
+      ],
+      "summaryChip": "Complaint \u2022 Platform \u2022 Negative",
+      "messageSnippet": "@LocobuzzCX Our team has been experiencing significant data sync delays over the past 48 hours. Multiple reports from...",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 5,
+        "fromCustomer": 3,
+        "fromBrand": 2
+      },
+      "replyStatus": "not-replied",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-002",
+          "name": "Marcus Johnson"
+        },
+        "timestamp": "2024-12-31T07:15:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "breached",
+          "dueAt": "2024-12-31T07:30:00Z",
+          "remainingMinutes": -150,
+          "breached": true,
+          "breachedAt": "2024-12-31T07:30:00Z",
+          "breachedBy": 150
+        },
+        "resolution": {
+          "status": "due-soon",
+          "dueAt": "2024-12-31T10:30:00Z",
+          "remainingMinutes": 45,
+          "breached": false
+        }
+      },
+      "tags": [
+        "media-mention",
+        "technical-issue",
+        "urgent"
+      ],
+      "hasAttachments": false,
+      "reasonSurfaced": "Breached 2h30m \u2022 VIP + Negative \u2022 Public",
+      "classification": {
+        "categoryMap": {
+          "category": "Technical Support",
+          "subcategory": "Platform Issues",
+          "subSubcategory": "Data Sync Delays",
+          "fullPath": "Technical Support > Platform Issues > Data Sync Delays"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Platform Reliability",
+            "aspects": [
+              {
+                "name": "data-sync-performance",
+                "sentiment": "negative",
+                "sentimentScore": -0.75,
+                "customerOpinion": "significant delays, affecting operations",
+                "customerWords": [
+                  "significant data sync delays",
+                  "48 hours",
+                  "multiple reports"
+                ],
+                "entity": {
+                  "value": "data sync",
+                  "type": "feature",
+                  "category": "brand"
+                }
+              },
+              {
+                "name": "business-impact",
+                "sentiment": "negative",
+                "sentimentScore": -0.8,
+                "customerOpinion": "affecting business operations",
+                "customerWords": [
+                  "affecting business operations",
+                  "clients",
+                  "missing analytics"
+                ]
+              }
+            ],
+            "overallSentiment": "negative",
+            "overallSentimentScore": -0.78
+          }
+        ],
+        "entities": [
+          {
+            "value": "Locobuzz CX",
+            "type": "company",
+            "category": "brand",
+            "linkedAspects": [
+              "data-sync-performance"
+            ],
+            "sentiment": "negative",
+            "sentimentScore": -0.68
+          },
+          {
+            "value": "Tech Insights Daily",
+            "type": "media-outlet",
+            "category": "brand",
+            "linkedAspects": [],
+            "sentiment": "negative",
+            "sentimentScore": -0.68,
+            "metadata": {
+              "followerCount": 234000,
+              "verified": true,
+              "publicComplaint": true
+            }
+          },
+          {
+            "value": "48 hours",
+            "type": "duration",
+            "category": "ner",
+            "linkedAspects": [
+              "data-sync-performance"
+            ],
+            "metadata": {
+              "unit": "hours",
+              "value": 48
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-003",
+      "ticketNumber": "TKT-2024-0003",
+      "status": "pending",
+      "handoffState": "waiting-on-internal",
+      "priority": "medium",
+      "createdAt": "2024-12-30T16:45:00Z",
+      "updatedAt": "2024-12-31T09:20:00Z",
+      "assignedTo": {
+        "id": "user-001",
+        "name": "Sarah Chen",
+        "avatarUrl": "https://i.pravatar.cc/150?img=5"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-003",
+        "name": "Priya Sharma",
+        "username": "priya.sharma.official",
+        "platform": "facebook",
+        "avatarUrl": "https://i.pravatar.cc/150?img=45",
+        "isVerified": false,
+        "followerCount": 2800,
+        "engagementRate": 3.1
+      },
+      "contact": {
+        "id": "contact-003",
+        "name": "Priya Sharma",
+        "email": "priya.s@email.com",
+        "phone": "+1-555-0456",
+        "previousInteractions": 0,
+        "lastContactDate": null,
+        "resolutionRate": null
+      },
+      "impactScore": {
+        "score": 5.2,
+        "tier": "medium",
+        "factors": {
+          "followerCount": 4.5,
+          "engagementVelocity": 5.8,
+          "sentimentSeverity": 5.0,
+          "vipStatus": 5.5
+        }
+      },
+      "channel": {
+        "id": "ch-facebook",
+        "name": "Facebook",
+        "platform": "facebook"
+      },
+      "page": {
+        "id": "page-locobuzz-fb",
+        "name": "Locobuzz CX",
+        "handle": "@LocobuzzCXOfficial"
+      },
+      "interactionType": "comment",
+      "interactionTypeLabel": "Comment on Post",
+      "sentiment": "neutral",
+      "sentimentScore": 0.15,
+      "intent": "question",
+      "aspects": [
+        "feature-request"
+      ],
+      "signals": [],
+      "summaryChip": "Question \u2022 Feature Request \u2022 Neutral",
+      "messageSnippet": "Does Locobuzz support integration with Shopify? We're looking to consolidate our customer support across all channels...",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 4,
+        "fromCustomer": 2,
+        "fromBrand": 2
+      },
+      "replyStatus": "replied",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-001",
+          "name": "Sarah Chen"
+        },
+        "timestamp": "2024-12-31T09:20:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "met",
+          "dueAt": "2024-12-30T17:45:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-30T17:10:00Z"
+        },
+        "resolution": {
+          "status": "paused",
+          "dueAt": "2024-12-31T16:45:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "pausedReason": "Waiting on internal team"
+        }
+      },
+      "tags": [
+        "integration-query",
+        "shopify"
+      ],
+      "hasAttachments": false,
+      "reasonSurfaced": null,
+      "classification": {
+        "categoryMap": {
+          "category": "Product Information",
+          "subcategory": "Integrations",
+          "subSubcategory": "E-Commerce Platforms",
+          "fullPath": "Product Information > Integrations > E-Commerce Platforms"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Integration Interest",
+            "aspects": [
+              {
+                "name": "shopify-integration",
+                "sentiment": "neutral",
+                "sentimentScore": 0.15,
+                "customerOpinion": "looking to consolidate support",
+                "customerWords": [
+                  "Shopify",
+                  "consolidate",
+                  "all channels"
+                ],
+                "entity": {
+                  "value": "Shopify",
+                  "type": "platform",
+                  "category": "brand"
+                }
+              },
+              {
+                "name": "multi-channel-support",
+                "sentiment": "positive",
+                "sentimentScore": 0.2,
+                "customerOpinion": "interested in unified solution",
+                "customerWords": [
+                  "all channels",
+                  "e-commerce platform"
+                ]
+              }
+            ],
+            "overallSentiment": "neutral",
+            "overallSentimentScore": 0.18
+          }
+        ],
+        "entities": [
+          {
+            "value": "Shopify",
+            "type": "platform",
+            "category": "brand",
+            "linkedAspects": [
+              "shopify-integration"
+            ],
+            "sentiment": "neutral",
+            "sentimentScore": 0.15
+          },
+          {
+            "value": "Locobuzz",
+            "type": "company",
+            "category": "brand",
+            "linkedAspects": [
+              "multi-channel-support"
+            ],
+            "sentiment": "neutral",
+            "sentimentScore": 0.15
+          },
+          {
+            "value": "Priya Sharma",
+            "type": "customer",
+            "category": "person",
+            "linkedAspects": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-004",
+      "ticketNumber": "TKT-2024-0004",
+      "status": "new",
+      "priority": "low",
+      "createdAt": "2024-12-31T09:30:00Z",
+      "updatedAt": "2024-12-31T09:30:00Z",
+      "assignedTo": null,
+      "team": null,
+      "author": {
+        "id": "author-004",
+        "name": "Michael Chen",
+        "username": "michael_chen_reviews",
+        "platform": "google",
+        "avatarUrl": "https://i.pravatar.cc/150?img=56",
+        "isVerified": false,
+        "followerCount": 0,
+        "engagementRate": 0
+      },
+      "contact": {
+        "id": "contact-004",
+        "name": "Michael Chen",
+        "email": "m.chen@email.com",
+        "phone": null,
+        "previousInteractions": 0,
+        "lastContactDate": null,
+        "resolutionRate": null
+      },
+      "impactScore": {
+        "score": 3.2,
+        "tier": "low",
+        "factors": {
+          "followerCount": 1.0,
+          "engagementVelocity": 3.5,
+          "sentimentSeverity": 4.8,
+          "vipStatus": 3.5
+        }
+      },
+      "channel": {
+        "id": "ch-google",
+        "name": "Google Reviews",
+        "platform": "google"
+      },
+      "page": {
+        "id": "page-downtown-gmb",
+        "name": "Locobuzz CX - Downtown",
+        "handle": "locobuzz-cx-downtown"
+      },
+      "interactionType": "review",
+      "interactionTypeLabel": "Google Review",
+      "sentiment": "positive",
+      "sentimentScore": 0.85,
+      "intent": "praise",
+      "aspects": [
+        "customer-service",
+        "platform-ease"
+      ],
+      "signals": [],
+      "summaryChip": "Praise \u2022 Customer Service \u2022 Positive",
+      "messageSnippet": "Excellent platform! The customer service team was incredibly helpful in getting us set up. The interface is intuitive...",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 1,
+        "fromCustomer": 1,
+        "fromBrand": 0
+      },
+      "replyStatus": "not-replied",
+      "lastSeenBy": null,
+      "sla": {
+        "firstResponse": {
+          "status": "within-sla",
+          "dueAt": "2024-12-31T13:30:00Z",
+          "remainingMinutes": 240,
+          "breached": false
+        },
+        "resolution": {
+          "status": "within-sla",
+          "dueAt": "2025-01-02T09:30:00Z",
+          "remainingMinutes": 2880,
+          "breached": false
+        }
+      },
+      "tags": [
+        "positive-review"
+      ],
+      "hasAttachments": false,
+      "reasonSurfaced": null,
+      "classification": {
+        "categoryMap": {
+          "category": "Customer Feedback",
+          "subcategory": "Positive Reviews",
+          "subSubcategory": "Service Praise",
+          "fullPath": "Customer Feedback > Positive Reviews > Service Praise"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Service Quality",
+            "aspects": [
+              {
+                "name": "customer-service",
+                "sentiment": "very-positive",
+                "sentimentScore": 0.9,
+                "customerOpinion": "incredibly helpful",
+                "customerWords": [
+                  "incredibly helpful",
+                  "getting us set up"
+                ],
+                "entity": {
+                  "value": "customer service team",
+                  "type": "department",
+                  "category": "brand"
+                }
+              },
+              {
+                "name": "platform-usability",
+                "sentiment": "positive",
+                "sentimentScore": 0.8,
+                "customerOpinion": "intuitive interface",
+                "customerWords": [
+                  "intuitive",
+                  "interface",
+                  "excellent platform"
+                ]
+              }
+            ],
+            "overallSentiment": "very-positive",
+            "overallSentimentScore": 0.85
+          }
+        ],
+        "entities": [
+          {
+            "value": "customer service team",
+            "type": "department",
+            "category": "brand",
+            "linkedAspects": [
+              "customer-service"
+            ],
+            "sentiment": "very-positive",
+            "sentimentScore": 0.9
+          },
+          {
+            "value": "Locobuzz CX",
+            "type": "company",
+            "category": "brand",
+            "linkedAspects": [
+              "platform-usability"
+            ],
+            "sentiment": "very-positive",
+            "sentimentScore": 0.85
+          },
+          {
+            "value": "Michael Chen",
+            "type": "reviewer",
+            "category": "person",
+            "linkedAspects": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-005",
+      "ticketNumber": "TKT-2024-0005",
+      "status": "open",
+      "priority": "medium",
+      "createdAt": "2024-12-31T07:00:00Z",
+      "updatedAt": "2024-12-31T08:30:00Z",
+      "assignedTo": {
+        "id": "user-003",
+        "name": "Amanda Foster",
+        "avatarUrl": "https://i.pravatar.cc/150?img=29"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-005",
+        "name": "Carlos Rodriguez",
+        "username": "@carlos_tech_reviews",
+        "platform": "instagram",
+        "avatarUrl": "https://i.pravatar.cc/150?img=68",
+        "isVerified": false,
+        "followerCount": 8900,
+        "engagementRate": 5.4
+      },
+      "contact": {
+        "id": "contact-005",
+        "name": "Carlos Rodriguez",
+        "email": "carlos.r@techmail.com",
+        "phone": "+1-555-0789",
+        "previousInteractions": 2,
+        "lastContactDate": "2024-10-20T15:30:00Z",
+        "resolutionRate": 100
+      },
+      "impactScore": {
+        "score": 6.8,
+        "tier": "medium",
+        "factors": {
+          "followerCount": 6.2,
+          "engagementVelocity": 7.1,
+          "sentimentSeverity": 6.5,
+          "vipStatus": 7.5
+        }
+      },
+      "channel": {
+        "id": "ch-instagram",
+        "name": "Instagram",
+        "platform": "instagram"
+      },
+      "page": {
+        "id": "page-locobuzz-ig",
+        "name": "Locobuzz CX Official",
+        "handle": "@locobuzzcx"
+      },
+      "interactionType": "story-mention",
+      "interactionTypeLabel": "Story Mention",
+      "sentiment": "positive",
+      "sentimentScore": 0.78,
+      "intent": "feedback",
+      "aspects": [
+        "ai-features",
+        "automation"
+      ],
+      "signals": [
+        "influencer-mention"
+      ],
+      "summaryChip": "Feedback \u2022 AI Features \u2022 Positive",
+      "messageSnippet": "Loving the new AI automation features in @locobuzzcx! The sentiment analysis is incredibly accurate and saves us hours...",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 2,
+        "fromCustomer": 1,
+        "fromBrand": 1
+      },
+      "replyStatus": "replied",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-003",
+          "name": "Amanda Foster"
+        },
+        "timestamp": "2024-12-31T08:30:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "met",
+          "dueAt": "2024-12-31T08:00:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-31T07:45:00Z"
+        },
+        "resolution": {
+          "status": "within-sla",
+          "dueAt": "2024-12-31T19:00:00Z",
+          "remainingMinutes": 555,
+          "breached": false
+        }
+      },
+      "tags": [
+        "influencer-feedback",
+        "product-feedback"
+      ],
+      "hasAttachments": true,
+      "reasonSurfaced": null,
+      "classification": {
+        "categoryMap": {
+          "category": "Customer Feedback",
+          "subcategory": "Product Feedback",
+          "subSubcategory": "AI Features",
+          "fullPath": "Customer Feedback > Product Feedback > AI Features"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "AI Capabilities",
+            "aspects": [
+              {
+                "name": "sentiment-analysis",
+                "sentiment": "very-positive",
+                "sentimentScore": 0.92,
+                "customerOpinion": "incredibly accurate",
+                "customerWords": [
+                  "incredibly accurate",
+                  "sentiment analysis"
+                ],
+                "entity": {
+                  "value": "sentiment analysis",
+                  "type": "feature",
+                  "category": "brand"
+                }
+              },
+              {
+                "name": "time-savings",
+                "sentiment": "positive",
+                "sentimentScore": 0.85,
+                "customerOpinion": "saves hours every week",
+                "customerWords": [
+                  "saves us hours",
+                  "every week"
+                ],
+                "entity": {
+                  "value": "AI automation features",
+                  "type": "feature",
+                  "category": "brand"
+                }
+              },
+              {
+                "name": "aspect-tagging",
+                "sentiment": "very-positive",
+                "sentimentScore": 0.88,
+                "customerOpinion": "game changer for reporting",
+                "customerWords": [
+                  "game changer",
+                  "reporting",
+                  "aspect-based tagging"
+                ]
+              }
+            ],
+            "overallSentiment": "very-positive",
+            "overallSentimentScore": 0.88
+          }
+        ],
+        "entities": [
+          {
+            "value": "sentiment analysis",
+            "type": "feature",
+            "category": "brand",
+            "linkedAspects": [
+              "sentiment-analysis"
+            ],
+            "sentiment": "very-positive",
+            "sentimentScore": 0.92
+          },
+          {
+            "value": "AI automation features",
+            "type": "feature",
+            "category": "brand",
+            "linkedAspects": [
+              "time-savings"
+            ],
+            "sentiment": "very-positive",
+            "sentimentScore": 0.85
+          },
+          {
+            "value": "Locobuzz CX",
+            "type": "company",
+            "category": "brand",
+            "linkedAspects": [
+              "sentiment-analysis",
+              "aspect-tagging"
+            ],
+            "sentiment": "very-positive",
+            "sentimentScore": 0.88
+          },
+          {
+            "value": "Carlos Rodriguez",
+            "type": "influencer",
+            "category": "person",
+            "linkedAspects": [],
+            "metadata": {
+              "followerCount": 8900,
+              "platform": "instagram"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-006",
+      "ticketNumber": "TKT-2024-0006",
+      "status": "pending",
+      "handoffState": "pending-approval",
+      "priority": "high",
+      "createdAt": "2024-12-31T08:00:00Z",
+      "updatedAt": "2024-12-31T09:45:00Z",
+      "assignedTo": {
+        "id": "user-001",
+        "name": "Sarah Chen",
+        "avatarUrl": "https://i.pravatar.cc/150?img=5"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-006",
+        "name": "Enterprise Customer LLC",
+        "username": "@enterprise_cx_lead",
+        "platform": "linkedin",
+        "avatarUrl": "https://i.pravatar.cc/150?img=60",
+        "isVerified": true,
+        "followerCount": 12400,
+        "engagementRate": 4.5
+      },
+      "contact": {
+        "id": "contact-006",
+        "name": "David Kim",
+        "email": "david.kim@enterprise.com",
+        "phone": "+1-555-0999",
+        "previousInteractions": 8,
+        "lastContactDate": "2024-12-15T10:00:00Z",
+        "resolutionRate": 87.5
+      },
+      "impactScore": {
+        "score": 9.1,
+        "tier": "vip",
+        "factors": {
+          "followerCount": 7.5,
+          "engagementVelocity": 8.9,
+          "sentimentSeverity": 9.2,
+          "vipStatus": 10.0
+        }
+      },
+      "channel": {
+        "id": "ch-linkedin",
+        "name": "LinkedIn",
+        "platform": "linkedin"
+      },
+      "page": {
+        "id": "page-locobuzz-li",
+        "name": "Locobuzz CX",
+        "handle": "locobuzz-cx"
+      },
+      "interactionType": "dm",
+      "interactionTypeLabel": "Direct Message",
+      "sentiment": "negative",
+      "sentimentScore": -0.85,
+      "intent": "complaint",
+      "aspects": [
+        "billing",
+        "contract-terms"
+      ],
+      "signals": [
+        "enterprise-escalation",
+        "legal-concern"
+      ],
+      "summaryChip": "Complaint \u2022 Billing \u2022 Negative",
+      "messageSnippet": "We've been billed incorrectly for the past 3 months. Our contract clearly states enterprise pricing at $X but we've been...",
+      "unreadCount": 1,
+      "messageCount": {
+        "total": 6,
+        "fromCustomer": 4,
+        "fromBrand": 2
+      },
+      "replyStatus": "pending-approval",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-001",
+          "name": "Sarah Chen"
+        },
+        "timestamp": "2024-12-31T09:45:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "paused",
+          "dueAt": "2024-12-31T09:00:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "pausedReason": "Pending supervisor approval"
+        },
+        "resolution": {
+          "status": "paused",
+          "dueAt": "2024-12-31T16:00:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "pausedReason": "Pending supervisor approval"
+        }
+      },
+      "tags": [
+        "vip-customer",
+        "billing-dispute",
+        "legal-review"
+      ],
+      "hasAttachments": true,
+      "reasonSurfaced": "VIP Customer \u2022 Billing Issue \u2022 Needs Approval",
+      "classification": {
+        "categoryMap": {
+          "category": "Billing & Payments",
+          "subcategory": "Billing Disputes",
+          "subSubcategory": "Contract Pricing Issues",
+          "fullPath": "Billing & Payments > Billing Disputes > Contract Pricing Issues"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Billing Accuracy",
+            "aspects": [
+              {
+                "name": "incorrect-billing",
+                "sentiment": "very-negative",
+                "sentimentScore": -0.9,
+                "customerOpinion": "billed incorrectly for 3 months",
+                "customerWords": [
+                  "billed incorrectly",
+                  "3 months",
+                  "significant discrepancy"
+                ],
+                "entity": {
+                  "value": "enterprise pricing",
+                  "type": "pricing-tier",
+                  "category": "brand"
+                }
+              },
+              {
+                "name": "contract-terms",
+                "sentiment": "negative",
+                "sentimentScore": -0.75,
+                "customerOpinion": "contract clearly states different pricing",
+                "customerWords": [
+                  "contract clearly states",
+                  "enterprise pricing"
+                ]
+              }
+            ],
+            "overallSentiment": "very-negative",
+            "overallSentimentScore": -0.83
+          },
+          {
+            "groupName": "Escalation Risk",
+            "aspects": [
+              {
+                "name": "legal-escalation",
+                "sentiment": "very-negative",
+                "sentimentScore": -0.88,
+                "customerOpinion": "may involve legal team",
+                "customerWords": [
+                  "legal team",
+                  "resolved promptly"
+                ],
+                "entity": {
+                  "value": "legal team",
+                  "type": "threat",
+                  "category": "ner"
+                }
+              }
+            ],
+            "overallSentiment": "very-negative",
+            "overallSentimentScore": -0.88
+          }
+        ],
+        "entities": [
+          {
+            "value": "enterprise pricing",
+            "type": "pricing-tier",
+            "category": "brand",
+            "linkedAspects": [
+              "incorrect-billing",
+              "contract-terms"
+            ],
+            "sentiment": "negative",
+            "sentimentScore": -0.8
+          },
+          {
+            "value": "David Kim",
+            "type": "customer",
+            "category": "person",
+            "linkedAspects": [],
+            "sentiment": "very-negative",
+            "sentimentScore": -0.85,
+            "metadata": {
+              "company": "Enterprise Customer LLC",
+              "tier": "VIP"
+            }
+          },
+          {
+            "value": "legal team",
+            "type": "threat",
+            "category": "ner",
+            "linkedAspects": [
+              "legal-escalation"
+            ],
+            "metadata": {
+              "severity": "high",
+              "requiresEscalation": true
+            }
+          },
+          {
+            "value": "3 months",
+            "type": "duration",
+            "category": "ner",
+            "linkedAspects": [
+              "incorrect-billing"
+            ],
+            "metadata": {
+              "unit": "months",
+              "value": 3
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-007",
+      "ticketNumber": "TKT-2024-0007",
+      "status": "resolved",
+      "priority": "low",
+      "createdAt": "2024-12-30T14:20:00Z",
+      "updatedAt": "2024-12-30T15:45:00Z",
+      "resolvedAt": "2024-12-30T15:45:00Z",
+      "assignedTo": {
+        "id": "user-002",
+        "name": "Marcus Johnson",
+        "avatarUrl": "https://i.pravatar.cc/150?img=12"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-007",
+        "name": "Lisa Anderson",
+        "username": "@lisaand_food",
+        "platform": "facebook",
+        "avatarUrl": "https://i.pravatar.cc/150?img=27",
+        "isVerified": false,
+        "followerCount": 1200,
+        "engagementRate": 2.8
+      },
+      "contact": {
+        "id": "contact-007",
+        "name": "Lisa Anderson",
+        "email": "lisa.a@email.com",
+        "phone": null,
+        "previousInteractions": 1,
+        "lastContactDate": "2024-09-05T12:00:00Z",
+        "resolutionRate": 100
+      },
+      "impactScore": {
+        "score": 4.1,
+        "tier": "low",
+        "factors": {
+          "followerCount": 3.2,
+          "engagementVelocity": 4.5,
+          "sentimentSeverity": 4.0,
+          "vipStatus": 4.5
+        }
+      },
+      "channel": {
+        "id": "ch-facebook",
+        "name": "Facebook",
+        "platform": "facebook"
+      },
+      "page": {
+        "id": "page-locobuzz-fb",
+        "name": "Locobuzz CX",
+        "handle": "@LocobuzzCXOfficial"
+      },
+      "interactionType": "comment",
+      "interactionTypeLabel": "Comment on Post",
+      "sentiment": "neutral",
+      "sentimentScore": 0.05,
+      "intent": "question",
+      "aspects": [
+        "pricing"
+      ],
+      "signals": [],
+      "summaryChip": "Question \u2022 Pricing \u2022 Neutral",
+      "messageSnippet": "What are the pricing tiers for small businesses? I couldn't find clear information on the website...",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 3,
+        "fromCustomer": 2,
+        "fromBrand": 1
+      },
+      "replyStatus": "replied",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-002",
+          "name": "Marcus Johnson"
+        },
+        "timestamp": "2024-12-30T15:45:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "met",
+          "dueAt": "2024-12-30T15:20:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-30T14:50:00Z"
+        },
+        "resolution": {
+          "status": "met",
+          "dueAt": "2024-12-31T14:20:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-30T15:45:00Z"
+        }
+      },
+      "tags": [
+        "pricing-inquiry"
+      ],
+      "hasAttachments": false,
+      "reasonSurfaced": null,
+      "classification": {
+        "categoryMap": {
+          "category": "Sales & Pre-Sales",
+          "subcategory": "Pricing Inquiries",
+          "subSubcategory": "Plan Selection",
+          "fullPath": "Sales & Pre-Sales > Pricing Inquiries > Plan Selection"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Buying Intent",
+            "aspects": [
+              {
+                "name": "pricing-information",
+                "sentiment": "neutral",
+                "sentimentScore": 0.05,
+                "customerOpinion": "needs clear information",
+                "customerWords": [
+                  "pricing tiers",
+                  "small businesses",
+                  "couldn't find"
+                ],
+                "entity": {
+                  "value": "small businesses",
+                  "type": "segment",
+                  "category": "ner"
+                }
+              },
+              {
+                "name": "plan-selection",
+                "sentiment": "positive",
+                "sentimentScore": 0.15,
+                "customerOpinion": "wants to choose right plan",
+                "customerWords": [
+                  "choose the right plan",
+                  "my needs"
+                ]
+              }
+            ],
+            "overallSentiment": "neutral",
+            "overallSentimentScore": 0.1
+          }
+        ],
+        "entities": [
+          {
+            "value": "small businesses",
+            "type": "customer-segment",
+            "category": "ner",
+            "linkedAspects": [
+              "pricing-information"
+            ],
+            "sentiment": "neutral",
+            "sentimentScore": 0.05
+          },
+          {
+            "value": "Locobuzz",
+            "type": "company",
+            "category": "brand",
+            "linkedAspects": [
+              "pricing-information"
+            ],
+            "sentiment": "neutral",
+            "sentimentScore": 0.05
+          },
+          {
+            "value": "Lisa Anderson",
+            "type": "prospect",
+            "category": "person",
+            "linkedAspects": [],
+            "metadata": {
+              "stage": "consideration"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-008",
+      "ticketNumber": "TKT-2024-0008",
+      "status": "open",
+      "priority": "high",
+      "createdAt": "2024-12-31T09:00:00Z",
+      "updatedAt": "2024-12-31T09:00:00Z",
+      "assignedTo": {
+        "id": "user-001",
+        "name": "Sarah Chen",
+        "avatarUrl": "https://i.pravatar.cc/150?img=5"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-008",
+        "name": "Tom Bradley",
+        "username": "@tombradley_tech",
+        "platform": "x",
+        "avatarUrl": "https://i.pravatar.cc/150?img=52",
+        "isVerified": false,
+        "followerCount": 3400,
+        "engagementRate": 3.9
+      },
+      "contact": {
+        "id": "contact-008",
+        "name": "Tom Bradley",
+        "email": "tom.bradley@email.com",
+        "phone": "+1-555-0234",
+        "previousInteractions": 4,
+        "lastContactDate": "2024-11-28T16:00:00Z",
+        "resolutionRate": 75
+      },
+      "impactScore": {
+        "score": 7.3,
+        "tier": "high",
+        "factors": {
+          "followerCount": 5.8,
+          "engagementVelocity": 7.2,
+          "sentimentSeverity": 8.5,
+          "vipStatus": 7.8
+        }
+      },
+      "channel": {
+        "id": "ch-x",
+        "name": "X (Twitter)",
+        "platform": "x"
+      },
+      "page": {
+        "id": "page-locobuzz-x",
+        "name": "Locobuzz CX",
+        "handle": "@LocobuzzCX"
+      },
+      "interactionType": "post",
+      "interactionTypeLabel": "Public Post",
+      "sentiment": "negative",
+      "sentimentScore": -0.78,
+      "intent": "complaint",
+      "aspects": [
+        "mobile-app",
+        "bug"
+      ],
+      "signals": [
+        "technical-escalation"
+      ],
+      "summaryChip": "Complaint \u2022 Mobile App \u2022 Negative",
+      "messageSnippet": "@LocobuzzCX The mobile app keeps crashing when I try to view analytics. iPhone 15, iOS 17.2. This has been happening for...",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 2,
+        "fromCustomer": 2,
+        "fromBrand": 0
+      },
+      "replyStatus": "not-replied",
+      "lastSeenBy": null,
+      "sla": {
+        "firstResponse": {
+          "status": "due-soon",
+          "dueAt": "2024-12-31T10:00:00Z",
+          "remainingMinutes": 15,
+          "breached": false
+        },
+        "resolution": {
+          "status": "within-sla",
+          "dueAt": "2024-12-31T17:00:00Z",
+          "remainingMinutes": 435,
+          "breached": false
+        }
+      },
+      "tags": [
+        "app-bug",
+        "ios",
+        "analytics"
+      ],
+      "hasAttachments": false,
+      "reasonSurfaced": "Due in 15m \u2022 Technical Issue",
+      "classification": {
+        "categoryMap": {
+          "category": "Technical Support",
+          "subcategory": "Mobile App",
+          "subSubcategory": "App Crashes",
+          "fullPath": "Technical Support > Mobile App > App Crashes"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "App Stability",
+            "aspects": [
+              {
+                "name": "app-crashes",
+                "sentiment": "negative",
+                "sentimentScore": -0.8,
+                "customerOpinion": "app keeps crashing",
+                "customerWords": [
+                  "keeps crashing",
+                  "mobile app",
+                  "analytics"
+                ],
+                "entity": {
+                  "value": "mobile app",
+                  "type": "product",
+                  "category": "brand"
+                }
+              },
+              {
+                "name": "device-compatibility",
+                "sentiment": "neutral",
+                "sentimentScore": -0.05,
+                "customerOpinion": "issue on specific iOS version",
+                "customerWords": [
+                  "iPhone 15",
+                  "iOS 17.2"
+                ],
+                "entity": {
+                  "value": "iOS 17.2",
+                  "type": "platform-version",
+                  "category": "ner"
+                }
+              }
+            ],
+            "overallSentiment": "negative",
+            "overallSentimentScore": -0.78
+          }
+        ],
+        "entities": [
+          {
+            "value": "mobile app",
+            "type": "product",
+            "category": "brand",
+            "linkedAspects": [
+              "app-crashes"
+            ],
+            "sentiment": "negative",
+            "sentimentScore": -0.8
+          },
+          {
+            "value": "iPhone 15",
+            "type": "device",
+            "category": "ner",
+            "linkedAspects": [
+              "device-compatibility"
+            ],
+            "metadata": {
+              "platform": "iOS"
+            }
+          },
+          {
+            "value": "iOS 17.2",
+            "type": "platform-version",
+            "category": "ner",
+            "linkedAspects": [
+              "device-compatibility"
+            ],
+            "metadata": {
+              "platform": "iOS",
+              "version": "17.2"
+            }
+          },
+          {
+            "value": "Tom Bradley",
+            "type": "customer",
+            "category": "person",
+            "linkedAspects": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-009",
+      "ticketNumber": "TKT-2024-0009",
+      "status": "pending",
+      "handoffState": "waiting-on-customer",
+      "priority": "medium",
+      "createdAt": "2024-12-30T11:30:00Z",
+      "updatedAt": "2024-12-31T08:00:00Z",
+      "assignedTo": {
+        "id": "user-003",
+        "name": "Amanda Foster",
+        "avatarUrl": "https://i.pravatar.cc/150?img=29"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-009",
+        "name": "Emma Watson",
+        "username": "@emmaw_marketing",
+        "platform": "instagram",
+        "avatarUrl": "https://i.pravatar.cc/150?img=24",
+        "isVerified": false,
+        "followerCount": 6700,
+        "engagementRate": 4.8
+      },
+      "contact": {
+        "id": "contact-009",
+        "name": "Emma Watson",
+        "email": "emma.w@marketingpro.com",
+        "phone": "+1-555-0567",
+        "previousInteractions": 1,
+        "lastContactDate": "2024-07-22T09:30:00Z",
+        "resolutionRate": 100
+      },
+      "impactScore": {
+        "score": 6.2,
+        "tier": "medium",
+        "factors": {
+          "followerCount": 5.9,
+          "engagementVelocity": 6.5,
+          "sentimentSeverity": 6.0,
+          "vipStatus": 6.5
+        }
+      },
+      "channel": {
+        "id": "ch-instagram",
+        "name": "Instagram",
+        "platform": "instagram"
+      },
+      "page": {
+        "id": "page-locobuzz-ig",
+        "name": "Locobuzz CX Official",
+        "handle": "@locobuzzcx"
+      },
+      "interactionType": "dm",
+      "interactionTypeLabel": "Direct Message",
+      "sentiment": "neutral",
+      "sentimentScore": 0.22,
+      "intent": "question",
+      "aspects": [
+        "account-access"
+      ],
+      "signals": [],
+      "summaryChip": "Question \u2022 Account Access \u2022 Neutral",
+      "messageSnippet": "Hi! I can't log into my account. I've tried resetting my password but not receiving the email. Can you help?",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 4,
+        "fromCustomer": 2,
+        "fromBrand": 2
+      },
+      "replyStatus": "replied",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-003",
+          "name": "Amanda Foster"
+        },
+        "timestamp": "2024-12-31T08:00:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "met",
+          "dueAt": "2024-12-30T12:30:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-30T11:50:00Z"
+        },
+        "resolution": {
+          "status": "paused",
+          "dueAt": "2024-12-31T11:30:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "pausedReason": "Waiting on customer response"
+        }
+      },
+      "tags": [
+        "account-issue",
+        "password-reset"
+      ],
+      "hasAttachments": false,
+      "reasonSurfaced": null,
+      "classification": {
+        "categoryMap": {
+          "category": "Technical Support",
+          "subcategory": "Account Access",
+          "subSubcategory": "Login Issues",
+          "fullPath": "Technical Support > Account Access > Login Issues"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Access Problems",
+            "aspects": [
+              {
+                "name": "login-failure",
+                "sentiment": "neutral",
+                "sentimentScore": -0.2,
+                "customerOpinion": "cannot log in",
+                "customerWords": [
+                  "can't log into my account"
+                ],
+                "entity": null
+              },
+              {
+                "name": "password-reset-issue",
+                "sentiment": "negative",
+                "sentimentScore": -0.45,
+                "customerOpinion": "not receiving reset email",
+                "customerWords": [
+                  "tried resetting",
+                  "not receiving the email"
+                ],
+                "entity": {
+                  "value": "password reset email",
+                  "type": "system-feature",
+                  "category": "brand"
+                }
+              }
+            ],
+            "overallSentiment": "neutral",
+            "overallSentimentScore": -0.33
+          }
+        ],
+        "entities": [
+          {
+            "value": "password reset email",
+            "type": "system-feature",
+            "category": "brand",
+            "linkedAspects": [
+              "password-reset-issue"
+            ],
+            "sentiment": "negative",
+            "sentimentScore": -0.45
+          },
+          {
+            "value": "Emma Watson",
+            "type": "customer",
+            "category": "person",
+            "linkedAspects": [],
+            "metadata": {
+              "platform": "instagram",
+              "followerCount": 6700
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-010",
+      "ticketNumber": "TKT-2024-0010",
+      "status": "new",
+      "priority": "medium",
+      "createdAt": "2024-12-31T09:45:00Z",
+      "updatedAt": "2024-12-31T09:45:00Z",
+      "assignedTo": null,
+      "team": null,
+      "author": {
+        "id": "author-010",
+        "name": "Sophia Lee",
+        "username": "sophia_lee_consulting",
+        "platform": "linkedin",
+        "avatarUrl": "https://i.pravatar.cc/150?img=38",
+        "isVerified": false,
+        "followerCount": 8900,
+        "engagementRate": 5.2
+      },
+      "contact": {
+        "id": "contact-010",
+        "name": "Sophia Lee",
+        "email": "sophia.lee@consultingfirm.com",
+        "phone": "+1-555-0890",
+        "previousInteractions": 0,
+        "lastContactDate": null,
+        "resolutionRate": null
+      },
+      "impactScore": {
+        "score": 6.5,
+        "tier": "medium",
+        "factors": {
+          "followerCount": 6.2,
+          "engagementVelocity": 6.8,
+          "sentimentSeverity": 6.0,
+          "vipStatus": 7.0
+        }
+      },
+      "channel": {
+        "id": "ch-linkedin",
+        "name": "LinkedIn",
+        "platform": "linkedin"
+      },
+      "page": {
+        "id": "page-locobuzz-li",
+        "name": "Locobuzz CX",
+        "handle": "locobuzz-cx"
+      },
+      "interactionType": "comment",
+      "interactionTypeLabel": "Comment on Post",
+      "sentiment": "positive",
+      "sentimentScore": 0.65,
+      "intent": "question",
+      "aspects": [
+        "demo-request"
+      ],
+      "signals": [
+        "sales-lead"
+      ],
+      "summaryChip": "Question \u2022 Demo Request \u2022 Positive",
+      "messageSnippet": "Very interested in seeing a demo for our consulting firm. We work with 50+ enterprise clients who could benefit from this...",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 1,
+        "fromCustomer": 1,
+        "fromBrand": 0
+      },
+      "replyStatus": "not-replied",
+      "lastSeenBy": null,
+      "sla": {
+        "firstResponse": {
+          "status": "within-sla",
+          "dueAt": "2024-12-31T10:45:00Z",
+          "remainingMinutes": 60,
+          "breached": false
+        },
+        "resolution": {
+          "status": "within-sla",
+          "dueAt": "2024-12-31T21:45:00Z",
+          "remainingMinutes": 720,
+          "breached": false
+        }
+      },
+      "tags": [
+        "sales-lead",
+        "demo-request"
+      ],
+      "hasAttachments": false,
+      "reasonSurfaced": null,
+      "classification": {
+        "categoryMap": {
+          "category": "Sales & Pre-Sales",
+          "subcategory": "Demo Requests",
+          "subSubcategory": "Enterprise Demo",
+          "fullPath": "Sales & Pre-Sales > Demo Requests > Enterprise Demo"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Sales Opportunity",
+            "aspects": [
+              {
+                "name": "demo-interest",
+                "sentiment": "positive",
+                "sentimentScore": 0.7,
+                "customerOpinion": "very interested in seeing a demo",
+                "customerWords": [
+                  "very interested",
+                  "seeing a demo",
+                  "consulting firm"
+                ],
+                "entity": {
+                  "value": "demo",
+                  "type": "sales-activity",
+                  "category": "ner"
+                }
+              },
+              {
+                "name": "enterprise-potential",
+                "sentiment": "positive",
+                "sentimentScore": 0.8,
+                "customerOpinion": "works with 50+ enterprise clients",
+                "customerWords": [
+                  "50+ enterprise clients",
+                  "benefit from this"
+                ],
+                "entity": {
+                  "value": "enterprise clients",
+                  "type": "customer-segment",
+                  "category": "ner"
+                }
+              }
+            ],
+            "overallSentiment": "positive",
+            "overallSentimentScore": 0.75
+          }
+        ],
+        "entities": [
+          {
+            "value": "consulting firm",
+            "type": "company-type",
+            "category": "ner",
+            "linkedAspects": [
+              "demo-interest"
+            ],
+            "sentiment": "positive",
+            "sentimentScore": 0.7
+          },
+          {
+            "value": "50+ enterprise clients",
+            "type": "opportunity-size",
+            "category": "ner",
+            "linkedAspects": [
+              "enterprise-potential"
+            ],
+            "metadata": {
+              "clientCount": 50,
+              "segment": "enterprise"
+            }
+          },
+          {
+            "value": "Sophia Lee",
+            "type": "prospect",
+            "category": "person",
+            "linkedAspects": [],
+            "metadata": {
+              "company": "consultingfirm",
+              "platform": "linkedin",
+              "stage": "interest"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-011",
+      "ticketNumber": "TKT-2024-0011",
+      "status": "open",
+      "priority": "low",
+      "createdAt": "2024-12-31T08:30:00Z",
+      "updatedAt": "2024-12-31T09:15:00Z",
+      "assignedTo": {
+        "id": "user-002",
+        "name": "Marcus Johnson",
+        "avatarUrl": "https://i.pravatar.cc/150?img=12"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-011",
+        "name": "Rachel Kim",
+        "username": "@rachelk_design",
+        "platform": "instagram",
+        "avatarUrl": "https://i.pravatar.cc/150?img=45",
+        "isVerified": false,
+        "followerCount": 15600,
+        "engagementRate": 6.1
+      },
+      "contact": {
+        "id": "contact-011",
+        "name": "Rachel Kim",
+        "email": "rachel.kim@designstudio.com",
+        "phone": null,
+        "previousInteractions": 5,
+        "lastContactDate": "2024-12-01T14:00:00Z",
+        "resolutionRate": 100
+      },
+      "impactScore": {
+        "score": 7.8,
+        "tier": "high",
+        "factors": {
+          "followerCount": 7.2,
+          "engagementVelocity": 8.0,
+          "sentimentSeverity": 7.5,
+          "vipStatus": 8.5
+        }
+      },
+      "channel": {
+        "id": "ch-instagram",
+        "name": "Instagram",
+        "platform": "instagram"
+      },
+      "page": {
+        "id": "page-locobuzz-ig",
+        "name": "Locobuzz CX Official",
+        "handle": "@locobuzzcx"
+      },
+      "interactionType": "comment",
+      "interactionTypeLabel": "Comment on Post",
+      "sentiment": "positive",
+      "sentimentScore": 0.92,
+      "intent": "praise",
+      "aspects": [
+        "ui-design",
+        "user-experience"
+      ],
+      "signals": [
+        "brand-advocate"
+      ],
+      "summaryChip": "Praise \u2022 UI Design \u2022 Positive",
+      "messageSnippet": "The new dashboard redesign is absolutely gorgeous! \ud83d\ude0d Love the attention to detail and the smooth animations. Great work team!",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 2,
+        "fromCustomer": 1,
+        "fromBrand": 1
+      },
+      "replyStatus": "replied",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-002",
+          "name": "Marcus Johnson"
+        },
+        "timestamp": "2024-12-31T09:15:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "met",
+          "dueAt": "2024-12-31T09:30:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-31T08:55:00Z"
+        },
+        "resolution": {
+          "status": "within-sla",
+          "dueAt": "2025-01-01T08:30:00Z",
+          "remainingMinutes": 1395,
+          "breached": false
+        }
+      },
+      "tags": [
+        "brand-advocate",
+        "positive-feedback"
+      ],
+      "hasAttachments": false,
+      "reasonSurfaced": null,
+      "classification": {
+        "categoryMap": {
+          "category": "Customer Feedback",
+          "subcategory": "Product Feedback",
+          "subSubcategory": "UI/UX Design",
+          "fullPath": "Customer Feedback > Product Feedback > UI/UX Design"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Design Quality",
+            "aspects": [
+              {
+                "name": "dashboard-redesign",
+                "sentiment": "very-positive",
+                "sentimentScore": 0.95,
+                "customerOpinion": "absolutely gorgeous",
+                "customerWords": [
+                  "absolutely gorgeous",
+                  "new dashboard redesign"
+                ],
+                "entity": {
+                  "value": "dashboard redesign",
+                  "type": "feature",
+                  "category": "brand"
+                }
+              },
+              {
+                "name": "attention-to-detail",
+                "sentiment": "very-positive",
+                "sentimentScore": 0.9,
+                "customerOpinion": "love the attention to detail",
+                "customerWords": [
+                  "attention to detail",
+                  "smooth animations"
+                ],
+                "entity": null
+              },
+              {
+                "name": "user-experience",
+                "sentiment": "very-positive",
+                "sentimentScore": 0.88,
+                "customerOpinion": "thoughtful UX from designer perspective",
+                "customerWords": [
+                  "thoughtfulness in the UX",
+                  "as a designer myself"
+                ]
+              }
+            ],
+            "overallSentiment": "very-positive",
+            "overallSentimentScore": 0.91
+          }
+        ],
+        "entities": [
+          {
+            "value": "dashboard redesign",
+            "type": "feature",
+            "category": "brand",
+            "linkedAspects": [
+              "dashboard-redesign"
+            ],
+            "sentiment": "very-positive",
+            "sentimentScore": 0.95
+          },
+          {
+            "value": "Locobuzz team",
+            "type": "company",
+            "category": "brand",
+            "linkedAspects": [
+              "attention-to-detail",
+              "user-experience"
+            ],
+            "sentiment": "very-positive",
+            "sentimentScore": 0.9
+          },
+          {
+            "value": "Rachel Kim",
+            "type": "brand-advocate",
+            "category": "person",
+            "linkedAspects": [],
+            "sentiment": "very-positive",
+            "sentimentScore": 0.92,
+            "metadata": {
+              "followerCount": 15600,
+              "profession": "designer",
+              "influencePotential": "high"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-012",
+      "ticketNumber": "TKT-2024-0012",
+      "status": "resolved",
+      "priority": "medium",
+      "createdAt": "2024-12-30T09:00:00Z",
+      "updatedAt": "2024-12-30T16:30:00Z",
+      "resolvedAt": "2024-12-30T16:30:00Z",
+      "assignedTo": {
+        "id": "user-001",
+        "name": "Sarah Chen",
+        "avatarUrl": "https://i.pravatar.cc/150?img=5"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-012",
+        "name": "James Wilson",
+        "username": "@jameswilson_biz",
+        "platform": "x",
+        "avatarUrl": "https://i.pravatar.cc/150?img=56",
+        "isVerified": false,
+        "followerCount": 4200,
+        "engagementRate": 4.1
+      },
+      "contact": {
+        "id": "contact-012",
+        "name": "James Wilson",
+        "email": "james.w@businesscorp.com",
+        "phone": "+1-555-0345",
+        "previousInteractions": 2,
+        "lastContactDate": "2024-10-10T11:00:00Z",
+        "resolutionRate": 100
+      },
+      "impactScore": {
+        "score": 5.9,
+        "tier": "medium",
+        "factors": {
+          "followerCount": 5.5,
+          "engagementVelocity": 6.0,
+          "sentimentSeverity": 5.8,
+          "vipStatus": 6.2
+        }
+      },
+      "channel": {
+        "id": "ch-x",
+        "name": "X (Twitter)",
+        "platform": "x"
+      },
+      "page": {
+        "id": "page-locobuzz-x",
+        "name": "Locobuzz CX",
+        "handle": "@LocobuzzCX"
+      },
+      "interactionType": "dm",
+      "interactionTypeLabel": "Direct Message",
+      "sentiment": "neutral",
+      "sentimentScore": 0.18,
+      "intent": "question",
+      "aspects": [
+        "api-documentation"
+      ],
+      "signals": [],
+      "summaryChip": "Question \u2022 API Documentation \u2022 Neutral",
+      "messageSnippet": "Hi, where can I find the updated API documentation? The link on the developer portal seems to be broken...",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 3,
+        "fromCustomer": 1,
+        "fromBrand": 2
+      },
+      "replyStatus": "replied",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-001",
+          "name": "Sarah Chen"
+        },
+        "timestamp": "2024-12-30T16:30:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "met",
+          "dueAt": "2024-12-30T10:00:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-30T09:25:00Z"
+        },
+        "resolution": {
+          "status": "met",
+          "dueAt": "2024-12-31T09:00:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-30T16:30:00Z"
+        }
+      },
+      "tags": [
+        "api-support",
+        "documentation"
+      ],
+      "hasAttachments": false,
+      "hasMedia": false,
+      "reasonSurfaced": null,
+      "classification": {
+        "categoryMap": {
+          "category": "Technical Support",
+          "subcategory": "Developer Support",
+          "subSubcategory": "API Documentation",
+          "fullPath": "Technical Support > Developer Support > API Documentation"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Documentation Quality",
+            "aspects": [
+              {
+                "name": "broken-link",
+                "sentiment": "negative",
+                "sentimentScore": -0.3,
+                "customerOpinion": "link seems to be broken",
+                "customerWords": [
+                  "link",
+                  "seems to be broken",
+                  "developer portal"
+                ],
+                "entity": {
+                  "value": "developer portal",
+                  "type": "product",
+                  "category": "brand"
+                }
+              },
+              {
+                "name": "api-documentation-access",
+                "sentiment": "neutral",
+                "sentimentScore": 0.1,
+                "customerOpinion": "looking for updated documentation",
+                "customerWords": [
+                  "updated API documentation",
+                  "where can I find"
+                ],
+                "entity": {
+                  "value": "API documentation",
+                  "type": "resource",
+                  "category": "brand"
+                }
+              }
+            ],
+            "overallSentiment": "neutral",
+            "overallSentimentScore": -0.1
+          }
+        ],
+        "entities": [
+          {
+            "value": "API documentation",
+            "type": "resource",
+            "category": "brand",
+            "linkedAspects": [
+              "api-documentation-access"
+            ],
+            "sentiment": "neutral",
+            "sentimentScore": 0.1
+          },
+          {
+            "value": "developer portal",
+            "type": "product",
+            "category": "brand",
+            "linkedAspects": [
+              "broken-link"
+            ],
+            "sentiment": "negative",
+            "sentimentScore": -0.3
+          },
+          {
+            "value": "James Wilson",
+            "type": "developer",
+            "category": "person",
+            "linkedAspects": [],
+            "metadata": {
+              "userType": "technical",
+              "company": "BusinessCorp"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-013",
+      "ticketNumber": "TKT-2024-0013",
+      "status": "open",
+      "priority": "urgent",
+      "createdAt": "2024-12-31T10:00:00Z",
+      "updatedAt": "2024-12-31T10:30:00Z",
+      "assignedTo": {
+        "id": "user-002",
+        "name": "Marcus Johnson",
+        "avatarUrl": "https://i.pravatar.cc/150?img=12"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-013",
+        "name": "Sarah Thompson",
+        "username": "+1-555-9876",
+        "platform": "whatsapp",
+        "avatarUrl": "https://i.pravatar.cc/150?img=33",
+        "isVerified": false,
+        "followerCount": 0,
+        "engagementRate": 0
+      },
+      "contact": {
+        "id": "contact-013",
+        "name": "Sarah Thompson",
+        "email": "sarah.t@email.com",
+        "phone": "+1-555-9876",
+        "company": "Thompson & Associates",
+        "jobTitle": "Operations Manager",
+        "location": "Chicago, IL",
+        "customerTier": "vip",
+        "preferredLanguage": "en",
+        "timezone": "America/Chicago",
+        "previousInteractions": 12,
+        "lastContactDate": "2024-12-20T14:00:00Z",
+        "resolutionRate": 95
+      },
+      "impactScore": {
+        "score": 9.5,
+        "tier": "vip",
+        "factors": {
+          "followerCount": 7.0,
+          "engagementVelocity": 9.5,
+          "sentimentSeverity": 9.8,
+          "vipStatus": 10.0
+        }
+      },
+      "channel": {
+        "id": "ch-whatsapp",
+        "name": "WhatsApp Business",
+        "platform": "whatsapp"
+      },
+      "page": {
+        "id": "page-locobuzz-whatsapp",
+        "name": "Locobuzz Support",
+        "handle": "+1-800-SUPPORT"
+      },
+      "interactionType": "whatsapp-message",
+      "interactionTypeLabel": "WhatsApp Message",
+      "sentiment": "very-negative",
+      "sentimentScore": -0.92,
+      "intent": "escalation",
+      "aspects": [
+        "billing",
+        "service-quality",
+        "account-management"
+      ],
+      "signals": [
+        "churn-risk",
+        "vip-escalation",
+        "legal-threat"
+      ],
+      "summaryChip": "Escalation \u2022 Billing \u2022 Very Negative",
+      "messageSnippet": "This is unacceptable! I've been charged twice for the same service and nobody is responding to my emails. I want a full refund immediately or I'm taking legal action!",
+      "unreadCount": 3,
+      "messageCount": {
+        "total": 7,
+        "fromCustomer": 5,
+        "fromBrand": 2
+      },
+      "replyStatus": "not-replied",
+      "lastSeenBy": null,
+      "sla": {
+        "firstResponse": {
+          "status": "breached",
+          "dueAt": "2024-12-31T10:15:00Z",
+          "remainingMinutes": -15,
+          "breached": true,
+          "breachedAt": "2024-12-31T10:16:00Z"
+        },
+        "resolution": {
+          "status": "due-soon",
+          "dueAt": "2024-12-31T14:00:00Z",
+          "remainingMinutes": 210,
+          "breached": false
+        }
+      },
+      "tags": [
+        "billing-issue",
+        "vip",
+        "legal-threat",
+        "churn-risk"
+      ],
+      "hasAttachments": false,
+      "hasMedia": false,
+      "reasonSurfaced": "SLA Breached \u2022 VIP Customer \u2022 Legal Threat",
+      "classification": {
+        "categoryMap": {
+          "category": "Billing & Payments",
+          "subcategory": "Billing Errors",
+          "subSubcategory": "Duplicate Charges",
+          "fullPath": "Billing & Payments > Billing Errors > Duplicate Charges"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Billing Issues",
+            "aspects": [
+              {
+                "name": "duplicate-charge",
+                "sentiment": "very-negative",
+                "sentimentScore": -0.95,
+                "customerOpinion": "charged twice, unacceptable",
+                "customerWords": [
+                  "charged twice",
+                  "same service",
+                  "unacceptable"
+                ],
+                "entity": {
+                  "value": "service charge",
+                  "type": "billing-item",
+                  "category": "ner"
+                }
+              },
+              {
+                "name": "refund-request",
+                "sentiment": "very-negative",
+                "sentimentScore": -0.9,
+                "customerOpinion": "demands full refund immediately",
+                "customerWords": [
+                  "full refund",
+                  "immediately"
+                ],
+                "entity": null
+              }
+            ],
+            "overallSentiment": "very-negative",
+            "overallSentimentScore": -0.93
+          },
+          {
+            "groupName": "Service Quality",
+            "aspects": [
+              {
+                "name": "response-time",
+                "sentiment": "very-negative",
+                "sentimentScore": -0.88,
+                "customerOpinion": "nobody is responding",
+                "customerWords": [
+                  "nobody responding",
+                  "emails"
+                ],
+                "entity": null
+              }
+            ],
+            "overallSentiment": "very-negative",
+            "overallSentimentScore": -0.88
+          }
+        ],
+        "entities": [
+          {
+            "value": "Locobuzz",
+            "type": "company",
+            "category": "brand",
+            "linkedAspects": [
+              "response-time"
+            ],
+            "sentiment": "very-negative",
+            "sentimentScore": -0.9
+          },
+          {
+            "value": "Sarah Thompson",
+            "type": "customer",
+            "category": "person",
+            "linkedAspects": [],
+            "sentiment": "very-negative",
+            "sentimentScore": -0.92
+          },
+          {
+            "value": "legal action",
+            "type": "threat",
+            "category": "ner",
+            "linkedAspects": [],
+            "metadata": {
+              "severity": "high",
+              "requiresEscalation": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-014",
+      "ticketNumber": "TKT-2024-0014",
+      "status": "in-progress",
+      "priority": "medium",
+      "createdAt": "2024-12-31T09:30:00Z",
+      "updatedAt": "2024-12-31T10:00:00Z",
+      "assignedTo": {
+        "id": "user-003",
+        "name": "Emily Rodriguez",
+        "avatarUrl": "https://i.pravatar.cc/150?img=28"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-014",
+        "name": "Mike Chen",
+        "username": "Mike Chen (Google User)",
+        "platform": "google-reviews",
+        "avatarUrl": "https://i.pravatar.cc/150?img=51",
+        "isVerified": true,
+        "followerCount": 0,
+        "engagementRate": 0
+      },
+      "contact": {
+        "id": "contact-014",
+        "name": "Mike Chen",
+        "email": "mike.chen@techstartup.io",
+        "phone": null,
+        "company": "TechStartup Inc",
+        "jobTitle": "CTO",
+        "location": "San Francisco, CA",
+        "customerTier": "enterprise",
+        "preferredLanguage": "en",
+        "timezone": "America/Los_Angeles",
+        "previousInteractions": 5,
+        "lastContactDate": "2024-11-30T10:00:00Z",
+        "resolutionRate": 100
+      },
+      "impactScore": {
+        "score": 9.2,
+        "tier": "vip",
+        "factors": {
+          "followerCount": 8.0,
+          "engagementVelocity": 8.5,
+          "sentimentSeverity": 9.0,
+          "vipStatus": 10.0
+        }
+      },
+      "channel": {
+        "id": "ch-google-reviews",
+        "name": "Google My Business",
+        "platform": "google-reviews"
+      },
+      "page": {
+        "id": "page-locobuzz-google",
+        "name": "Locobuzz CX Reviews",
+        "handle": "Locobuzz CX"
+      },
+      "interactionType": "public-review",
+      "interactionTypeLabel": "Public Review",
+      "sentiment": "positive",
+      "sentimentScore": 0.85,
+      "intent": "praise",
+      "aspects": [
+        "product-features",
+        "customer-support",
+        "ease-of-use"
+      ],
+      "signals": [
+        "potential-advocate",
+        "testimonial-opportunity"
+      ],
+      "summaryChip": "Praise \u2022 Product Features \u2022 Positive",
+      "messageSnippet": "Amazing platform! The AI-powered sentiment analysis is incredibly accurate. Customer support team is also very responsive. Highly recommend!",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 2,
+        "fromCustomer": 1,
+        "fromBrand": 1
+      },
+      "replyStatus": "replied",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-003",
+          "name": "Emily Rodriguez"
+        },
+        "timestamp": "2024-12-31T09:45:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "met",
+          "dueAt": "2024-12-31T10:30:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-31T09:45:00Z"
+        },
+        "resolution": {
+          "status": "met",
+          "dueAt": "2024-12-31T17:30:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-31T10:00:00Z"
+        }
+      },
+      "tags": [
+        "positive-review",
+        "testimonial",
+        "enterprise"
+      ],
+      "hasAttachments": false,
+      "hasMedia": false,
+      "reviewRating": 5,
+      "reasonSurfaced": "Positive Review \u2022 Testimonial Opportunity",
+      "classification": {
+        "categoryMap": {
+          "category": "Customer Feedback",
+          "subcategory": "Positive Reviews",
+          "subSubcategory": "Product Praise",
+          "fullPath": "Customer Feedback > Positive Reviews > Product Praise"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Product Experience",
+            "aspects": [
+              {
+                "name": "ai-accuracy",
+                "sentiment": "very-positive",
+                "sentimentScore": 0.92,
+                "customerOpinion": "incredibly accurate",
+                "customerWords": [
+                  "incredibly accurate",
+                  "AI-powered",
+                  "sentiment analysis"
+                ],
+                "entity": {
+                  "value": "AI-powered sentiment analysis",
+                  "type": "feature",
+                  "category": "brand"
+                }
+              },
+              {
+                "name": "ease-of-use",
+                "sentiment": "positive",
+                "sentimentScore": 0.8,
+                "customerOpinion": "amazing platform",
+                "customerWords": [
+                  "amazing platform"
+                ],
+                "entity": {
+                  "value": "platform",
+                  "type": "product",
+                  "category": "brand"
+                }
+              }
+            ],
+            "overallSentiment": "very-positive",
+            "overallSentimentScore": 0.86
+          },
+          {
+            "groupName": "Support Quality",
+            "aspects": [
+              {
+                "name": "support-responsiveness",
+                "sentiment": "positive",
+                "sentimentScore": 0.85,
+                "customerOpinion": "very responsive",
+                "customerWords": [
+                  "very responsive",
+                  "customer support team"
+                ],
+                "entity": {
+                  "value": "customer support team",
+                  "type": "team",
+                  "category": "brand"
+                }
+              }
+            ],
+            "overallSentiment": "positive",
+            "overallSentimentScore": 0.85
+          }
+        ],
+        "entities": [
+          {
+            "value": "Locobuzz",
+            "type": "company",
+            "category": "brand",
+            "linkedAspects": [
+              "ai-accuracy",
+              "ease-of-use"
+            ],
+            "sentiment": "very-positive",
+            "sentimentScore": 0.88
+          },
+          {
+            "value": "AI-powered sentiment analysis",
+            "type": "feature",
+            "category": "brand",
+            "linkedAspects": [
+              "ai-accuracy"
+            ],
+            "sentiment": "very-positive",
+            "sentimentScore": 0.92
+          },
+          {
+            "value": "customer support team",
+            "type": "department",
+            "category": "brand",
+            "linkedAspects": [
+              "support-responsiveness"
+            ],
+            "sentiment": "positive",
+            "sentimentScore": 0.85
+          },
+          {
+            "value": "Mike Chen",
+            "type": "reviewer",
+            "category": "person",
+            "linkedAspects": [],
+            "sentiment": "very-positive",
+            "sentimentScore": 0.85
+          },
+          {
+            "value": "San Francisco",
+            "type": "city",
+            "category": "location",
+            "linkedAspects": [],
+            "metadata": {
+              "state": "CA",
+              "country": "USA"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-015",
+      "ticketNumber": "TKT-2024-0015",
+      "status": "open",
+      "priority": "high",
+      "createdAt": "2024-12-31T11:00:00Z",
+      "updatedAt": "2024-12-31T11:15:00Z",
+      "assignedTo": {
+        "id": "user-001",
+        "name": "Sarah Chen",
+        "avatarUrl": "https://i.pravatar.cc/150?img=5"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-015",
+        "name": "Alex Rivera",
+        "username": "@alex_rivera_photo",
+        "platform": "instagram",
+        "avatarUrl": "https://i.pravatar.cc/150?img=41",
+        "isVerified": true,
+        "followerCount": 125000,
+        "engagementRate": 7.8,
+        "bio": "Professional Photographer | Travel Enthusiast \ud83d\udcf8",
+        "followsBrand": true
+      },
+      "contact": {
+        "id": "contact-015",
+        "name": "Alex Rivera",
+        "email": "alex@rivera-photos.com",
+        "phone": "+1-555-7788",
+        "company": "Rivera Photography",
+        "jobTitle": "Owner & Lead Photographer",
+        "location": "Miami, FL",
+        "customerTier": "premium",
+        "preferredLanguage": "en",
+        "timezone": "America/New_York",
+        "previousInteractions": 8,
+        "lastContactDate": "2024-12-15T16:00:00Z",
+        "resolutionRate": 100
+      },
+      "impactScore": {
+        "score": 9.3,
+        "tier": "vip",
+        "factors": {
+          "followerCount": 9.8,
+          "engagementVelocity": 9.2,
+          "sentimentSeverity": 8.5,
+          "vipStatus": 9.5
+        }
+      },
+      "channel": {
+        "id": "ch-instagram",
+        "name": "Instagram",
+        "platform": "instagram"
+      },
+      "page": {
+        "id": "page-locobuzz-ig",
+        "name": "Locobuzz CX Official",
+        "handle": "@locobuzzcx"
+      },
+      "interactionType": "dm-with-media",
+      "interactionTypeLabel": "DM with Photo",
+      "sentiment": "neutral",
+      "sentimentScore": 0.15,
+      "intent": "question",
+      "aspects": [
+        "feature-request",
+        "image-analysis"
+      ],
+      "signals": [
+        "influencer-engagement",
+        "feature-opportunity"
+      ],
+      "summaryChip": "Question \u2022 Feature Request \u2022 Neutral",
+      "messageSnippet": "Love your platform! Quick question - does your image recognition work with videos too? I'd love to analyze sentiment from video comments. Sent you a sample.",
+      "unreadCount": 1,
+      "messageCount": {
+        "total": 2,
+        "fromCustomer": 2,
+        "fromBrand": 0
+      },
+      "replyStatus": "not-replied",
+      "lastSeenBy": null,
+      "sla": {
+        "firstResponse": {
+          "status": "within-sla",
+          "dueAt": "2024-12-31T12:00:00Z",
+          "remainingMinutes": 45,
+          "breached": false
+        },
+        "resolution": {
+          "status": "within-sla",
+          "dueAt": "2024-12-31T19:00:00Z",
+          "remainingMinutes": 465,
+          "breached": false
+        }
+      },
+      "tags": [
+        "feature-request",
+        "influencer",
+        "media-attached"
+      ],
+      "hasAttachments": true,
+      "hasMedia": true,
+      "mediaType": "image",
+      "mediaUrl": "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=400",
+      "mediaCount": 1,
+      "reasonSurfaced": "Influencer \u2022 Feature Request",
+      "classification": {
+        "categoryMap": {
+          "category": "Product Feedback",
+          "subcategory": "Feature Requests",
+          "subSubcategory": "Video Analysis",
+          "fullPath": "Product Feedback > Feature Requests > Video Analysis"
+        },
+        "aspectGroups": [
+          {
+            "groupName": "Product Features",
+            "aspects": [
+              {
+                "name": "video-support",
+                "sentiment": "neutral",
+                "sentimentScore": 0.2,
+                "customerOpinion": "wants video analysis feature",
+                "customerWords": [
+                  "videos too",
+                  "analyze sentiment",
+                  "video comments"
+                ],
+                "entity": {
+                  "value": "image recognition",
+                  "type": "feature",
+                  "category": "brand"
+                }
+              },
+              {
+                "name": "platform-satisfaction",
+                "sentiment": "positive",
+                "sentimentScore": 0.9,
+                "customerOpinion": "loves the platform",
+                "customerWords": [
+                  "Love your platform"
+                ],
+                "entity": {
+                  "value": "platform",
+                  "type": "product",
+                  "category": "brand"
+                }
+              }
+            ],
+            "overallSentiment": "positive",
+            "overallSentimentScore": 0.55
+          }
+        ],
+        "entities": [
+          {
+            "value": "image recognition",
+            "type": "feature",
+            "category": "brand",
+            "linkedAspects": [
+              "video-support"
+            ],
+            "sentiment": "neutral",
+            "sentimentScore": 0.2
+          },
+          {
+            "value": "video comments",
+            "type": "content-type",
+            "category": "ner",
+            "linkedAspects": [
+              "video-support"
+            ],
+            "sentiment": "neutral",
+            "sentimentScore": 0.15
+          },
+          {
+            "value": "Alex Rivera",
+            "type": "influencer",
+            "category": "person",
+            "linkedAspects": [],
+            "sentiment": "positive",
+            "sentimentScore": 0.7,
+            "metadata": {
+              "followerCount": 125000,
+              "verified": true
+            }
+          },
+          {
+            "value": "Miami",
+            "type": "city",
+            "category": "location",
+            "linkedAspects": [],
+            "metadata": {
+              "state": "FL",
+              "country": "USA"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket-016",
+      "ticketNumber": "TKT-2024-0016",
+      "status": "open",
+      "priority": "high",
+      "createdAt": "2024-12-28T14:22:00Z",
+      "updatedAt": "2025-01-05T10:30:00Z",
+      "assignedTo": {
+        "id": "user-001",
+        "name": "Sarah Chen",
+        "avatarUrl": "https://i.pravatar.cc/150?img=5"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-016",
+        "name": "Robert Patterson",
+        "username": "robert.patterson",
+        "platform": "email",
+        "avatarUrl": "https://i.pravatar.cc/150?img=33",
+        "isVerified": false,
+        "followerCount": 0,
+        "engagementRate": 0
+      },
+      "contact": {
+        "id": "contact-016",
+        "name": "Robert Patterson",
+        "email": "robert.patterson@globaltech.com",
+        "phone": "+1-555-0198",
+        "company": "GlobalTech Industries",
+        "jobTitle": "IT Director",
+        "location": "Chicago, IL",
+        "customerTier": "enterprise",
+        "preferredLanguage": "en",
+        "timezone": "America/Chicago",
+        "previousInteractions": 12,
+        "lastContactDate": "2024-11-20T16:45:00Z",
+        "resolutionRate": 92
+      },
+      "impactScore": {
+        "score": 9.2,
+        "tier": "vip",
+        "factors": {
+          "followerCount": 0,
+          "engagementVelocity": 0,
+          "sentimentSeverity": 8.5,
+          "vipStatus": 10.0
+        }
+      },
+      "channel": {
+        "id": "ch-email",
+        "name": "Email",
+        "platform": "email"
+      },
+      "page": {
+        "id": "page-support-email",
+        "name": "Support Email",
+        "handle": "support@locobuzz.com"
+      },
+      "interactionType": "email",
+      "interactionTypeLabel": "Email Thread",
+      "sentiment": "negative",
+      "sentimentScore": -0.65,
+      "intent": "complaint",
+      "aspects": [
+        "billing",
+        "refund"
+      ],
+      "signals": [
+        "long-thread",
+        "multiple-participants"
+      ],
+      "summaryChip": "Complaint \u2022 Billing \u2022 Negative",
+      "messageSnippet": "I was charged twice for order #7291. Please refund the duplicate charge immediately...",
+      "unreadCount": 2,
+      "messageCount": {
+        "total": 13,
+        "fromCustomer": 7,
+        "fromBrand": 6
+      },
+      "replyStatus": "replied",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-002",
+          "name": "Mike Chen"
+        },
+        "timestamp": "2025-01-03T15:20:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "met",
+          "dueAt": "2024-12-28T16:22:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-28T15:10:00Z"
+        },
+        "resolution": {
+          "status": "within-sla",
+          "dueAt": "2025-01-06T14:22:00Z",
+          "remainingMinutes": 1892,
+          "breached": false
+        }
+      },
+      "tags": [
+        "billing-issue",
+        "enterprise-customer",
+        "refund-requested"
+      ],
+      "hasAttachments": true,
+      "reasonSurfaced": "Enterprise Customer \u2022 Long Thread (13 emails)",
+      "emailThreadSummary": {
+        "totalEmails": 13,
+        "durationDays": 8,
+        "description": "13 emails over 8 days about duplicate charge refund dispute",
+        "participants": [
+          {
+            "id": "author-016",
+            "name": "Robert Patterson",
+            "email": "robert.patterson@globaltech.com",
+            "role": "primary-customer",
+            "messageCount": 7,
+            "lastActivityAt": "2025-01-05T10:15:00Z"
+          },
+          {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "email": "sarah.chen@locobuzz.com",
+            "role": "internal-team",
+            "messageCount": 4,
+            "lastActivityAt": "2025-01-04T14:30:00Z"
+          },
+          {
+            "id": "user-003",
+            "name": "Mike Roberts",
+            "email": "mike.roberts@locobuzz.com",
+            "role": "internal-team",
+            "messageCount": 2,
+            "lastActivityAt": "2025-01-02T09:15:00Z"
+          },
+          {
+            "id": "contact-016b",
+            "name": "Susan Patterson",
+            "email": "susan.patterson@globaltech.com",
+            "role": "cc-contact",
+            "messageCount": 0,
+            "lastActivityAt": "2024-12-28T14:22:00Z"
+          }
+        ],
+        "importantDates": {
+          "firstContact": "2024-12-28T14:22:00Z",
+          "lastReply": "2025-01-05T10:30:00Z",
+          "resolutionDate": null
+        },
+        "attachmentCount": 3
+      },
+      "isNoReplySource": false,
+      "emailThreadMetadata": {
+        "threadId": "email-thread-016",
+        "subject": "Duplicate Charge - Order #7291",
+        "companyDomain": "locobuzz.com",
+        "originalParticipants": {
+          "from": {
+            "name": "Robert Patterson",
+            "email": "robert.patterson@globaltech.com"
+          },
+          "to": [
+            {
+              "name": "Support Team",
+              "email": "support@locobuzz.com"
+            }
+          ],
+          "cc": [
+            {
+              "name": "Susan Patterson",
+              "email": "susan.patterson@globaltech.com"
+            }
+          ]
+        },
+        "totalMessages": 13,
+        "hasHtmlMessages": true,
+        "hasAttachments": true
+      }
+    },
+    {
+      "id": "ticket-017",
+      "ticketNumber": "TKT-2024-0017",
+      "status": "open",
+      "priority": "high",
+      "createdAt": "2024-12-30T14:45:00Z",
+      "updatedAt": "2024-12-30T15:45:00Z",
+      "assignedTo": {
+        "id": "user-001",
+        "name": "Sarah Chen",
+        "avatarUrl": "https://i.pravatar.cc/150?img=5"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-017",
+        "name": "John Doe",
+        "username": "@john_doe_tech",
+        "platform": "instagram",
+        "avatarUrl": "https://i.pravatar.cc/150?img=52",
+        "isVerified": false,
+        "followerCount": 3400,
+        "engagementRate": 3.8
+      },
+      "contact": {
+        "id": "contact-017",
+        "name": "John Doe",
+        "email": "john.doe@email.com",
+        "phone": "+1-555-0156",
+        "company": null,
+        "jobTitle": null,
+        "location": "Los Angeles, CA",
+        "customerTier": "regular",
+        "preferredLanguage": "en",
+        "timezone": "America/Los_Angeles",
+        "previousInteractions": 1,
+        "lastContactDate": null,
+        "resolutionRate": null
+      },
+      "impactScore": {
+        "score": 7.5,
+        "tier": "medium",
+        "factors": {
+          "followerCount": 5.2,
+          "engagementVelocity": 7.8,
+          "sentimentSeverity": 8.5,
+          "vipStatus": 5.0
+        }
+      },
+      "channel": {
+        "id": "ch-instagram",
+        "name": "Instagram",
+        "platform": "instagram"
+      },
+      "page": {
+        "id": "page-locobuzz-ig",
+        "name": "Locobuzz CX Official",
+        "handle": "@locobuzzcx"
+      },
+      "interactionType": "dm",
+      "interactionTypeLabel": "Direct Message (from Public)",
+      "sentiment": "negative",
+      "sentimentScore": -0.78,
+      "intent": "complaint",
+      "aspects": [
+        "checkout",
+        "payment"
+      ],
+      "signals": [
+        "public-escalation",
+        "viral-risk"
+      ],
+      "summaryChip": "Complaint \u2022 Payment \u2022 Negative",
+      "messageSnippet": "Tried this yesterday and it charged me twice! Still waiting for refund...",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 8,
+        "fromCustomer": 4,
+        "fromBrand": 4
+      },
+      "replyStatus": "replied",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-001",
+          "name": "Sarah Chen"
+        },
+        "timestamp": "2024-12-30T15:45:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "met",
+          "dueAt": "2024-12-30T15:45:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-30T15:15:00Z"
+        },
+        "resolution": {
+          "status": "within-sla",
+          "dueAt": "2024-12-31T14:45:00Z",
+          "remainingMinutes": 420,
+          "breached": false
+        }
+      },
+      "tags": [
+        "payment-issue",
+        "public-to-dm",
+        "resolved-positive"
+      ],
+      "hasAttachments": false,
+      "reasonSurfaced": "Public complaint moved to DM \u2022 High visibility (450 views)",
+      "conversationTransition": {
+        "id": "transition-017",
+        "timestamp": "2024-12-30T15:15:00Z",
+        "from": {
+          "interactionType": "comment",
+          "visibility": "public",
+          "mentionId": "mention-017-public-1",
+          "platform": "instagram"
+        },
+        "to": {
+          "interactionType": "dm",
+          "visibility": "private",
+          "mentionId": "mention-017-dm-1",
+          "platform": "instagram"
+        },
+        "reason": "sensitive-information",
+        "reasonText": "Sensitive financial information",
+        "initiatedBy": "agent",
+        "initiatorName": "Sarah Chen",
+        "publicVisibilityStats": {
+          "views": 450,
+          "reactions": 125,
+          "comments": 23
+        }
+      },
+      "publicPostContext": {
+        "postId": "post-brand-express-checkout",
+        "content": "Introducing our new Express Checkout feature! Shop faster than ever. Try it today! \ud83d\uded2\u2728",
+        "timestamp": "2024-12-29T10:00:00Z",
+        "author": {
+          "id": "page-locobuzz-ig",
+          "name": "Locobuzz CX Official",
+          "username": "@locobuzzcx",
+          "avatarUrl": "https://i.pravatar.cc/150?img=1",
+          "isVerified": true,
+          "followerCount": 45000
+        },
+        "platform": "instagram",
+        "postType": "post",
+        "visibility": "public",
+        "engagementMetrics": {
+          "reactions": {
+            "total": 3500,
+            "byType": {
+              "like": 2800,
+              "love": 520,
+              "wow": 180
+            }
+          },
+          "comments": 789,
+          "shares": 245,
+          "reach": 28500,
+          "impressions": 45200
+        },
+        "viralityIndicator": "high",
+        "viralityReason": "2.3x average engagement - trending post",
+        "media": [
+          {
+            "type": "image",
+            "url": "https://placehold.co/1080x1080/3b82f6/fff?text=Express+Checkout",
+            "thumbnailUrl": "https://placehold.co/400x400/3b82f6/fff?text=Express+Checkout",
+            "altText": "Express Checkout feature announcement"
+          }
+        ],
+        "platformUrl": "https://instagram.com/p/brand-express-checkout"
+      },
+      "engagementRisk": {
+        "level": "medium",
+        "reason": "High engagement post with negative comment thread",
+        "shouldEscalate": false,
+        "requiresApproval": false,
+        "suggestedActions": [
+          "Monitor for additional negative comments",
+          "Resolve customer issue in DM",
+          "Consider follow-up public update if resolved positively"
+        ]
+      }
+    },
+    {
+      "id": "ticket-018",
+      "ticketNumber": "TKT-2024-0018",
+      "status": "open",
+      "priority": "medium",
+      "createdAt": "2024-12-29T09:23:00Z",
+      "updatedAt": "2024-12-31T14:21:00Z",
+      "assignedTo": {
+        "id": "user-001",
+        "name": "Sarah Chen",
+        "avatarUrl": "https://i.pravatar.cc/150?img=5"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-018",
+        "name": "Maria Garcia",
+        "username": "+15550142",
+        "platform": "whatsapp",
+        "avatarUrl": "https://i.pravatar.cc/150?img=47",
+        "isVerified": false,
+        "followerCount": 0,
+        "engagementRate": 0
+      },
+      "contact": {
+        "id": "contact-018",
+        "name": "Maria Garcia",
+        "email": "maria.garcia@email.com",
+        "phone": "+1-555-0142",
+        "company": null,
+        "jobTitle": null,
+        "location": "Miami, FL",
+        "customerTier": "regular",
+        "preferredLanguage": "en",
+        "timezone": "America/New_York",
+        "previousInteractions": 2,
+        "lastContactDate": "2024-11-05T10:30:00Z",
+        "resolutionRate": 100
+      },
+      "impactScore": {
+        "score": 6.0,
+        "tier": "medium",
+        "factors": {
+          "followerCount": 0,
+          "engagementVelocity": 6.5,
+          "sentimentSeverity": 7.0,
+          "vipStatus": 5.0
+        }
+      },
+      "channel": {
+        "id": "ch-whatsapp",
+        "name": "WhatsApp",
+        "platform": "whatsapp"
+      },
+      "page": {
+        "id": "page-support-whatsapp",
+        "name": "Support WhatsApp",
+        "handle": "+15551234567"
+      },
+      "interactionType": "chat-message",
+      "interactionTypeLabel": "WhatsApp Chat",
+      "sentiment": "neutral",
+      "sentimentScore": 0.15,
+      "intent": "question",
+      "aspects": [
+        "order-tracking",
+        "delivery"
+      ],
+      "signals": [
+        "quick-resolution"
+      ],
+      "summaryChip": "Question \u2022 Tracking \u2022 Neutral",
+      "messageSnippet": "Hi, I have a question about my order...",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 21,
+        "fromCustomer": 12,
+        "fromBrand": 9
+      },
+      "replyStatus": "replied",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-001",
+          "name": "Sarah Chen"
+        },
+        "timestamp": "2024-12-31T14:21:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "met",
+          "dueAt": "2024-12-29T09:33:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-29T09:25:00Z"
+        },
+        "resolution": {
+          "status": "met",
+          "dueAt": "2024-12-31T09:23:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-31T14:21:00Z"
+        }
+      },
+      "tags": [
+        "order-inquiry",
+        "chat",
+        "tracking"
+      ],
+      "hasAttachments": false,
+      "reasonSurfaced": null,
+      "isTyping": false
+    },
+    {
+      "id": "ticket-019",
+      "ticketNumber": "TKT-2024-0019",
+      "status": "open",
+      "priority": "medium",
+      "createdAt": "2024-12-28T15:30:00Z",
+      "updatedAt": "2024-12-28T16:15:00Z",
+      "assignedTo": {
+        "id": "user-001",
+        "name": "Sarah Chen",
+        "avatarUrl": "https://i.pravatar.cc/150?img=5"
+      },
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-019",
+        "name": "Customer John",
+        "username": "@customer_john_84",
+        "platform": "instagram",
+        "avatarUrl": "https://i.pravatar.cc/150?img=68",
+        "isVerified": false,
+        "followerCount": 890,
+        "engagementRate": 2.4
+      },
+      "contact": {
+        "id": "contact-019",
+        "name": "John Smith",
+        "email": "john.smith84@email.com",
+        "phone": null,
+        "company": null,
+        "jobTitle": null,
+        "location": "Denver, CO",
+        "customerTier": "regular",
+        "preferredLanguage": "en",
+        "timezone": "America/Denver",
+        "previousInteractions": 0,
+        "lastContactDate": null,
+        "resolutionRate": null
+      },
+      "impactScore": {
+        "score": 5.5,
+        "tier": "medium",
+        "factors": {
+          "followerCount": 3.0,
+          "engagementVelocity": 5.2,
+          "sentimentSeverity": 4.5,
+          "vipStatus": 5.0
+        }
+      },
+      "channel": {
+        "id": "ch-instagram",
+        "name": "Instagram",
+        "platform": "instagram"
+      },
+      "page": {
+        "id": "page-locobuzz-ig",
+        "name": "Locobuzz CX Official",
+        "handle": "@locobuzzcx"
+      },
+      "interactionType": "comment",
+      "interactionTypeLabel": "Threaded Comment",
+      "sentiment": "neutral",
+      "sentimentScore": -0.25,
+      "intent": "feedback",
+      "aspects": [
+        "pricing",
+        "shipping"
+      ],
+      "signals": [
+        "thread-context-needed"
+      ],
+      "summaryChip": "Feedback \u2022 Pricing \u2022 Neutral",
+      "messageSnippet": "@budget_buyer Same, plus I heard shipping takes forever with this brand...",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 5,
+        "fromCustomer": 3,
+        "fromBrand": 2
+      },
+      "replyStatus": "replied",
+      "lastSeenBy": {
+        "user": {
+          "id": "user-001",
+          "name": "Sarah Chen"
+        },
+        "timestamp": "2024-12-28T16:15:00Z"
+      },
+      "sla": {
+        "firstResponse": {
+          "status": "met",
+          "dueAt": "2024-12-28T17:30:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-28T15:55:00Z"
+        },
+        "resolution": {
+          "status": "met",
+          "dueAt": "2024-12-30T15:30:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-28T16:15:00Z"
+        }
+      },
+      "tags": [
+        "product-inquiry",
+        "pricing-feedback",
+        "resolved-positive"
+      ],
+      "hasAttachments": false,
+      "reasonSurfaced": "Nested comment on trending post",
+      "parentPostContext": {
+        "post": {
+          "postId": "post-ecoline-launch",
+          "content": "Introducing our new EcoLine collection! Sustainable materials, modern design, affordable pricing. What do you think? \ud83c\udf31\u2728",
+          "timestamp": "2024-12-28T15:42:00Z",
+          "author": {
+            "id": "page-locobuzz-ig",
+            "name": "Locobuzz CX Official",
+            "username": "@locobuzzcx",
+            "avatarUrl": "https://i.pravatar.cc/150?img=1",
+            "isVerified": true,
+            "followerCount": 45000
+          },
+          "platform": "instagram",
+          "postType": "post",
+          "visibility": "public",
+          "engagementMetrics": {
+            "reactions": {
+              "total": 1500,
+              "byType": {
+                "like": 435,
+                "love": 520,
+                "wow": 325,
+                "fire": 220
+              }
+            },
+            "comments": 230,
+            "shares": 120,
+            "reach": 28500,
+            "impressions": 42000
+          },
+          "viralityIndicator": "high",
+          "viralityReason": "2.5x average engagement - trending",
+          "media": [
+            {
+              "type": "carousel",
+              "url": "https://placehold.co/1080x1080/10b981/fff?text=EcoLine+Collection",
+              "thumbnailUrl": "https://placehold.co/400x400/10b981/fff?text=EcoLine",
+              "altText": "EcoLine sustainable collection"
+            }
+          ],
+          "platformUrl": "https://instagram.com/p/ecoline-launch"
+        },
+        "isCollapsed": true,
+        "threadPosition": {
+          "currentCommentNumber": 3,
+          "totalComments": 47,
+          "nestingLevel": 2
+        },
+        "parentComment": {
+          "id": "comment-parent-1",
+          "authorUsername": "@budget_buyer",
+          "content": "Agreed, I'll stick with Brand X at $29",
+          "contentSnippet": "Agreed, I'll stick with Brand X at $29",
+          "timestamp": "2024-12-28T15:25:00Z",
+          "reactions": 23
+        },
+        "siblingReplies": {
+          "count": 2,
+          "platformUrl": "https://instagram.com/p/ecoline-launch/comments"
+        },
+        "childReplies": {
+          "count": 0,
+          "platformUrl": "https://instagram.com/p/ecoline-launch/comments"
+        }
+      },
+      "threadNavigator": {
+        "breadcrumb": [
+          {
+            "type": "post",
+            "label": "Original Post",
+            "id": "post-ecoline-launch",
+            "isClickable": true
+          },
+          {
+            "type": "comment",
+            "label": "@price_conscious_shopper's comment",
+            "id": "comment-root",
+            "isClickable": true
+          },
+          {
+            "type": "reply",
+            "label": "@budget_buyer's reply",
+            "id": "comment-parent-1",
+            "isClickable": true
+          },
+          {
+            "type": "current",
+            "label": "This ticket",
+            "isClickable": false
+          }
+        ],
+        "actions": {
+          "canJumpToParent": true,
+          "canViewSiblings": true,
+          "canViewChildren": false,
+          "canViewFullThread": true,
+          "fullThreadUrl": "https://instagram.com/p/ecoline-launch"
+        }
+      },
+      "engagementRisk": {
+        "level": "low",
+        "reason": "Nested reply in large thread, not highly visible",
+        "shouldEscalate": false,
+        "requiresApproval": false,
+        "suggestedActions": [
+          "Address shipping misconception",
+          "Provide accurate information"
+        ]
+      }
+    },
+    {
+      "id": "ticket-020",
+      "ticketNumber": "TKT-2024-0020",
+      "status": "new",
+      "priority": "high",
+      "createdAt": "2024-12-31T11:00:00Z",
+      "updatedAt": "2024-12-31T11:00:00Z",
+      "assignedTo": null,
+      "team": {
+        "id": "team-cx",
+        "name": "Customer Experience Team"
+      },
+      "author": {
+        "id": "author-voice-001",
+        "name": "Jennifer Wu",
+        "username": "+15557788",
+        "platform": "voice",
+        "avatarUrl": "https://i.pravatar.cc/150?img=32"
+      },
+      "contact": {
+        "id": "contact-voice-001",
+        "name": "Jennifer Wu",
+        "email": "jwu@enterprise.com",
+        "phone": "+1-555-7788"
+      },
+      "impactScore": {
+        "score": 9.2,
+        "tier": "vip",
+        "factors": {
+          "followerCount": 1.0,
+          "engagementVelocity": 9.5,
+          "sentimentSeverity": 9.0,
+          "vipStatus": 10.0
+        }
+      },
+      "channel": {
+        "id": "ch-voice",
+        "name": "Voice Support Line",
+        "platform": "voice"
+      },
+      "page": {
+        "id": "page-locobuzz-voice",
+        "name": "Main Support Line",
+        "handle": "+1800LOCOBUZZ"
+      },
+      "interactionType": "call",
+      "interactionTypeLabel": "Inbound Call",
+      "sentiment": "neutral",
+      "sentimentScore": 0.0,
+      "intent": "general",
+      "aspects": [
+        "account-management"
+      ],
+      "summaryChip": "Call \u2022 Account Mgmt \u2022 Neutral",
+      "messageSnippet": "Inbound call from Jennifer Wu (Enterprise VIP). Duration: 04:22.",
+      "unreadCount": 0,
+      "messageCount": {
+        "total": 1,
+        "fromCustomer": 1,
+        "fromBrand": 0
+      },
+      "replyStatus": "not-replied",
+      "lastSeenBy": null,
+      "sla": {
+        "firstResponse": {
+          "status": "met",
+          "dueAt": "2024-12-31T11:15:00Z",
+          "remainingMinutes": null,
+          "breached": false,
+          "metAt": "2024-12-31T11:02:00Z"
+        },
+        "resolution": {
+          "status": "within-sla",
+          "dueAt": "2024-12-31T17:00:00Z",
+          "remainingMinutes": 360,
+          "breached": false
+        }
+      },
+      "tags": [
+        "vip",
+        "enterprise",
+        "phone-call"
+      ],
+      "hasAttachments": true,
+      "callMetadata": {
+        "duration": 262,
+        "recordingUrl": "https://storage.locobuzz.com/recordings/call-12345.mp3",
+        "callType": "inbound",
+        "missedCall": false,
+        "isVoicemail": false,
+        "transcript": [
+          {
+            "startTime": 0,
+            "endTime": 5,
+            "speaker": "agent",
+            "text": "Hello, thank you for calling Locobuzz Support. This is Sarah speaking."
+          },
+          {
+            "startTime": 6,
+            "endTime": 12,
+            "speaker": "customer",
+            "text": "Hi Sarah, this is Jennifer from Enterprise Tech. I needed some help with our account settings."
+          }
+        ]
+      }
+    }
+  ],
+  "conversationThreads": {
+    "ticket-001": {
+      "mentions": [
+        {
+          "id": "mention-001-1",
+          "content": "I ordered the Premium package 2 weeks ago (Order #ORD-2024-5678) and still haven't received it. This is completely unacceptable for a premium service. Can someone please tell me what's going on?",
+          "timestamp": "2024-12-31T08:15:00Z",
+          "author": {
+            "id": "author-001",
+            "name": "Jessica Martinez",
+            "avatarUrl": "https://i.pravatar.cc/150?img=24"
+          },
+          "platform": "instagram",
+          "hasAttachments": false
+        }
+      ],
+      "replies": [],
+      "internalNotes": [
+        {
+          "id": "note-001-1",
+          "content": "Checked with fulfillment team - package was delayed due to weather. Should arrive tomorrow. Need to offer discount code as compensation.",
+          "timestamp": "2024-12-31T09:30:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "mentions": [
+            "@supervisor"
+          ]
+        }
+      ]
+    },
+    "ticket-002": {
+      "mentions": [
+        {
+          "id": "mention-002-1",
+          "content": "@LocobuzzCX Our team has been experiencing significant data sync delays over the past 48 hours. Multiple reports from our clients about missing analytics. This is affecting our business operations. Need urgent resolution.",
+          "timestamp": "2024-12-31T06:30:00Z",
+          "author": {
+            "id": "author-002",
+            "name": "Tech Insights Daily",
+            "avatarUrl": "https://i.pravatar.cc/150?img=70"
+          },
+          "platform": "x",
+          "hasAttachments": false,
+          "insights": {
+            "sentiment": "negative",
+            "category": "Complaint",
+            "aspects": [
+              {
+                "aspect": "Business Impact",
+                "entity": "Client Operations",
+                "opinion": "negative"
+              }
+            ],
+            "aspectGroups": [
+              {
+                "name": "Technical Issues",
+                "aspects": [
+                  {
+                    "aspect": "Data Sync",
+                    "entity": "48 Hours",
+                    "opinion": "negative"
+                  },
+                  {
+                    "aspect": "Analytics",
+                    "entity": "Missing Data",
+                    "opinion": "negative"
+                  }
+                ]
+              },
+              {
+                "name": "Urgency",
+                "aspects": [
+                  {
+                    "aspect": "Resolution Needed",
+                    "entity": "Urgent",
+                    "opinion": "negative"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "replies": [],
+      "internalNotes": [
+        {
+          "id": "note-002-1",
+          "content": "Major media outlet with 234K followers. This is a public complaint. Escalating to engineering team immediately. @engineering_lead please prioritize.",
+          "timestamp": "2024-12-31T07:20:00Z",
+          "author": {
+            "id": "user-002",
+            "name": "Marcus Johnson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=12"
+          },
+          "mentions": [
+            "@engineering_lead"
+          ]
+        }
+      ]
+    },
+    "ticket-003": {
+      "mentions": [
+        {
+          "id": "mention-003-1",
+          "content": "Does Locobuzz support integration with Shopify? We're looking to consolidate our customer support across all channels including our e-commerce platform. Would love to know if this is possible!",
+          "timestamp": "2024-12-30T16:45:00Z",
+          "author": {
+            "id": "author-003",
+            "name": "Priya Sharma",
+            "avatarUrl": "https://i.pravatar.cc/150?img=45"
+          },
+          "platform": "facebook",
+          "hasAttachments": false,
+          "insights": {
+            "sentiment": "positive",
+            "category": "Inquiry",
+            "aspects": [
+              {
+                "aspect": "Consolidation Goal",
+                "entity": "All Channels",
+                "opinion": "neutral"
+              }
+            ],
+            "aspectGroups": [
+              {
+                "name": "Product Features",
+                "aspects": [
+                  {
+                    "aspect": "Shopify Integration",
+                    "entity": "E-commerce Platform",
+                    "opinion": "neutral"
+                  },
+                  {
+                    "aspect": "Omnichannel Support",
+                    "entity": "Customer Support",
+                    "opinion": "positive"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "replies": [
+        {
+          "id": "reply-003-1",
+          "content": "Hi Priya! Great question. We do support Shopify integration. I've reached out to our partnerships team to get you detailed documentation and setup instructions. They'll follow up with you directly via email within the next 24 hours. Is there anything specific about the integration you'd like to know in the meantime?",
+          "timestamp": "2024-12-30T17:10:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "facebook",
+          "insights": {
+            "sentiment": "positive",
+            "category": "Response",
+            "aspects": [],
+            "aspectGroups": [
+              {
+                "name": "Customer Service",
+                "aspects": [
+                  {
+                    "aspect": "Support Response",
+                    "entity": "Integration Documentation",
+                    "opinion": "positive"
+                  },
+                  {
+                    "aspect": "Follow-up",
+                    "entity": "24 Hours",
+                    "opinion": "positive"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-003-1",
+          "content": "Sent to partnerships team for detailed Shopify integration docs. @partnerships please follow up with customer at priya.s@email.com within 24h.",
+          "timestamp": "2024-12-31T09:20:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "mentions": [
+            "@partnerships"
+          ]
+        }
+      ]
+    },
+    "ticket-004": {
+      "mentions": [
+        {
+          "id": "mention-004-1",
+          "content": "Excellent platform! The customer service team was incredibly helpful in getting us set up. The interface is intuitive and our team picked it up within a day. The real-time analytics dashboard is exactly what we needed. Highly recommend for any business looking to streamline their customer engagement!",
+          "timestamp": "2024-12-31T09:30:00Z",
+          "author": {
+            "id": "author-004",
+            "name": "Michael Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=56"
+          },
+          "platform": "google",
+          "hasAttachments": false,
+          "reviewRating": 5,
+          "reviewSource": "Google Reviews",
+          "insights": {
+            "sentiment": "positive",
+            "category": "Appreciation",
+            "aspects": [
+              {
+                "aspect": "Recommendation",
+                "entity": "Business Use",
+                "opinion": "positive"
+              }
+            ],
+            "aspectGroups": [
+              {
+                "name": "Customer Service",
+                "aspects": [
+                  {
+                    "aspect": "Onboarding Support",
+                    "entity": "Setup Process",
+                    "opinion": "positive"
+                  },
+                  {
+                    "aspect": "Team Helpfulness",
+                    "entity": "Customer Service Team",
+                    "opinion": "positive"
+                  }
+                ]
+              },
+              {
+                "name": "Product Experience",
+                "aspects": [
+                  {
+                    "aspect": "User Interface",
+                    "entity": "Platform Interface",
+                    "opinion": "positive"
+                  },
+                  {
+                    "aspect": "Learning Curve",
+                    "entity": "One Day",
+                    "opinion": "positive"
+                  },
+                  {
+                    "aspect": "Analytics Dashboard",
+                    "entity": "Real-time Features",
+                    "opinion": "positive"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "replies": [],
+      "internalNotes": []
+    },
+    "ticket-005": {
+      "mentions": [
+        {
+          "id": "mention-005-1",
+          "content": "Loving the new AI automation features in @locobuzzcx! The sentiment analysis is incredibly accurate and saves us hours every week. The aspect-based tagging is a game changer for our reporting. \ud83d\ude4c",
+          "timestamp": "2024-12-31T07:00:00Z",
+          "author": {
+            "id": "author-005",
+            "name": "Carlos Rodriguez",
+            "avatarUrl": "https://i.pravatar.cc/150?img=68"
+          },
+          "platform": "instagram",
+          "hasAttachments": true,
+          "attachments": [
+            {
+              "type": "image",
+              "url": "https://via.placeholder.com/800x600",
+              "description": "Screenshot of dashboard"
+            }
+          ]
+        }
+      ],
+      "replies": [
+        {
+          "id": "reply-005-1",
+          "content": "Carlos, thank you so much for the amazing feedback! \ud83c\udf89 We're thrilled to hear the AI features are making such a positive impact on your workflow. Your feedback helps us continue improving. If you ever have suggestions or questions, feel free to reach out anytime!",
+          "timestamp": "2024-12-31T07:45:00Z",
+          "author": {
+            "id": "user-003",
+            "name": "Amanda Foster",
+            "avatarUrl": "https://i.pravatar.cc/150?img=29"
+          },
+          "isAiGenerated": false,
+          "platform": "instagram"
+        }
+      ],
+      "internalNotes": []
+    },
+    "ticket-006": {
+      "mentions": [
+        {
+          "id": "mention-006-1",
+          "content": "We've been billed incorrectly for the past 3 months. Our contract clearly states enterprise pricing at $X but we've been charged $Y. This is a significant discrepancy and needs immediate correction. We may need to involve our legal team if this isn't resolved promptly.",
+          "timestamp": "2024-12-31T08:00:00Z",
+          "author": {
+            "id": "author-006",
+            "name": "Enterprise Customer LLC",
+            "avatarUrl": "https://i.pravatar.cc/150?img=60"
+          },
+          "platform": "linkedin",
+          "hasAttachments": true,
+          "attachments": [
+            {
+              "type": "pdf",
+              "url": "contract-agreement.pdf",
+              "description": "Contract agreement"
+            }
+          ]
+        }
+      ],
+      "replies": [],
+      "internalNotes": [
+        {
+          "id": "note-006-1",
+          "content": "URGENT: VIP enterprise customer with potential legal escalation. Billing discrepancy for 3 months. Draft response prepared but needs supervisor approval before sending. @supervisor_billing please review ASAP.",
+          "timestamp": "2024-12-31T09:00:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "mentions": [
+            "@supervisor_billing"
+          ]
+        },
+        {
+          "id": "note-006-2",
+          "content": "Draft response: Acknowledge error, commit to full audit within 24h, offer immediate credit for discrepancy + 1 month comp as apology. Need legal review before sending.",
+          "timestamp": "2024-12-31T09:30:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "mentions": []
+        }
+      ],
+      "draftReply": {
+        "id": "draft-006-1",
+        "content": "Dear David,\n\nThank you for bringing this to our attention. We sincerely apologize for the billing discrepancy. This is not the experience we want for our valued enterprise partners.\n\nWe are immediately launching a full audit of your account and will provide you with a complete breakdown within 24 hours. We commit to:\n\n1. Immediate credit for all overcharges\n2. One month of service at no charge as our apology\n3. Implementation of additional billing verification to prevent future issues\n\nI will personally oversee this resolution and keep you updated every step of the way. You can reach me directly at sarah.chen@locobuzz.com or +1-555-CX-SUPPORT.\n\nAgain, our sincerest apologies for this error.\n\nBest regards,\nSarah Chen\nSenior Customer Success Manager",
+        "createdAt": "2024-12-31T09:45:00Z",
+        "status": "pending-approval",
+        "approver": {
+          "id": "supervisor-001",
+          "name": "Director of Customer Success"
+        }
+      }
+    },
+    "ticket-007": {
+      "mentions": [
+        {
+          "id": "mention-007-1",
+          "content": "What are the pricing tiers for small businesses? I couldn't find clear information on the website and want to make sure I choose the right plan for my needs.",
+          "timestamp": "2024-12-30T14:20:00Z",
+          "author": {
+            "id": "author-007",
+            "name": "Lisa Anderson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=27"
+          },
+          "platform": "facebook",
+          "hasAttachments": false
+        }
+      ],
+      "replies": [
+        {
+          "id": "reply-007-1",
+          "content": "Hi Lisa! Thanks for reaching out. We have several plans designed specifically for small businesses:\n\n\u2022 Starter ($49/mo) - Up to 5 social channels, 1 user\n\u2022 Growth ($149/mo) - Up to 15 channels, 5 users, basic analytics\n\u2022 Professional ($299/mo) - Unlimited channels, 10 users, advanced AI features\n\nWe also offer a 14-day free trial so you can test everything out. I can send you detailed feature comparisons - what's your email?",
+          "timestamp": "2024-12-30T14:50:00Z",
+          "author": {
+            "id": "user-002",
+            "name": "Marcus Johnson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=12"
+          },
+          "isAiGenerated": false,
+          "platform": "facebook"
+        },
+        {
+          "id": "mention-007-2",
+          "content": "Perfect, thank you! lisa.a@email.com - I'd love to see the comparison!",
+          "timestamp": "2024-12-30T15:30:00Z",
+          "author": {
+            "id": "author-007",
+            "name": "Lisa Anderson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=27"
+          },
+          "platform": "facebook",
+          "hasAttachments": false
+        },
+        {
+          "id": "reply-007-2",
+          "content": "Sent! Check your inbox in the next few minutes. If you have any questions after reviewing, feel free to book a quick call with our team: https://calendly.com/locobuzz-sales",
+          "timestamp": "2024-12-30T15:45:00Z",
+          "author": {
+            "id": "user-002",
+            "name": "Marcus Johnson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=12"
+          },
+          "isAiGenerated": false,
+          "platform": "facebook"
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-007-1",
+          "content": "Sales lead - sent pricing comparison. Tagged in CRM for follow-up in 3 days if no response.",
+          "timestamp": "2024-12-30T15:45:00Z",
+          "author": {
+            "id": "user-002",
+            "name": "Marcus Johnson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=12"
+          },
+          "mentions": []
+        }
+      ]
+    },
+    "ticket-011": {
+      "mentions": [
+        {
+          "id": "mention-011-1",
+          "content": "The new dashboard redesign is absolutely gorgeous! \ud83d\ude0d Love the attention to detail and the smooth animations. Great work team! As a designer myself, I really appreciate the thoughtfulness in the UX.",
+          "timestamp": "2024-12-31T08:30:00Z",
+          "author": {
+            "id": "author-011",
+            "name": "Rachel Kim",
+            "avatarUrl": "https://i.pravatar.cc/150?img=45"
+          },
+          "platform": "instagram",
+          "hasAttachments": false
+        }
+      ],
+      "replies": [
+        {
+          "id": "reply-011-1",
+          "content": "Rachel! \ud83c\udfa8 This means so much coming from you! Our design team poured their hearts into this redesign and your feedback made their day. Thank you for being such an amazing advocate for our product! \u2764\ufe0f",
+          "timestamp": "2024-12-31T08:55:00Z",
+          "author": {
+            "id": "user-002",
+            "name": "Marcus Johnson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=12"
+          },
+          "isAiGenerated": false,
+          "platform": "instagram"
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-011-1",
+          "content": "Brand advocate with 15.6K followers. Consider featuring in case study or customer spotlight. @marketing",
+          "timestamp": "2024-12-31T09:15:00Z",
+          "author": {
+            "id": "user-002",
+            "name": "Marcus Johnson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=12"
+          },
+          "mentions": [
+            "@marketing"
+          ]
+        }
+      ]
+    },
+    "ticket-016": {
+      "mentions": [
+        {
+          "id": "mention-016-email-1",
+          "content": "I was charged twice for order #7291. Please refund the duplicate charge immediately.",
+          "timestamp": "2024-12-28T14:22:00Z",
+          "author": {
+            "id": "author-016",
+            "name": "Robert Patterson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=33"
+          },
+          "platform": "email",
+          "hasAttachments": false,
+          "insights": {
+            "sentiment": "negative",
+            "category": "Complaint",
+            "aspects": [
+              {
+                "aspect": "Duplicate Charge",
+                "entity": "Order #7291",
+                "opinion": "negative"
+              }
+            ],
+            "aspectGroups": [
+              {
+                "name": "Financial",
+                "aspects": [
+                  {
+                    "aspect": "Billing",
+                    "entity": "Order Processing",
+                    "opinion": "negative"
+                  },
+                  {
+                    "aspect": "Refund Request",
+                    "entity": "Duplicate Payment",
+                    "opinion": "negative"
+                  }
+                ]
+              }
+            ]
+          },
+          "emailMetadata": {
+            "subject": "Duplicate Charge - Order #7291",
+            "from": {
+              "name": "Robert Patterson",
+              "email": "robert.patterson@globaltech.com"
+            },
+            "to": [
+              {
+                "name": "Support Team",
+                "email": "support@locobuzz.com",
+                "role": "internal-team"
+              }
+            ],
+            "cc": [
+              {
+                "name": "Susan Patterson",
+                "email": "susan.patterson@globaltech.com",
+                "role": "cc-contact"
+              }
+            ],
+            "contentType": "plain-text",
+            "isHtml": false,
+            "hasQuotedReply": false,
+            "hasSignature": true,
+            "signatureContent": "Best regards,\\nRobert Patterson\\nIT Director, GlobalTech Industries",
+            "isSystemMessage": false,
+            "isNoReplyAddress": false,
+            "isInternal": false,
+            "companyDomain": "locobuzz.com"
+          }
+        },
+        {
+          "id": "mention-016-email-3",
+          "content": "One charge for $49.99 and another for $49.99 on Dec 20.",
+          "timestamp": "2024-12-28T16:00:00Z",
+          "author": {
+            "id": "author-016",
+            "name": "Robert Patterson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=33"
+          },
+          "platform": "email",
+          "hasAttachments": false,
+          "insights": {
+            "sentiment": "neutral",
+            "category": "Inquiry",
+            "aspects": [
+              {
+                "aspect": "Transaction Details",
+                "entity": "Payment Date",
+                "opinion": "neutral"
+              }
+            ],
+            "aspectGroups": [
+              {
+                "name": "Financial",
+                "aspects": [
+                  {
+                    "aspect": "Billing Amount",
+                    "entity": "$49.99 Charge",
+                    "opinion": "neutral"
+                  }
+                ]
+              }
+            ]
+          },
+          "emailMetadata": {
+            "subject": "Re: Duplicate Charge - Order #7291",
+            "from": {
+              "name": "Robert Patterson",
+              "email": "robert.patterson@globaltech.com"
+            },
+            "to": [
+              {
+                "name": "Sarah Chen",
+                "email": "sarah.chen@locobuzz.com",
+                "role": "internal-team"
+              }
+            ],
+            "cc": [
+              {
+                "name": "Susan Patterson",
+                "email": "susan.patterson@globaltech.com",
+                "role": "cc-contact"
+              }
+            ],
+            "inReplyTo": "email-thread-016",
+            "contentType": "plain-text",
+            "isHtml": false,
+            "hasQuotedReply": true,
+            "hasSignature": false,
+            "isSystemMessage": false,
+            "isNoReplyAddress": false,
+            "isInternal": false,
+            "companyDomain": "locobuzz.com"
+          }
+        },
+        {
+          "id": "mention-016-email-6",
+          "content": "Thank you! How long will the refund take?",
+          "timestamp": "2025-01-02T10:15:00Z",
+          "author": {
+            "id": "author-016",
+            "name": "Robert Patterson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=33"
+          },
+          "platform": "email",
+          "hasAttachments": false,
+          "insights": {
+            "sentiment": "positive",
+            "category": "Appreciation",
+            "aspects": [],
+            "aspectGroups": [
+              {
+                "name": "Customer Service",
+                "aspects": [
+                  {
+                    "aspect": "Support Response",
+                    "entity": "Refund Processing",
+                    "opinion": "positive"
+                  },
+                  {
+                    "aspect": "Timeline Communication",
+                    "entity": "Refund ETA",
+                    "opinion": "neutral"
+                  }
+                ]
+              }
+            ]
+          },
+          "emailMetadata": {
+            "subject": "Re: Duplicate Charge - Order #7291",
+            "from": {
+              "name": "Robert Patterson",
+              "email": "robert.patterson@globaltech.com"
+            },
+            "to": [
+              {
+                "name": "Mike Roberts",
+                "email": "mike.roberts@locobuzz.com",
+                "role": "internal-team"
+              }
+            ],
+            "inReplyTo": "email-thread-016",
+            "contentType": "plain-text",
+            "isHtml": false,
+            "hasQuotedReply": true,
+            "hasSignature": false,
+            "isSystemMessage": false,
+            "isNoReplyAddress": false,
+            "isInternal": false,
+            "companyDomain": "locobuzz.com",
+            "participantChanges": {
+              "removed": [
+                {
+                  "name": "Susan Patterson",
+                  "email": "susan.patterson@globaltech.com",
+                  "type": "cc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "mention-016-email-8",
+          "content": "Still haven't received the refund after 7 days.",
+          "timestamp": "2025-01-04T09:00:00Z",
+          "author": {
+            "id": "author-016",
+            "name": "Robert Patterson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=33"
+          },
+          "platform": "email",
+          "hasAttachments": false,
+          "insights": {
+            "sentiment": "negative",
+            "category": "Complaint",
+            "aspects": [
+              {
+                "aspect": "Processing Delay",
+                "entity": "7 Day Wait",
+                "opinion": "negative"
+              }
+            ],
+            "aspectGroups": [
+              {
+                "name": "Customer Service",
+                "aspects": [
+                  {
+                    "aspect": "Follow-up",
+                    "entity": "Refund Status",
+                    "opinion": "negative"
+                  },
+                  {
+                    "aspect": "Response Time",
+                    "entity": "7 Days No Update",
+                    "opinion": "negative"
+                  }
+                ]
+              },
+              {
+                "name": "Financial",
+                "aspects": [
+                  {
+                    "aspect": "Refund Processing",
+                    "entity": "Bank Transfer",
+                    "opinion": "negative"
+                  }
+                ]
+              }
+            ]
+          },
+          "emailMetadata": {
+            "subject": "Re: Duplicate Charge - Order #7291",
+            "from": {
+              "name": "Robert Patterson",
+              "email": "robert.patterson@globaltech.com"
+            },
+            "to": [
+              {
+                "name": "Mike Roberts",
+                "email": "mike.roberts@locobuzz.com",
+                "role": "internal-team"
+              }
+            ],
+            "cc": [
+              {
+                "name": "Susan Patterson",
+                "email": "susan.patterson@globaltech.com",
+                "role": "cc-contact"
+              }
+            ],
+            "inReplyTo": "email-thread-016",
+            "contentType": "plain-text",
+            "isHtml": false,
+            "hasQuotedReply": false,
+            "hasSignature": false,
+            "isSystemMessage": false,
+            "isNoReplyAddress": false,
+            "isInternal": false,
+            "companyDomain": "locobuzz.com",
+            "participantChanges": {
+              "added": [
+                {
+                  "name": "Susan Patterson",
+                  "email": "susan.patterson@globaltech.com",
+                  "type": "cc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "mention-016-email-13",
+          "content": "Got the refund today. Thanks for following up!",
+          "timestamp": "2025-01-05T10:15:00Z",
+          "author": {
+            "id": "author-016",
+            "name": "Robert Patterson",
+            "avatarUrl": "https://i.pravatar.cc/150?img=33"
+          },
+          "platform": "email",
+          "hasAttachments": false,
+          "emailMetadata": {
+            "subject": "Re: Duplicate Charge - Order #7291",
+            "from": {
+              "name": "Robert Patterson",
+              "email": "robert.patterson@globaltech.com"
+            },
+            "to": [
+              {
+                "name": "Sarah Chen",
+                "email": "sarah.chen@locobuzz.com",
+                "role": "internal-team"
+              }
+            ],
+            "inReplyTo": "email-thread-016",
+            "contentType": "plain-text",
+            "isHtml": false,
+            "hasQuotedReply": false,
+            "hasSignature": true,
+            "signatureContent": "Thanks again,\\nRobert",
+            "isSystemMessage": false,
+            "isNoReplyAddress": false,
+            "isInternal": false,
+            "companyDomain": "locobuzz.com",
+            "participantChanges": {
+              "added": [
+                {
+                  "name": "Sarah Chen",
+                  "email": "sarah.chen@locobuzz.com",
+                  "type": "to"
+                }
+              ],
+              "removed": [
+                {
+                  "name": "Mike Roberts",
+                  "email": "mike.roberts@locobuzz.com",
+                  "type": "to"
+                },
+                {
+                  "name": "Susan Patterson",
+                  "email": "susan.patterson@globaltech.com",
+                  "type": "cc"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "replies": [
+        {
+          "id": "reply-016-email-2",
+          "content": "Sorry to hear that. I'm looking into it now. Can you confirm the charge amounts and dates?",
+          "timestamp": "2024-12-28T15:10:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "email",
+          "emailMetadata": {
+            "subject": "Re: Duplicate Charge - Order #7291",
+            "from": {
+              "name": "Sarah Chen",
+              "email": "sarah.chen@locobuzz.com"
+            },
+            "to": [
+              {
+                "name": "Robert Patterson",
+                "email": "robert.patterson@globaltech.com",
+                "role": "primary-customer"
+              }
+            ],
+            "cc": [
+              {
+                "name": "Susan Patterson",
+                "email": "susan.patterson@globaltech.com",
+                "role": "cc-contact"
+              }
+            ],
+            "isInternal": true,
+            "companyDomain": "locobuzz.com"
+          }
+        },
+        {
+          "id": "reply-016-email-5",
+          "content": "I've taken over from Sarah while she's out. I see the duplicate charge. Processing the refund now.",
+          "timestamp": "2025-01-02T09:00:00Z",
+          "author": {
+            "id": "user-003",
+            "name": "Mike Roberts",
+            "avatarUrl": "https://i.pravatar.cc/150?img=29"
+          },
+          "isAiGenerated": false,
+          "platform": "email",
+          "emailMetadata": {
+            "subject": "Re: Duplicate Charge - Order #7291",
+            "from": {
+              "name": "Mike Roberts",
+              "email": "mike.roberts@locobuzz.com"
+            },
+            "to": [
+              {
+                "name": "Robert Patterson",
+                "email": "robert.patterson@globaltech.com",
+                "role": "primary-customer"
+              }
+            ],
+            "isInternal": true,
+            "companyDomain": "locobuzz.com",
+            "participantChanges": {
+              "added": [
+                {
+                  "name": "Mike Roberts",
+                  "email": "mike.roberts@locobuzz.com",
+                  "type": "to"
+                }
+              ],
+              "removed": [
+                {
+                  "name": "Sarah Chen",
+                  "email": "sarah.chen@locobuzz.com",
+                  "type": "to"
+                },
+                {
+                  "name": "Susan Patterson",
+                  "email": "susan.patterson@globaltech.com",
+                  "type": "cc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "reply-016-email-7",
+          "content": "Refund processed. Should appear in 3-5 business days.",
+          "timestamp": "2025-01-02T10:30:00Z",
+          "author": {
+            "id": "user-003",
+            "name": "Mike Roberts",
+            "avatarUrl": "https://i.pravatar.cc/150?img=29"
+          },
+          "isAiGenerated": false,
+          "platform": "email",
+          "emailMetadata": {
+            "subject": "Re: Duplicate Charge - Order #7291",
+            "from": {
+              "name": "Mike Roberts",
+              "email": "mike.roberts@locobuzz.com"
+            },
+            "to": [
+              {
+                "name": "Robert Patterson",
+                "email": "robert.patterson@globaltech.com",
+                "role": "primary-customer"
+              }
+            ],
+            "isInternal": true,
+            "companyDomain": "locobuzz.com",
+            "contentType": "html",
+            "isHtml": true,
+            "htmlContent": "<div style='font-family: Arial, sans-serif;'><p>Hi Robert,</p><p>Great news! <strong>Refund processed.</strong> Should appear in 3-5 business days.</p><table style='border: 1px solid #ddd; margin: 10px 0;'><tr><td style='padding: 8px; background: #f5f5f5;'>Refund ID:</td><td style='padding: 8px;'>REF-9821</td></tr><tr><td style='padding: 8px; background: #f5f5f5;'>Amount:</td><td style='padding: 8px;'>$49.99</td></tr></table><p>Best regards,<br/>Mike Roberts</p></div>"
+          }
+        },
+        {
+          "id": "reply-016-email-9",
+          "content": "I'm back. Checking on the refund status with finance team now.",
+          "timestamp": "2025-01-04T11:00:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "email",
+          "emailMetadata": {
+            "subject": "Re: Duplicate Charge - Order #7291",
+            "from": {
+              "name": "Sarah Chen",
+              "email": "sarah.chen@locobuzz.com"
+            },
+            "to": [
+              {
+                "name": "Robert Patterson",
+                "email": "robert.patterson@globaltech.com",
+                "role": "primary-customer"
+              }
+            ],
+            "cc": [
+              {
+                "name": "Susan Patterson",
+                "email": "susan.patterson@globaltech.com",
+                "role": "cc-contact"
+              }
+            ],
+            "isInternal": true,
+            "companyDomain": "locobuzz.com",
+            "contentType": "plain-text",
+            "isHtml": false,
+            "participantChanges": {
+              "added": [
+                {
+                  "name": "Sarah Chen",
+                  "email": "sarah.chen@locobuzz.com",
+                  "type": "to"
+                },
+                {
+                  "name": "Susan Patterson",
+                  "email": "susan.patterson@globaltech.com",
+                  "type": "cc"
+                }
+              ],
+              "removed": [
+                {
+                  "name": "Mike Roberts",
+                  "email": "mike.roberts@locobuzz.com",
+                  "type": "to"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "reply-016-email-12",
+          "content": "Confirmed refund was processed on Dec 28. Should appear by Jan 9th at the latest.",
+          "timestamp": "2025-01-05T10:30:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "email",
+          "emailMetadata": {
+            "subject": "Re: Duplicate Charge - Order #7291",
+            "from": {
+              "name": "Sarah Chen",
+              "email": "sarah.chen@locobuzz.com"
+            },
+            "to": [
+              {
+                "name": "Robert Patterson",
+                "email": "robert.patterson@globaltech.com",
+                "role": "primary-customer"
+              }
+            ],
+            "isInternal": true,
+            "companyDomain": "locobuzz.com",
+            "contentType": "plain-text",
+            "isHtml": false,
+            "participantChanges": {
+              "removed": [
+                {
+                  "name": "Susan Patterson",
+                  "email": "susan.patterson@globaltech.com",
+                  "type": "cc"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "internalNotes": [
+        {
+          "id": "note-016-10",
+          "content": "@Mike can you confirm the refund was processed on Dec 28?",
+          "timestamp": "2025-01-04T14:30:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "mentions": [
+            "@Mike"
+          ]
+        },
+        {
+          "id": "note-016-11",
+          "content": "Yes, confirmed. Refund ID REF-9821.",
+          "timestamp": "2025-01-04T15:00:00Z",
+          "author": {
+            "id": "user-003",
+            "name": "Mike Roberts",
+            "avatarUrl": "https://i.pravatar.cc/150?img=29"
+          },
+          "mentions": []
+        }
+      ]
+    },
+    "ticket-017": {
+      "mentions": [
+        {
+          "id": "mention-017-public-1",
+          "content": "Tried this yesterday and it charged me twice! Still waiting for refund. Not impressed. @BrandSupport",
+          "timestamp": "2024-12-30T14:50:00Z",
+          "author": {
+            "id": "author-017",
+            "name": "John Doe",
+            "avatarUrl": "https://i.pravatar.cc/150?img=52"
+          },
+          "platform": "instagram",
+          "hasAttachments": false
+        },
+        {
+          "id": "mention-017-dm-1",
+          "content": "Thanks for reaching out. It's order #78291. Both charges were $129.99 on Dec 29.",
+          "timestamp": "2024-12-30T15:20:00Z",
+          "author": {
+            "id": "author-017",
+            "name": "John Doe",
+            "avatarUrl": "https://i.pravatar.cc/150?img=52"
+          },
+          "platform": "instagram",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-30T15:21:00Z",
+            "deliveredAt": "2024-12-30T15:20:00Z",
+            "sentAt": "2024-12-30T15:20:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-017-dm-3",
+          "content": "Oh wow, that was fast! Thank you. Will you let me know when it's refunded?",
+          "timestamp": "2024-12-30T15:30:00Z",
+          "author": {
+            "id": "author-017",
+            "name": "John Doe",
+            "avatarUrl": "https://i.pravatar.cc/150?img=52"
+          },
+          "platform": "instagram",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-30T15:31:00Z",
+            "deliveredAt": "2024-12-30T15:30:00Z",
+            "sentAt": "2024-12-30T15:30:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-017-dm-7",
+          "content": "Sure, I'll edit my comment now. You earned it! \ud83d\udc4d",
+          "timestamp": "2024-12-30T15:45:00Z",
+          "author": {
+            "id": "author-017",
+            "name": "John Doe",
+            "avatarUrl": "https://i.pravatar.cc/150?img=52"
+          },
+          "platform": "instagram",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-30T15:46:00Z",
+            "deliveredAt": "2024-12-30T15:45:00Z",
+            "sentAt": "2024-12-30T15:45:00Z",
+            "messageType": "text"
+          }
+        }
+      ],
+      "replies": [
+        {
+          "id": "reply-017-public-1",
+          "content": "We're sorry to hear this, John. This isn't the experience we want for you. I'm sending you a DM now so we can resolve this quickly and privately.",
+          "timestamp": "2024-12-30T15:00:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "instagram"
+        },
+        {
+          "id": "reply-017-dm-2",
+          "content": "Hi John, I'm Sarah from customer support. I saw your comment about the double charge. I'm really sorry about that. Can you DM me your order number so I can look into this right away?",
+          "timestamp": "2024-12-30T15:15:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "instagram",
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-30T15:18:00Z",
+            "deliveredAt": "2024-12-30T15:15:00Z",
+            "sentAt": "2024-12-30T15:15:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "reply-017-dm-4",
+          "content": "I found your order. You're absolutely right - there was a duplicate charge due to a system glitch. I'm processing the refund now. It should appear in your account within 3-5 business days.",
+          "timestamp": "2024-12-30T15:25:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "instagram",
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-30T15:27:00Z",
+            "deliveredAt": "2024-12-30T15:25:00Z",
+            "sentAt": "2024-12-30T15:25:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "reply-017-dm-5",
+          "content": "Absolutely! Refund confirmed - reference #REF-9482. You'll see it by Jan 4th at the latest. I've also added a $20 credit to your account for the inconvenience.",
+          "timestamp": "2024-12-30T15:35:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "instagram",
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-30T15:36:00Z",
+            "deliveredAt": "2024-12-30T15:35:00Z",
+            "sentAt": "2024-12-30T15:35:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "reply-017-dm-6",
+          "content": "You're very welcome, John! Thanks for your patience. If you're comfortable, would you consider updating your public comment to let others know we resolved this? No pressure at all!",
+          "timestamp": "2024-12-30T15:40:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "instagram",
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-30T15:42:00Z",
+            "deliveredAt": "2024-12-30T15:40:00Z",
+            "sentAt": "2024-12-30T15:40:00Z",
+            "messageType": "text"
+          }
+        }
+      ],
+      "internalNotes": []
+    },
+    "ticket-018": {
+      "mentions": [
+        {
+          "id": "mention-018-chat-1",
+          "content": "Hi, I have a question about my order",
+          "timestamp": "2024-12-29T09:23:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-29T09:24:00Z",
+            "deliveredAt": "2024-12-29T09:23:00Z",
+            "sentAt": "2024-12-29T09:23:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-2",
+          "content": "It was supposed to ship yesterday but I haven't gotten tracking",
+          "timestamp": "2024-12-29T09:23:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-29T09:24:00Z",
+            "deliveredAt": "2024-12-29T09:23:00Z",
+            "sentAt": "2024-12-29T09:23:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-3",
+          "content": "Order #78291",
+          "timestamp": "2024-12-29T09:24:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-29T09:24:00Z",
+            "deliveredAt": "2024-12-29T09:24:00Z",
+            "sentAt": "2024-12-29T09:24:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-6",
+          "content": "Oh great!",
+          "timestamp": "2024-12-29T09:26:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-29T09:27:00Z",
+            "deliveredAt": "2024-12-29T09:26:00Z",
+            "sentAt": "2024-12-29T09:26:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-7",
+          "content": "Thank you!",
+          "timestamp": "2024-12-29T09:26:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-29T09:27:00Z",
+            "deliveredAt": "2024-12-29T09:26:00Z",
+            "sentAt": "2024-12-29T09:26:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-9",
+          "content": "No that's all",
+          "timestamp": "2024-12-29T09:27:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-29T09:28:00Z",
+            "deliveredAt": "2024-12-29T09:27:00Z",
+            "sentAt": "2024-12-29T09:27:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-10",
+          "content": "\ud83d\udc4d",
+          "timestamp": "2024-12-29T09:27:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-29T09:28:00Z",
+            "deliveredAt": "2024-12-29T09:27:00Z",
+            "sentAt": "2024-12-29T09:27:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-11",
+          "content": "Hi again",
+          "timestamp": "2024-12-31T14:15:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-31T14:16:00Z",
+            "deliveredAt": "2024-12-31T14:15:00Z",
+            "sentAt": "2024-12-31T14:15:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-12",
+          "content": "Package still hasn't arrived",
+          "timestamp": "2024-12-31T14:15:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-31T14:16:00Z",
+            "deliveredAt": "2024-12-31T14:15:00Z",
+            "sentAt": "2024-12-31T14:15:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-13",
+          "content": "Tracking says delivered but I don't have it",
+          "timestamp": "2024-12-31T14:15:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-31T14:16:00Z",
+            "deliveredAt": "2024-12-31T14:15:00Z",
+            "sentAt": "2024-12-31T14:15:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-14",
+          "content": "Can you help?",
+          "timestamp": "2024-12-31T14:16:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-31T14:17:00Z",
+            "deliveredAt": "2024-12-31T14:16:00Z",
+            "sentAt": "2024-12-31T14:16:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-17",
+          "content": "Oh wait!",
+          "timestamp": "2024-12-31T14:20:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-31T14:20:00Z",
+            "deliveredAt": "2024-12-31T14:20:00Z",
+            "sentAt": "2024-12-31T14:20:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-18",
+          "content": "Found it behind the planter on my porch",
+          "timestamp": "2024-12-31T14:20:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-31T14:21:00Z",
+            "deliveredAt": "2024-12-31T14:20:00Z",
+            "sentAt": "2024-12-31T14:20:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-19",
+          "content": "\ud83d\ude05 my bad",
+          "timestamp": "2024-12-31T14:20:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-31T14:21:00Z",
+            "deliveredAt": "2024-12-31T14:20:00Z",
+            "sentAt": "2024-12-31T14:20:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "mention-018-chat-20",
+          "content": "Thanks for checking!",
+          "timestamp": "2024-12-31T14:20:00Z",
+          "author": {
+            "id": "author-018",
+            "name": "Maria Garcia",
+            "avatarUrl": "https://i.pravatar.cc/150?img=47"
+          },
+          "platform": "whatsapp",
+          "hasAttachments": false,
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-31T14:21:00Z",
+            "deliveredAt": "2024-12-31T14:20:00Z",
+            "sentAt": "2024-12-31T14:20:00Z",
+            "messageType": "text"
+          }
+        }
+      ],
+      "replies": [
+        {
+          "id": "reply-018-chat-4",
+          "content": "Hi! I can help with that. Let me look up order #78291 for you.",
+          "timestamp": "2024-12-29T09:25:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "whatsapp",
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-29T09:25:00Z",
+            "deliveredAt": "2024-12-29T09:25:00Z",
+            "sentAt": "2024-12-29T09:25:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "reply-018-chat-5",
+          "content": "I found it! The order shipped this morning. Your tracking number is: 1Z9999999999999999",
+          "timestamp": "2024-12-29T09:26:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "whatsapp",
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-29T09:26:00Z",
+            "deliveredAt": "2024-12-29T09:26:00Z",
+            "sentAt": "2024-12-29T09:26:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "reply-018-chat-8",
+          "content": "You're welcome! It should arrive by Dec 31. Anything else I can help with?",
+          "timestamp": "2024-12-29T09:27:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "whatsapp",
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-29T09:27:00Z",
+            "deliveredAt": "2024-12-29T09:27:00Z",
+            "sentAt": "2024-12-29T09:27:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "reply-018-chat-15",
+          "content": "I'm sorry to hear that! Let me check with the carrier.",
+          "timestamp": "2024-12-31T14:17:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "whatsapp",
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-31T14:18:00Z",
+            "deliveredAt": "2024-12-31T14:17:00Z",
+            "sentAt": "2024-12-31T14:17:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "reply-018-chat-16",
+          "content": "According to the carrier, it was left at your front door at 1:45 PM today. Could it be in a safe spot or with a neighbor?",
+          "timestamp": "2024-12-31T14:19:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "whatsapp",
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-31T14:20:00Z",
+            "deliveredAt": "2024-12-31T14:19:00Z",
+            "sentAt": "2024-12-31T14:19:00Z",
+            "messageType": "text"
+          }
+        },
+        {
+          "id": "reply-018-chat-21",
+          "content": "Glad you found it! Enjoy your order! \ud83d\ude0a",
+          "timestamp": "2024-12-31T14:21:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "whatsapp",
+          "chatMetadata": {
+            "deliveryStatus": "read",
+            "readAt": "2024-12-31T14:21:00Z",
+            "deliveredAt": "2024-12-31T14:21:00Z",
+            "sentAt": "2024-12-31T14:21:00Z",
+            "messageType": "text"
+          }
+        }
+      ],
+      "internalNotes": []
+    },
+    "ticket-019": {
+      "mentions": [
+        {
+          "id": "mention-019-comment-1",
+          "content": "@budget_buyer Same, plus I heard shipping takes forever with this brand",
+          "timestamp": "2024-12-28T15:30:00Z",
+          "author": {
+            "id": "author-019",
+            "name": "Customer John",
+            "avatarUrl": "https://i.pravatar.cc/150?img=68"
+          },
+          "platform": "instagram",
+          "hasAttachments": false
+        },
+        {
+          "id": "mention-019-comment-3",
+          "content": "Oh really? Free 2-day shipping? That changes things. Didn't know that!",
+          "timestamp": "2024-12-28T16:00:00Z",
+          "author": {
+            "id": "author-019",
+            "name": "Customer John",
+            "avatarUrl": "https://i.pravatar.cc/150?img=68"
+          },
+          "platform": "instagram",
+          "hasAttachments": false
+        },
+        {
+          "id": "mention-019-comment-5",
+          "content": "Sure, I'll check it out. Thanks for the info!",
+          "timestamp": "2024-12-28T16:15:00Z",
+          "author": {
+            "id": "author-019",
+            "name": "Customer John",
+            "avatarUrl": "https://i.pravatar.cc/150?img=68"
+          },
+          "platform": "instagram",
+          "hasAttachments": false
+        }
+      ],
+      "replies": [
+        {
+          "id": "reply-019-comment-2",
+          "content": "Hi @customer_john_84! I understand the pricing concern - our EcoLine uses sustainable materials which costs more to produce. However, we offer FREE 2-day shipping on all orders, so there's no delay at all! We also have a 30-day return policy if you're not 100% satisfied. Can I answer any other questions about the collection?",
+          "timestamp": "2024-12-28T15:55:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "instagram"
+        },
+        {
+          "id": "reply-019-comment-4",
+          "content": "Yes! All orders over $25 ship free with 2-day delivery. Plus new customers get 15% off first order with code WELCOME15. Would you like help finding your size?",
+          "timestamp": "2024-12-28T16:10:00Z",
+          "author": {
+            "id": "user-001",
+            "name": "Sarah Chen",
+            "avatarUrl": "https://i.pravatar.cc/150?img=5"
+          },
+          "isAiGenerated": false,
+          "platform": "instagram"
+        }
+      ],
+      "internalNotes": []
+    },
+    "ticket-020": {
+      "mentions": [
+        {
+          "id": "men-voice-001",
+          "content": "Inbound call from Jennifer Wu. Duration 04:22.",
+          "timestamp": "2024-12-31T11:00:00Z",
+          "author": {
+            "id": "author-voice-001",
+            "name": "Jennifer Wu",
+            "username": "+15557788",
+            "platform": "voice",
+            "avatarUrl": "https://i.pravatar.cc/150?img=32"
+          },
+          "platform": "voice",
+          "hasAttachments": true,
+          "callMetadata": {
+            "duration": 262,
+            "recordingUrl": "https://storage.locobuzz.com/recordings/call-12345.mp3",
+            "callType": "inbound",
+            "missedCall": false,
+            "isVoicemail": false,
+            "transcript": [
+              {
+                "startTime": 0,
+                "endTime": 5,
+                "speaker": "agent",
+                "text": "Hello, thank you for calling Locobuzz Support. This is Sarah speaking."
+              },
+              {
+                "startTime": 6,
+                "endTime": 12,
+                "speaker": "customer",
+                "text": "Hi Sarah, this is Jennifer from Enterprise Tech. I needed some help with our account settings."
+              }
+            ]
+          }
+        }
+      ],
+      "replies": [],
+      "internalNotes": []
+    }
+  },
+  "aiSuggestions": {
+    "ticket-001": [
+      {
+        "id": "ai-sug-001-1",
+        "type": "response",
+        "confidence": 0.92,
+        "confidenceLabel": "high",
+        "content": "Hi Jessica, I sincerely apologize for the delay with your Premium package order #ORD-2024-5678. I've checked with our fulfillment team and your package was delayed due to unexpected weather conditions, but it's scheduled to arrive tomorrow. As an apology for the inconvenience, I'd like to offer you a 20% discount on your next order. Would that work for you?",
+        "reasoning": "Based on 23 similar delivery delay tickets resolved with positive customer feedback. Template combines acknowledgment, explanation, timeline, and compensation.",
+        "source": "Knowledge Article: Delivery Delays + Historical Agent Responses",
+        "tone": "apologetic",
+        "suggestedTags": [
+          "delivery-delay",
+          "weather",
+          "compensation-offered"
+        ]
+      },
+      {
+        "id": "ai-sug-001-2",
+        "type": "response",
+        "confidence": 0.78,
+        "confidenceLabel": "medium",
+        "content": "Jessica, thank you for your patience. I understand how frustrating this must be, especially with a Premium package. Let me get this escalated to our fulfillment manager right away and get back to you within the hour with a concrete update and resolution.",
+        "reasoning": "Alternative approach focusing on urgency and escalation for high-value customer",
+        "source": "Similar tickets from @sarah_chen with 89% CSAT",
+        "tone": "firm",
+        "suggestedTags": [
+          "escalation",
+          "premium-customer"
+        ]
+      }
+    ],
+    "ticket-002": [
+      {
+        "id": "ai-sug-002-1",
+        "type": "response",
+        "confidence": 0.88,
+        "confidenceLabel": "high",
+        "content": "@techinsights We sincerely apologize for the data sync issues affecting your operations. Our engineering team has identified the root cause and is deploying a fix within the next 2 hours. I'll personally monitor the resolution and update you as soon as it's confirmed. Can I schedule a call with you and our Head of Engineering to discuss compensation and preventive measures?",
+        "reasoning": "High-stakes public complaint from verified media account. Requires immediate acknowledgment, technical update, and executive involvement.",
+        "source": "Crisis Communication Playbook + Enterprise Escalation Protocol",
+        "tone": "formal",
+        "suggestedTags": [
+          "technical-issue",
+          "public-apology",
+          "executive-escalation"
+        ]
+      }
+    ],
+    "ticket-008": [
+      {
+        "id": "ai-sug-008-1",
+        "type": "response",
+        "confidence": 0.85,
+        "confidenceLabel": "high",
+        "content": "Hi Tom, thanks for reporting this iOS app crash. Our mobile team is aware of this issue affecting analytics on iOS 17.2 and is working on a fix. In the meantime, you can access analytics through our web dashboard at app.locobuzz.com. We expect the mobile fix to be released in the next app update (v2.4.1) within 3-5 days. I'll notify you as soon as it's live.",
+        "reasoning": "Based on 12 similar iOS bug reports. Provides immediate workaround + timeline for permanent fix.",
+        "source": "Knowledge Article: iOS Known Issues + Engineering Roadmap",
+        "tone": "formal",
+        "suggestedTags": [
+          "app-bug",
+          "known-issue",
+          "workaround-provided"
+        ]
+      }
+    ],
+    "ticket-016": [
+      {
+        "id": "ai-sug-016-1",
+        "type": "response",
+        "confidence": 0.88,
+        "confidenceLabel": "high",
+        "content": "I sincerely apologize for the confusion regarding the duplicate charge. I've reviewed your account and confirmed the refund was processed on December 28th. The refund should appear in your account within the standard 5-10 business days from that date, which means you should see it by January 9th at the latest. I understand this has been frustrating, and I appreciate your patience.",
+        "reasoning": "Based on 8-day email thread. Customer needs reassurance and clear timeline.",
+        "source": "Knowledge Article: Refund Timelines + Previous similar email threads",
+        "tone": "apologetic",
+        "suggestedTags": [
+          "refund-processed",
+          "timeline-provided"
+        ]
+      }
+    ],
+    "ticket-017": [
+      {
+        "id": "ai-sug-017-1",
+        "type": "response",
+        "confidence": 0.92,
+        "confidenceLabel": "high",
+        "content": "I've also added a $20 credit to your account for the inconvenience. You'll see it by Jan 4th. Is there anything else I can help you with?",
+        "reasoning": "Follow-up after refund confirmation. Offer compensation for positive resolution.",
+        "source": "Similar public-to-DM resolutions with compensation",
+        "tone": "friendly",
+        "suggestedTags": [
+          "compensation-offered",
+          "resolved-positive"
+        ]
+      }
+    ],
+    "ticket-018": [
+      {
+        "id": "ai-sug-018-1",
+        "type": "response",
+        "confidence": 0.95,
+        "confidenceLabel": "high",
+        "content": "I found it! The order shipped this morning. Your tracking number is: 1Z9999999999999999",
+        "reasoning": "Quick chat response for order tracking inquiry. Short, conversational tone.",
+        "source": "Chat best practices + order lookup automation",
+        "tone": "friendly",
+        "suggestedTags": [
+          "tracking-provided",
+          "quick-resolution"
+        ]
+      }
+    ],
+    "ticket-019": [
+      {
+        "id": "ai-sug-019-1",
+        "type": "response",
+        "confidence": 0.85,
+        "confidenceLabel": "high",
+        "content": "Hi! I understand the pricing concern - our EcoLine uses sustainable materials which costs more to produce. However, we offer FREE 2-day shipping on all orders, so there's no delay at all! We also have a 30-day return policy if you're not 100% satisfied. Can I answer any other questions about the collection?",
+        "reasoning": "Addressing pricing and shipping misconceptions in threaded comment",
+        "source": "Product FAQ + Shipping Policy",
+        "tone": "friendly",
+        "suggestedTags": [
+          "pricing-explained",
+          "shipping-clarified"
+        ]
+      }
+    ]
+  },
+  "users": [
+    {
+      "id": "user-001",
+      "name": "Sarah Chen",
+      "email": "sarah.chen@locobuzz.com",
+      "role": "agent",
+      "avatarUrl": "https://i.pravatar.cc/150?img=5",
+      "status": "online"
+    },
+    {
+      "id": "user-002",
+      "name": "Marcus Johnson",
+      "email": "marcus.j@locobuzz.com",
+      "role": "agent",
+      "avatarUrl": "https://i.pravatar.cc/150?img=12",
+      "status": "online"
+    },
+    {
+      "id": "user-003",
+      "name": "Amanda Foster",
+      "email": "amanda.f@locobuzz.com",
+      "role": "agent",
+      "avatarUrl": "https://i.pravatar.cc/150?img=29",
+      "status": "away"
+    },
+    {
+      "id": "supervisor-001",
+      "name": "Jennifer Martinez",
+      "email": "jennifer.m@locobuzz.com",
+      "role": "supervisor",
+      "avatarUrl": "https://i.pravatar.cc/150?img=32",
+      "status": "online"
+    }
+  ],
+  "teams": [
+    {
+      "id": "team-cx",
+      "name": "Customer Experience Team",
+      "members": [
+        "user-001",
+        "user-002",
+        "user-003"
+      ],
+      "supervisor": "supervisor-001"
+    }
+  ]
+}

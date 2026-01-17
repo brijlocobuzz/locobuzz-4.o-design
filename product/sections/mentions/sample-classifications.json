@@ -1,0 +1,379 @@
+{
+  "exampleMentions": [
+    {
+      "id": "example-1",
+      "description": "Delivery complaint with 3-level categorization",
+      "content": "@LocobuzzCX Our team has been experiencing significant data sync delays over the past 48 hours. Multiple reports from...",
+
+      "entityType": "ORGANIZATION",
+      "sentiment": "Negative",
+      "sentimentScore": -0.72,
+      "intent": "Complaint",
+      "emotion": "Frustration",
+      "emotionCluster": "Negative",
+
+      "upperCategories": ["Service Issue", "Technical"],
+
+      "categorizations": [
+        {
+          "category": "Technical Support",
+          "subcategory": "Platform Issues",
+          "subSubcategory": "Data Sync Delays",
+          "sentiment": "Negative"
+        }
+      ],
+
+      "aspectGroups": [
+        {
+          "name": "Platform Reliability",
+          "aspects": ["platform-reliability", "data-accuracy"]
+        },
+        {
+          "name": "Data Sync Delays",
+          "aspects": ["sync-speed", "data-latency"]
+        }
+      ],
+      "ungroupedAspects": ["complaint"],
+      "tags": ["urgent-escalation", "public-complaint"]
+    },
+    {
+      "id": "example-2",
+      "description": "Product feedback with 2-level categorization",
+      "content": "Absolutely love the new interface design! The dashboard is so intuitive and clean.",
+
+      "entityType": "PRODUCT",
+      "sentiment": "Positive",
+      "sentimentScore": 0.88,
+      "intent": "Appreciation",
+      "emotion": "Joy",
+      "emotionCluster": "Positive",
+
+      "upperCategories": ["Product Feature", "User Experience"],
+
+      "categorizations": [
+        {
+          "category": "Product",
+          "subcategory": "User Interface",
+          "sentiment": "Positive"
+        }
+      ],
+
+      "aspectGroups": [
+        {
+          "name": "Design Quality",
+          "aspects": ["intuitive", "clean", "modern"]
+        }
+      ],
+      "ungroupedAspects": ["dashboard"],
+      "tags": []
+    },
+    {
+      "id": "example-3",
+      "description": "Service complaint with 1-level categorization only",
+      "content": "Why is customer support not responding to my emails? It's been 3 days!",
+
+      "entityType": "BRAND",
+      "sentiment": "Negative",
+      "sentimentScore": -0.65,
+      "intent": "Complaint",
+      "emotion": "Anger",
+      "emotionCluster": "Negative",
+
+      "upperCategories": ["Response Time"],
+
+      "categorizations": [
+        {
+          "category": "Customer Service",
+          "sentiment": "Negative"
+        }
+      ],
+
+      "aspectGroups": [
+        {
+          "name": "Response Time",
+          "aspects": ["slow-response", "email-support"]
+        }
+      ],
+      "ungroupedAspects": ["frustrated"],
+      "tags": ["sla-breach"]
+    },
+    {
+      "id": "example-4",
+      "description": "Multiple categorizations with different levels",
+      "content": "The app crashes frequently when uploading large files. Also, the pricing seems steep compared to competitors.",
+
+      "entityType": "PRODUCT",
+      "sentiment": "Negative",
+      "sentimentScore": -0.52,
+      "intent": "Feedback",
+      "emotion": "Disappointment",
+      "emotionCluster": "Negative",
+
+      "upperCategories": ["Technical Issue", "Pricing Concern"],
+
+      "categorizations": [
+        {
+          "category": "Product",
+          "subcategory": "Stability",
+          "subSubcategory": "App Crashes",
+          "sentiment": "Negative"
+        },
+        {
+          "category": "Pricing",
+          "subcategory": "Value Perception",
+          "sentiment": "Neutral"
+        }
+      ],
+
+      "aspectGroups": [
+        {
+          "name": "Technical Issues",
+          "aspects": ["crashes", "file-upload", "performance"]
+        },
+        {
+          "name": "Pricing Concerns",
+          "aspects": ["expensive", "competitor-comparison"]
+        }
+      ],
+      "ungroupedAspects": ["large-files"],
+      "tags": ["feature-request", "competitive-intel"]
+    },
+    {
+      "id": "example-5",
+      "description": "Simple praise with aspect groups but no sub-categories",
+      "content": "Best decision we made was switching to this platform. Everything just works!",
+
+      "entityType": "PRODUCT",
+      "sentiment": "Positive",
+      "sentimentScore": 0.94,
+      "intent": "Appreciation",
+      "emotion": "Excitement",
+      "emotionCluster": "Positive",
+
+      "upperCategories": ["Overall Experience"],
+
+      "categorizations": [
+        {
+          "category": "Overall Experience",
+          "sentiment": "Positive"
+        }
+      ],
+
+      "aspectGroups": [
+        {
+          "name": "Product Quality",
+          "aspects": ["reliability", "ease-of-use"]
+        }
+      ],
+      "ungroupedAspects": ["satisfaction"],
+      "tags": ["testimonial"]
+    },
+    {
+      "id": "example-6",
+      "description": "Delivery and product quality complaint",
+      "content": "Package arrived damaged and the product quality is poor. Very disappointed with this experience.",
+
+      "entityType": "PRODUCT",
+      "sentiment": "Negative",
+      "sentimentScore": -0.78,
+      "intent": "Complaint",
+      "emotion": "Disappointment",
+      "emotionCluster": "Negative",
+
+      "upperCategories": ["Delivery Issue", "Product Quality"],
+
+      "categorizations": [
+        {
+          "category": "Delivery",
+          "subcategory": "Package Condition",
+          "sentiment": "Negative"
+        },
+        {
+          "category": "Product",
+          "subcategory": "Quality",
+          "subSubcategory": "Durability",
+          "sentiment": "Negative"
+        }
+      ],
+
+      "aspectGroups": [
+        {
+          "name": "Delivery Experience",
+          "aspects": ["damaged-package", "shipping"]
+        },
+        {
+          "name": "Product Quality",
+          "aspects": ["poor-quality", "durability"]
+        }
+      ],
+      "ungroupedAspects": ["disappointed"],
+      "tags": ["refund-requested", "urgent"]
+    },
+    {
+      "id": "example-7",
+      "description": "Question with neutral sentiment",
+      "content": "Does your enterprise plan include API access? Looking to integrate with our CRM.",
+
+      "entityType": "PRODUCT",
+      "sentiment": "Neutral",
+      "sentimentScore": 0.02,
+      "intent": "Query",
+      "emotion": "Curiosity",
+      "emotionCluster": "Neutral",
+
+      "upperCategories": ["Feature Inquiry"],
+
+      "categorizations": [
+        {
+          "category": "Sales Inquiry",
+          "subcategory": "Features",
+          "sentiment": "Neutral"
+        }
+      ],
+
+      "aspectGroups": [],
+      "ungroupedAspects": ["api-access", "enterprise-plan", "crm-integration"],
+      "tags": ["sales-lead"]
+    },
+    {
+      "id": "example-8",
+      "description": "Mixed sentiment with aspect groups",
+      "content": "Love the new features you've added, but the mobile app still needs work. Desktop version is perfect though!",
+
+      "entityType": "PRODUCT",
+      "sentiment": "Neutral",
+      "sentimentScore": 0.15,
+      "intent": "Feedback",
+      "emotion": "Gratitude",
+      "emotionCluster": "Positive",
+
+      "upperCategories": ["Product Feature", "Platform Specific"],
+
+      "categorizations": [
+        {
+          "category": "Product",
+          "subcategory": "New Features",
+          "sentiment": "Positive"
+        },
+        {
+          "category": "Product",
+          "subcategory": "Mobile App",
+          "sentiment": "Negative"
+        },
+        {
+          "category": "Product",
+          "subcategory": "Desktop App",
+          "sentiment": "Positive"
+        }
+      ],
+
+      "aspectGroups": [
+        {
+          "name": "Feature Updates",
+          "aspects": ["new-features", "positive-feedback"]
+        },
+        {
+          "name": "Mobile Experience",
+          "aspects": ["needs-improvement", "bugs"]
+        },
+        {
+          "name": "Desktop Experience",
+          "aspects": ["excellent", "stable"]
+        }
+      ],
+      "ungroupedAspects": [],
+      "tags": ["beta-tester", "power-user"]
+    },
+    {
+      "id": "example-9",
+      "description": "Location-based complaint",
+      "content": "The Downtown store location has terrible parking. Had to drive around for 20 minutes just to find a spot.",
+
+      "entityType": "LOCATION",
+      "sentiment": "Negative",
+      "sentimentScore": -0.61,
+      "intent": "Complaint",
+      "emotion": "Frustration",
+      "emotionCluster": "Negative",
+
+      "upperCategories": ["Facility Issue"],
+
+      "categorizations": [
+        {
+          "category": "Facilities",
+          "subcategory": "Parking",
+          "sentiment": "Negative"
+        }
+      ],
+
+      "aspectGroups": [
+        {
+          "name": "Accessibility",
+          "aspects": ["parking", "location-access"]
+        }
+      ],
+      "ungroupedAspects": ["downtown-store"],
+      "tags": ["location-feedback"]
+    },
+    {
+      "id": "example-10",
+      "description": "Brand promotion / opportunity",
+      "content": "Hey @YourBrand! I'm hosting a tech meetup next month with 500+ attendees. Would you be interested in sponsoring?",
+
+      "entityType": "PERSON",
+      "sentiment": "Neutral",
+      "sentimentScore": 0.22,
+      "intent": "Opportunity",
+      "emotion": "Excitement",
+      "emotionCluster": "Positive",
+
+      "upperCategories": ["Partnership Opportunity"],
+
+      "categorizations": [
+        {
+          "category": "Business Development",
+          "subcategory": "Sponsorship",
+          "sentiment": "Neutral"
+        }
+      ],
+
+      "aspectGroups": [],
+      "ungroupedAspects": ["tech-meetup", "sponsorship"],
+      "tags": ["partnership-opportunity", "influencer"]
+    }
+  ],
+  "fixedClassifications": {
+    "ENTITY_TYPE": ["BRAND", "PERSON", "LOCATION", "PRODUCT", "ORGANIZATION"],
+    "SENTIMENT": ["Positive", "Negative", "Neutral", "None"],
+    "INTENT": ["Complaint", "Request", "Query", "Feedback", "Appreciation", "Opportunity", "Brand Promotion", "Information", "Irrelevant"],
+    "EMOTION": {
+      "Negative": ["Anger", "Frustration", "Disappointment", "Distrust", "Anxiety"],
+      "Positive": ["Joy", "Gratitude", "Trust", "Excitement"],
+      "Neutral": ["Curiosity", "Confusion", "Indifference"]
+    }
+  },
+  "notes": {
+    "fixedClassifications": "Every mention has these AI-generated fixed fields: entityType, sentiment, intent, emotion (with emotionCluster)",
+    "upperCategories": "Customer's Intent (AI Upper Categories) - dynamic, user-defined, array of strings",
+    "categorizations": [
+      "Can have 1, 2, or 3 levels (category, subcategory, sub-subcategory)",
+      "Multiple categorizations are possible for a single mention",
+      "Each categorization ALWAYS has an associated sentiment",
+      "If sub-subcategory is tagged, all parent categories inherit the same sentiment"
+    ],
+    "aspectGroups": [
+      "Hierarchical structure - aspect groups contain aspects",
+      "Display as larger pills with sentiment-based background color",
+      "Individual aspects shown as smaller tags below"
+    ],
+    "ungroupedAspects": [
+      "Aspects that don't belong to any group",
+      "Shown alongside grouped aspects as smaller tags"
+    ],
+    "tags": [
+      "System-generated or user-added tags (escalation flags, etc.)",
+      "Shown with warning icon for important tags",
+      "Different visual style from aspects (amber color for warnings)"
+    ]
+  }
+}
