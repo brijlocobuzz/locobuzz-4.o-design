@@ -4,9 +4,9 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: mode === 'production' ? '/locobuzz-4.o-design/' : '/',
+  base: '/locobuzz-4.o-design/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -15,4 +15,4 @@ export default defineConfig(({ mode }) => ({
   server: {
     port: 3000,
   },
-}))
+})
