@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createHashRouter } from 'react-router-dom'
 import { ProductPage } from '@/components/ProductPage'
 import { DataModelPage } from '@/components/DataModelPage'
 import { DesignPage } from '@/components/DesignPage'
@@ -9,7 +9,7 @@ import { ShellDesignPage, ShellDesignFullscreen } from '@/components/ShellDesign
 import { ExportPage } from '@/components/ExportPage'
 import AgentIQDemo from '@/sections/inbox/AgentIQDemo'
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: '/',
     element: <ProductPage />,
