@@ -1,23 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Design OS</title>
-    <script type="text/javascript">
-      // GitHub Pages SPA redirect
-      // https://github.com/rafgraph/spa-github-pages
-      var pathSegmentsToKeep = 1;
+    <script>
+      // GitHub Pages SPA redirect for subfolder deploy
+      const repoName = '/locobuzz-4.o-design'
+      const pathname = window.location.pathname
 
-      var l = window.location;
-      l.replace(
-        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
-        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-        l.hash
-      );
+      const redirectPath = pathname.startsWith(repoName)
+        ? pathname.replace(repoName, '')
+        : pathname
+
+      window.location.replace(
+        repoName + '/?redirect=' + redirectPath + window.location.search + window.location.hash
+      )
     </script>
   </head>
-  <body>
-  </body>
+  <body></body>
 </html>
