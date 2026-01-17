@@ -4,17 +4,8 @@
     <meta charset="utf-8" />
     <title>Design OS</title>
     <script>
-      // GitHub Pages SPA redirect for subfolder deploy
-      const repoName = '/locobuzz-4.o-design'
-      const pathname = window.location.pathname
-
-      const redirectPath = pathname.startsWith(repoName)
-        ? pathname.replace(repoName, '')
-        : pathname
-
-      window.location.replace(
-        repoName + '/?redirect=' + redirectPath + window.location.search + window.location.hash
-      )
+      // For HashRouter, just redirect to index.html
+      window.location.replace('/locobuzz-4.o-design/' + window.location.hash)
     </script>
   </head>
   <body></body>
