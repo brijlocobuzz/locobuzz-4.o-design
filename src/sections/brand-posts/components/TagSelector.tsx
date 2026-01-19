@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { Campaign, Theme, Objective } from '@/../product/sections/brand-posts/types'
-import { Tag, ChevronDown, X } from 'lucide-react'
+import { Tag, X } from 'lucide-react'
 
 interface TagSelectorProps {
   type: 'campaign' | 'theme' | 'objective'

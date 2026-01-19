@@ -17,14 +17,12 @@ import {
   Heart,
   MessageCircle,
   Share2,
-  Bookmark,
   TrendingUp,
   Edit,
   Copy,
   MoreHorizontal,
   Zap,
   Clock,
-  CheckCircle,
   AlertCircle
 } from 'lucide-react'
 

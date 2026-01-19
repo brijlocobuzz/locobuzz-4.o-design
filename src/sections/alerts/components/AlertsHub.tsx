@@ -14,7 +14,7 @@ export function AlertsHub({
   users,
   performanceMetrics,
   activeTab = 'recent',
-  currentFilters,
+  currentFilters: _currentFilters,
   onCreateAlert,
   onEditAlert,
   onToggleAlert,
@@ -31,11 +31,10 @@ export function AlertsHub({
   onApplyFilters,
   onClearFilters,
   onSearch,
-  onSaveAlert,
-  onCancelEdit
+  onSaveAlert: _onSaveAlert,
+  onCancelEdit: _onCancelEdit
 }: AlertsProps) {
   const [currentTab, setCurrentTab] = useState<'recent' | 'settings'>(activeTab)
-  const [searchQuery, setSearchQuery] = useState('')
 
   const handleTabChange = (tab: 'recent' | 'settings') => {
     setCurrentTab(tab)

@@ -31,7 +31,7 @@ export function RecentAlertsTab({
   onAcknowledge,
   onViewSource,
   onDismiss,
-  onApplyFilters,
+  onApplyFilters: _onApplyFilters,
   onClearFilters,
   onSearch
 }: RecentAlertsTabProps) {

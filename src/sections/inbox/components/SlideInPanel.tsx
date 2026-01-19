@@ -14,7 +14,7 @@ export function SlideInPanel({
   onSubmitForApproval,
   onInternalNote,
   onReply,
-  onApplyAISuggestion,
+  onApplyAISuggestion: _onApplyAISuggestion,
 }: SlideInPanelProps) {
 
   if (!isOpen) return null

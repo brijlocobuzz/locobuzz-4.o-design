@@ -5,9 +5,8 @@ import {
   MessageSquare,
   Sparkles,
   Brain,
-  Smile,
 } from 'lucide-react'
-import type { Classification } from '@/../product/sections/inbox/types'
+import type { Classification, Categorization, AspectGroup } from '@/../product/sections/inbox/types'
 
 interface ClassificationPanelProps {
   classification: Classification | undefined
@@ -31,15 +30,15 @@ export function ClassificationPanel({ classification }: ClassificationPanelProps
 
   // Safe access with fallbacks for missing data
   const safeClassification = {
-    entityType: safeClassification.entityType || 'N/A',
-    sentiment: safeClassification.sentiment || 'Neutral',
-    intent: safeClassification.intent || 'N/A',
-    emotion: safeClassification.emotion || 'N/A',
-    emotionCluster: safeClassification.emotionCluster || 'Neutral',
-    upperCategories: safeClassification.upperCategories || [],
-    categorizations: safeClassification.categorizations || [],
-    aspectGroups: safeClassification.aspectGroups || [],
-    ungroupedAspects: safeClassification.ungroupedAspects || [],
+    entityType: classification?.entityType || 'N/A',
+    sentiment: classification?.sentiment || 'Neutral',
+    intent: classification?.intent || 'N/A',
+    emotion: classification?.emotion || 'N/A',
+    emotionCluster: classification?.emotionCluster || 'Neutral',
+    upperCategories: classification?.upperCategories || [],
+    categorizations: classification?.categorizations || [],
+    aspectGroups: classification?.aspectGroups || [],
+    ungroupedAspects: classification?.ungroupedAspects || [],
   }
 
   const getEmotionColor = (cluster: string) => {
@@ -105,7 +104,7 @@ export function ClassificationPanel({ classification }: ClassificationPanelProps
               Customer's Intent (AI Upper Categories)
             </h4>
             <div className="flex flex-wrap gap-2">
-              {safeClassification.upperCategories.map((category, idx) => (
+              {safeClassification.upperCategories.map((category: string, idx: number) => (
                 <span
                   key={idx}
                   className="rounded-lg bg-blue-100 px-3 py-1.5 text-sm font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
@@ -125,7 +124,7 @@ export function ClassificationPanel({ classification }: ClassificationPanelProps
               Category Hierarchy
             </h4>
             <div className="space-y-2">
-              {safeClassification.categorizations.map((cat, idx) => {
+              {safeClassification.categorizations.map((cat: Categorization, idx: number) => {
                 const sentimentBg = cat.sentiment === 'Negative'
                   ? 'bg-rose-50 border-rose-200 dark:bg-rose-950/30 dark:border-rose-800'
                   : cat.sentiment === 'Positive'
@@ -175,27 +174,23 @@ export function ClassificationPanel({ classification }: ClassificationPanelProps
               Aspect Groups
             </h4>
             <div className="space-y-3">
-              {safeClassification.aspectGroups.map((group, idx) => (
+              {safeClassification.aspectGroups.map((group: AspectGroup, idx: number) => (
                 <div
                   key={idx}
                   className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800"
                 >
                   <h5 className="mb-3 font-medium text-slate-900 dark:text-white">
-                    {group.name || group.groupName}
+                    {group.name}
                   </h5>
                   <div className="flex flex-wrap gap-1.5">
-                    {group.aspects.map((aspect, aspectIdx) => {
-                      // Handle both string aspects and object aspects
-                      const aspectName = typeof aspect === 'string' ? aspect : aspect.name
-                      return (
-                        <span
-                          key={aspectIdx}
-                          className="rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-300"
-                        >
-                          {aspectName}
-                        </span>
-                      )
-                    })}
+                    {group.aspects.map((aspect: string, aspectIdx: number) => (
+                      <span
+                        key={aspectIdx}
+                        className="rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-300"
+                      >
+                        {aspect}
+                      </span>
+                    ))}
                   </div>
                 </div>
               ))}
@@ -211,18 +206,14 @@ export function ClassificationPanel({ classification }: ClassificationPanelProps
               Other Aspects
             </h4>
             <div className="flex flex-wrap gap-1.5">
-              {safeClassification.ungroupedAspects.map((aspect, idx) => {
-                // Handle both string aspects and object aspects
-                const aspectName = typeof aspect === 'string' ? aspect : aspect.name
-                return (
-                  <span
-                    key={idx}
-                    className="rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-300"
-                  >
-                    {aspectName}
-                  </span>
-                )
-              })}
+              {safeClassification.ungroupedAspects.map((aspect: string, idx: number) => (
+                <span
+                  key={idx}
+                  className="rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-300"
+                >
+                  {aspect}
+                </span>
+              ))}
             </div>
           </div>
         )}

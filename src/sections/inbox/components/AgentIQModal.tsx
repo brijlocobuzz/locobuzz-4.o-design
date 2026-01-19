@@ -106,7 +106,6 @@ export function AgentIQModal({
   }
 
   const config = outcomeConfig[outcome]
-  const Icon = config.icon
 
   const handleOverride = () => {
     if (overrideJustification.trim().length < 20) {

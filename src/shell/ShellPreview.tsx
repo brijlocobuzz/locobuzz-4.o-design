@@ -12,7 +12,6 @@ import {
   Settings,
 } from 'lucide-react'
 import { AppShell } from './components/AppShell'
-import { CommandBar } from './components/CommandBar'
 import type { Brand, NavigationItem, SecondaryNavSection } from './components/AppShell'
 import { useFilter } from '@/components/UnifiedFilter/FilterContext'
 

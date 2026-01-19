@@ -72,7 +72,7 @@ function QueryRow({ condition, onUpdate, onRemove }: QueryRowProps) {
                                 color: options.find(o => o.label === label)?.color
                             } : undefined}
                         >
-                            {label}
+                            {String(label)}
                         </span>
                     ))}
                 </div>

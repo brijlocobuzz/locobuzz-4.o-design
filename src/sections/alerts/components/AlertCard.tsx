@@ -39,7 +39,7 @@ const channelIcons = {
 
 export function AlertCard({
   alert,
-  config,
+  config: _config,
   deliveries,
   users,
   onViewDetail,
@@ -73,7 +73,6 @@ export function AlertCard({
   const acknowledgedBy = alert.acknowledgedBy ? users.find(u => u.id === alert.acknowledgedBy) : null
 
   // Delivery status summary
-  const deliveredCount = deliveries.filter(d => d.status === 'sent' || d.status === 'opened').length
   const openedCount = deliveries.filter(d => d.status === 'opened').length
   const failedCount = deliveries.filter(d => d.status === 'failed').length
 

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Calendar, Clock, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
 
 export interface DateRange {
   startDate: Date

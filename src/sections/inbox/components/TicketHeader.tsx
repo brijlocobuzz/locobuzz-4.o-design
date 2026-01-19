@@ -24,6 +24,7 @@ import { useState } from 'react'
 
 export interface MessageInsights {
   showInsights: boolean
+  badgeOrder?: string[]
   selectedInsights: {
     // AI Classifications (formerly combined)
     sentiment: boolean

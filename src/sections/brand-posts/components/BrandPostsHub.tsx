@@ -16,6 +16,8 @@ export function BrandPostsHub({
   locationProfiles,
   users,
   campaigns,
+  themes,
+  objectives,
   metrics,
   commentSummaries,
   savedViews,

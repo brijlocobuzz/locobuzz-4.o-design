@@ -1,11 +1,12 @@
 import data from '@/../product/sections/brand-posts/data.json'
 import { BrandPostsHub } from './components/BrandPostsHub'
+import type { Post, Page, Comment, CommentSummary } from '@/../product/sections/brand-posts/types'
 
 export default function BrandPostsPreview() {
   return (
     <BrandPostsHub
-      posts={data.posts}
-      pages={data.pages}
+      posts={data.posts as Post[]}
+      pages={data.pages as Page[]}
       productProfiles={data.productProfiles}
       locationProfiles={data.locationProfiles}
       users={data.users}
@@ -13,8 +14,8 @@ export default function BrandPostsPreview() {
       themes={data.themes}
       objectives={data.objectives}
       metrics={data.metrics}
-      comments={data.comments}
-      commentSummaries={data.commentSummaries}
+      comments={data.comments as Comment[]}
+      commentSummaries={data.commentSummaries as CommentSummary[]}
       savedViews={[]}
       viewMode="published"
       displayMode="feed"

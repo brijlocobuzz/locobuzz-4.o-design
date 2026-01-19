@@ -6,7 +6,7 @@
 // ============================================================================
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, X, Filter, Command, Sparkles, Clock, ChevronRight } from 'lucide-react';
+import { Search, X, Filter, Sparkles, Clock, ChevronRight } from 'lucide-react';
 import { useFilter } from './FilterContext';
 import { searchAttributes, getSlashCommand } from './filterConfig';
 import type { SlashCommand, FilterAttribute, NLPParseResult } from './types';
@@ -322,7 +322,7 @@ export function CommandPalette() {
         }
     };
 
-    const handleInlinePickerSelect = (value: string | string[]) => {
+    const handleInlinePickerSelect = (_value: string | string[]) => {
         if (selectedAttribute) {
             addCondition(selectedAttribute.id);
             // The updateCondition would be called here with the value

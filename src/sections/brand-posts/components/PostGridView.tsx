@@ -26,7 +26,7 @@ export function PostGridView({
   pages,
   campaigns,
   themes,
-  objectives,
+  objectives: _objectives,
   metrics,
   commentSummaries,
   onViewPost

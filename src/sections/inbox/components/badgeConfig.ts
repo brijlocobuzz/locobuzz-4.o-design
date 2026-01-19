@@ -32,7 +32,9 @@ export interface BadgeTypeConfig {
   [key: string]: BadgeVariantConfig
 }
 
-export const BADGE_CONFIG: Record<string, BadgeTypeConfig | BadgeVariantConfig> = {
+export type BadgeConfigValue = BadgeTypeConfig | BadgeVariantConfig | Record<string, BadgeTypeConfig | BadgeVariantConfig>
+
+export const BADGE_CONFIG: Record<string, BadgeConfigValue> = {
   // AI Classifications
   sentiment: {
     positive: {
@@ -220,7 +222,8 @@ export function getBadgeConfig(
   // Handle essentials badges (e.g., "essentials.priorityBadge")
   if (badgeId.startsWith('essentials.')) {
     const essentialType = badgeId.replace('essentials.', '')
-    const essentialConfig = BADGE_CONFIG.essentials?.[essentialType]
+    const essentialsConfig = BADGE_CONFIG.essentials as Record<string, BadgeTypeConfig | BadgeVariantConfig>
+    const essentialConfig = essentialsConfig?.[essentialType]
 
     if (!essentialConfig) return undefined
 

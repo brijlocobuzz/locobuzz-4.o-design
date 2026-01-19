@@ -1,13 +1,11 @@
 import type { Ticket } from '@/../product/sections/inbox/types'
 import { DataGrid, type ColumnDef } from '@/components/DataGrid'
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 
 interface TicketTableProps {
   tickets: Ticket[]
   selectedIds?: string[]
   onTicketClick?: (ticketId: string) => void
   onSelectionChange?: (ticketId: string, selected: boolean) => void
-  onCellEdit?: (ticketId: string, columnId: string, value: any) => void
 }
 
 export function TicketTable({
@@ -15,7 +13,6 @@ export function TicketTable({
   selectedIds = [],
   onTicketClick,
   onSelectionChange,
-  onCellEdit,
 }: TicketTableProps) {
   const getPlatformIcon = (platform: string) => {
     const icons: Record<string, string> = {
@@ -398,11 +395,6 @@ export function TicketTable({
     },
   ]
 
-  const handleCellEdit = (rowId: string, columnId: string, value: any) => {
-    onCellEdit?.(rowId, columnId, value)
-    console.log('Cell edited:', { rowId, columnId, value })
-  }
-
   return (
     <DataGrid
       data={tickets}
@@ -411,7 +403,6 @@ export function TicketTable({
       selectedIds={selectedIds}
       onRowClick={(row) => onTicketClick?.(row.id)}
       onSelectionChange={onSelectionChange}
-      onCellEdit={handleCellEdit}
       frozenColumnCount={2}
     />
   )

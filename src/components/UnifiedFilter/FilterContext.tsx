@@ -12,7 +12,6 @@ import type {
     SavedFilter,
     NLPParseResult,
     ParsedCondition,
-    OperatorKey,
 } from './types';
 import { FILTER_FAMILIES, SLASH_COMMANDS, getAttributeById } from './filterConfig';
 

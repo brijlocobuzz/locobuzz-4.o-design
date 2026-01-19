@@ -1,5 +1,5 @@
 import type { Ticket } from '@/../product/sections/inbox/types'
-import { TrendingUp, TrendingDown, MessageSquare } from 'lucide-react'
+import { MessageSquare } from 'lucide-react'
 import type { MessageInsights } from './TicketHeader'
 import { BadgeWithTooltip } from './BadgeWithTooltip'
 import { getBadgeConfig, getBadgeLabel } from './badgeConfig'
@@ -25,18 +25,11 @@ export function TicketCardDetailed({ ticket, isSelected, onClick, onSelect, show
 
   const getSentimentColor = () => {
     switch (ticket.sentiment) {
-      case 'negative': return 'bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300'
-      case 'neutral': return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
-      case 'positive': return 'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300'
+      case 'Negative': return 'bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300'
+      case 'Neutral': return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+      case 'Positive': return 'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300'
+      default: return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
     }
-  }
-
-  const getClassificationSentimentColor = (score: number) => {
-    if (score >= 0.7) return 'text-green-600 dark:text-green-400'
-    if (score > 0.2) return 'text-lime-600 dark:text-lime-400'
-    if (score >= -0.2) return 'text-slate-600 dark:text-slate-400'
-    if (score > -0.7) return 'text-orange-600 dark:text-orange-400'
-    return 'text-red-600 dark:text-red-400'
   }
 
   const getPlatformIcon = () => {
@@ -351,10 +344,8 @@ export function TicketCardDetailed({ ticket, isSelected, onClick, onSelect, show
                 <div className="mb-1.5 text-xs font-medium text-slate-600 dark:text-slate-400">Aspect Groups</div>
                 <div className="flex flex-wrap gap-1.5">
                   {ticket.classification.aspectGroups.map((group, idx) => {
-                    const groupName = group.name || group.groupName
-                    const aspectsList = group.aspects
-                      ?.map((a: any) => typeof a === 'string' ? a : a.name)
-                      .join(', ') || ''
+                    const groupName = group.name
+                    const aspectsList = group.aspects?.join(', ') || ''
                     const description = config
                       ? `${config.description}${aspectsList ? `: ${aspectsList}` : ''}`
                       : aspectsList
@@ -391,13 +382,11 @@ export function TicketCardDetailed({ ticket, isSelected, onClick, onSelect, show
                 <div className="mb-1.5 text-xs font-medium text-slate-600 dark:text-slate-400">Other Aspects</div>
                 <div className="flex flex-wrap gap-1.5">
                   {ticket.classification.ungroupedAspects.map((aspect, idx) => {
-                    // Handle both string aspects and object aspects
-                    const aspectName = typeof aspect === 'string' ? aspect : aspect.name
                     return config ? (
                       <BadgeWithTooltip
                         key={`ungrouped-${idx}`}
                         label={getBadgeLabel('aspects')}
-                        value={aspectName}
+                        value={aspect}
                         description={config.description}
                         icon={config.icon}
                         className="rounded-md bg-slate-200 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-300"
@@ -407,7 +396,7 @@ export function TicketCardDetailed({ ticket, isSelected, onClick, onSelect, show
                         key={`ungrouped-${idx}`}
                         className="rounded-md bg-slate-200 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-300"
                       >
-                        {aspectName}
+                        {aspect}
                       </span>
                     )
                   })}

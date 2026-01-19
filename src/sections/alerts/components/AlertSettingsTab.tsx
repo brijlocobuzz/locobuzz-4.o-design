@@ -11,11 +11,8 @@ import {
   Copy,
   Trash2,
   BarChart3,
-  MoreHorizontal,
   Power,
   PowerOff,
-  Download,
-  Tag
 } from 'lucide-react'
 
 interface AlertSettingsTabProps {
@@ -34,8 +31,8 @@ interface AlertSettingsTabProps {
 
 export function AlertSettingsTab({
   alertConfigurations,
-  performanceMetrics,
-  users,
+  performanceMetrics: _performanceMetrics,
+  users: _users,
   onEdit,
   onToggle,
   onDuplicate,
@@ -43,7 +40,7 @@ export function AlertSettingsTab({
   onViewStats,
   onBulkToggle,
   onBulkDelete,
-  onApplyFilters
+  onApplyFilters: _onApplyFilters
 }: AlertSettingsTabProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedType, setSelectedType] = useState<string[]>([])
@@ -278,7 +275,6 @@ export function AlertSettingsTab({
             {filteredConfigs.map(config => {
               const typeStyle = typeStyles[config.type]
               const isSelected = selectedAlerts.has(config.id)
-              const metrics = performanceMetrics.find(m => m.alertConfigId === config.id)
 
               return (
                 <tr

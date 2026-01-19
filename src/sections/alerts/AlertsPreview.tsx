@@ -1,14 +1,15 @@
 import data from '@/../product/sections/alerts/data.json'
 import { AlertsHub } from './components/AlertsHub'
+import type { AlertConfiguration, TriggeredAlert, DeliveryRecord, PerformanceMetrics } from '@/../product/sections/alerts/types'
 
 export default function AlertsPreview() {
   return (
     <AlertsHub
-      alertConfigurations={data.alertConfigurations}
-      triggeredAlerts={data.triggeredAlerts}
-      deliveryRecords={data.deliveryRecords}
+      alertConfigurations={data.alertConfigurations as AlertConfiguration[]}
+      triggeredAlerts={data.triggeredAlerts as TriggeredAlert[]}
+      deliveryRecords={data.deliveryRecords as DeliveryRecord[]}
       users={data.users}
-      performanceMetrics={data.performanceMetrics}
+      performanceMetrics={data.performanceMetrics as PerformanceMetrics[]}
       activeTab="recent"
       onCreateAlert={() => console.log('Create alert')}
       onEditAlert={(id) => console.log('Edit alert:', id)}

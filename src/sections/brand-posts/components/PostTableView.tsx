@@ -20,7 +20,6 @@ import {
   Download,
   Tag,
   Clock,
-  Users
 } from 'lucide-react'
 
 interface PostTableViewProps {
@@ -44,10 +43,10 @@ interface PostTableViewProps {
 export function PostTableView({
   posts,
   pages,
-  users,
+  users: _users,
   campaigns,
   themes,
-  objectives,
+  objectives: _objectives,
   metrics,
   commentSummaries,
   onViewPost,

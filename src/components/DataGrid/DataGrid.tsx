@@ -2,13 +2,8 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import {
   Settings,
   GripVertical,
-  Pencil,
-  Check,
-  X,
-  ChevronDown,
   Eye,
   EyeOff,
-  ArrowUpDown,
 } from 'lucide-react'
 
 // Column definition type
@@ -36,7 +31,6 @@ export interface DataGridProps<T> {
   selectedIds?: string[]
   onRowClick?: (row: T) => void
   onSelectionChange?: (id: string, selected: boolean) => void
-  onCellEdit?: (rowId: string, columnId: string, value: any) => void
   frozenColumnCount?: number
   className?: string
 }
@@ -55,7 +49,6 @@ export function DataGrid<T extends { id: string }>({
   selectedIds = [],
   onRowClick,
   onSelectionChange,
-  onCellEdit,
   frozenColumnCount = 2,
   className = '',
 }: DataGridProps<T>) {
@@ -71,11 +64,8 @@ export function DataGrid<T extends { id: string }>({
 
   // UI state
   const [showSettings, setShowSettings] = useState(false)
-  const [editingCell, setEditingCell] = useState<{ rowId: string; colId: string } | null>(null)
-  const [editValue, setEditValue] = useState<any>(null)
   const [resizingColumn, setResizingColumn] = useState<string | null>(null)
   const [draggedColumn, setDraggedColumn] = useState<string | null>(null)
-  const [hoveredCell, setHoveredCell] = useState<{ rowId: string; colId: string } | null>(null)
 
   const tableRef = useRef<HTMLDivElement>(null)
   const startXRef = useRef(0)
@@ -169,116 +159,12 @@ export function DataGrid<T extends { id: string }>({
     setDraggedColumn(null)
   }
 
-  // Cell editing
-  const startEditing = (rowId: string, colId: string, currentValue: any) => {
-    setEditingCell({ rowId, colId })
-    setEditValue(currentValue)
-  }
-
-  const saveEdit = () => {
-    if (editingCell && onCellEdit) {
-      onCellEdit(editingCell.rowId, editingCell.colId, editValue)
-    }
-    setEditingCell(null)
-    setEditValue(null)
-  }
-
-  const cancelEdit = () => {
-    setEditingCell(null)
-    setEditValue(null)
-  }
-
   // Get cell value
   const getCellValue = (row: T, column: ColumnDef<T>) => {
     if (typeof column.accessor === 'function') {
       return column.accessor(row)
     }
     return row[column.accessor]
-  }
-
-  // Render edit cell
-  const renderEditCell = (column: ColumnDef<T>, value: any) => {
-    switch (column.editType) {
-      case 'select':
-      case 'priority':
-      case 'status':
-        return (
-          <select
-            value={editValue || ''}
-            onChange={(e) => setEditValue(e.target.value)}
-            className="w-full rounded border border-indigo-300 bg-white px-2 py-1 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-indigo-700 dark:bg-slate-800"
-            autoFocus
-          >
-            {column.editOptions?.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        )
-
-      case 'multiselect':
-      case 'tags':
-        return (
-          <div className="flex flex-wrap gap-1">
-            {column.editOptions?.map((opt) => {
-              const isSelected = (editValue || []).includes(opt.value)
-              return (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                    const current = editValue || []
-                    setEditValue(
-                      isSelected
-                        ? current.filter((v: string) => v !== opt.value)
-                        : [...current, opt.value]
-                    )
-                  }}
-                  className={`rounded px-2 py-0.5 text-xs transition-colors ${
-                    isSelected
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              )
-            })}
-          </div>
-        )
-
-      case 'user':
-        return (
-          <select
-            value={editValue || ''}
-            onChange={(e) => setEditValue(e.target.value)}
-            className="w-full rounded border border-indigo-300 bg-white px-2 py-1 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-indigo-700 dark:bg-slate-800"
-            autoFocus
-          >
-            <option value="">Unassigned</option>
-            {column.editOptions?.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        )
-
-      default:
-        return (
-          <input
-            type="text"
-            value={editValue || ''}
-            onChange={(e) => setEditValue(e.target.value)}
-            className="w-full rounded border border-indigo-300 bg-white px-2 py-1 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-indigo-700 dark:bg-slate-800"
-            autoFocus
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') saveEdit()
-              if (e.key === 'Escape') cancelEdit()
-            }}
-          />
-        )
-    }
   }
 
   return (
@@ -446,8 +332,6 @@ export function DataGrid<T extends { id: string }>({
                   {/* Frozen Columns */}
                   {frozenColumns.map((column, index) => {
                     const cellValue = getCellValue(row, column)
-                    const isEditing = editingCell?.rowId === rowId && editingCell?.colId === column.id
-                    const isHovered = hoveredCell?.rowId === rowId && hoveredCell?.colId === column.id
 
                     return (
                       <td

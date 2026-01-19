@@ -74,7 +74,7 @@ export function TicketDetail({
   onCloseTicket,
   onCreateCRMTicket,
   onSyncCRM,
-  onExecuteAgentAction,
+  onExecuteAgentAction: _onExecuteAgentAction,
   onClose,
 }: TicketDetailProps) {
   const [activePanel, setActivePanel] = useState<RightPanelView>('customer')

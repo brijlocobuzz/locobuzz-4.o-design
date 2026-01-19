@@ -69,7 +69,7 @@ export function Mentions({
   // Calculate KPI values from data
   const totalMentions = mentions.length
   const actionableMentions = mentions.filter(m =>
-    m.intent === 'complaint' || m.intent === 'question' || m.sentiment === 'negative'
+    m.intent === 'Complaint' || m.intent === 'Query' || m.sentiment === 'Negative'
   ).length
   const nonActionableMentions = totalMentions - actionableMentions
 
@@ -81,9 +81,9 @@ export function Mentions({
   const filteredMentions = mentions.filter(mention => {
     if (activeFilter === 'all') return true
     if (activeFilter === 'actionable') {
-      return mention.intent === 'complaint' || mention.intent === 'question' || mention.sentiment === 'negative'
+      return mention.intent === 'Complaint' || mention.intent === 'Query' || mention.sentiment === 'Negative'
     }
-    return mention.intent !== 'complaint' && mention.intent !== 'question' && mention.sentiment !== 'negative'
+    return mention.intent !== 'Complaint' && mention.intent !== 'Query' && mention.sentiment !== 'Negative'
   })
 
   // Define columns for the DataGrid
@@ -393,9 +393,9 @@ export function Mentions({
                               </div>
                             </div>
                             <span
-                              className={`rounded-full px-3 py-1 text-xs font-medium ${mention.sentiment === 'positive'
+                              className={`rounded-full px-3 py-1 text-xs font-medium ${mention.sentiment === 'Positive'
                                   ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400'
-                                  : mention.sentiment === 'negative'
+                                  : mention.sentiment === 'Negative'
                                     ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400'
                                     : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
                                 }`}
@@ -432,9 +432,6 @@ export function Mentions({
                     }
                     return next
                   })
-                }}
-                onCellEdit={(rowId, columnId, value) => {
-                  console.log('Mention cell edited:', { rowId, columnId, value })
                 }}
                 frozenColumnCount={2}
               />

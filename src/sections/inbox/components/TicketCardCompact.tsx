@@ -1,5 +1,5 @@
 import type { Ticket } from '@/../product/sections/inbox/types'
-import { TrendingUp, TrendingDown, Minus, MessageSquare } from 'lucide-react'
+import { MessageSquare } from 'lucide-react'
 import type { MessageInsights } from './TicketHeader'
 import { BadgeWithTooltip } from './BadgeWithTooltip'
 import { getBadgeConfig, getBadgeLabel } from './badgeConfig'
@@ -29,20 +29,6 @@ export function TicketCardCompact({ ticket, isSelected, onClick, onSelect, showI
       case 'medium': return 'bg-yellow-100 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-300'
       case 'low': return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
     }
-  }
-
-  const getClassificationSentimentColor = (score: number) => {
-    if (score >= 0.7) return 'text-green-600 dark:text-green-400'
-    if (score > 0.2) return 'text-lime-600 dark:text-lime-400'
-    if (score >= -0.2) return 'text-slate-600 dark:text-slate-400'
-    if (score > -0.7) return 'text-orange-600 dark:text-orange-400'
-    return 'text-red-600 dark:text-red-400'
-  }
-
-  const getClassificationSentimentIcon = (score: number) => {
-    if (score > 0.2) return TrendingUp
-    if (score < -0.2) return TrendingDown
-    return Minus
   }
 
   const getPlatformIcon = () => {
@@ -338,10 +324,9 @@ export function TicketCardCompact({ ticket, isSelected, onClick, onSelect, showI
               return (
                 <>
                   {aspectGroups.slice(0, 2).map((group, groupIdx) => {
-                    const groupName = group.name || group.groupName
+                    const groupName = group.name
                     const aspectsList = group.aspects
-                      ?.map((a: any) => typeof a === 'string' ? a : a.name)
-                      .join(', ') || ''
+                      ?.join(', ') || ''
                     const description = config
                       ? `${config.description}${aspectsList ? `: ${aspectsList}` : ''}`
                       : aspectsList
@@ -380,13 +365,11 @@ export function TicketCardCompact({ ticket, isSelected, onClick, onSelect, showI
               return (
                 <>
                   {ungroupedAspects.slice(0, 2).map((aspect, idx) => {
-                    // Handle both string aspects and object aspects
-                    const aspectName = typeof aspect === 'string' ? aspect : aspect.name
                     return config ? (
                       <BadgeWithTooltip
                         key={idx}
                         label={getBadgeLabel('aspects')}
-                        value={aspectName}
+                        value={aspect}
                         description={config.description}
                         icon={config.icon}
                         className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300"
@@ -396,7 +379,7 @@ export function TicketCardCompact({ ticket, isSelected, onClick, onSelect, showI
                         key={idx}
                         className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300"
                       >
-                        {aspectName}
+                        {aspect}
                       </span>
                     )
                   })}

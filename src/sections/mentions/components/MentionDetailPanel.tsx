@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { X, ExternalLink, Tag, Hash, User, MapPin, Package, TrendingUp, Eye, EyeOff } from 'lucide-react'
-import type { Mention, CategoryMapping } from '@/../product/sections/mentions/types'
-import { CategoryMappingPicker } from '@/components/CategoryMappingPicker'
+import { X, ExternalLink, Tag, Hash, MapPin, Package, TrendingUp, Eye } from 'lucide-react'
+import type { Mention } from '@/../product/sections/mentions/types'
 
 interface MentionDetailPanelProps {
   mention: Mention
@@ -11,7 +10,7 @@ interface MentionDetailPanelProps {
   showInsights?: boolean
 }
 
-export function MentionDetailPanel({ mention, isOpen, onClose, onSave, showInsights = true }: MentionDetailPanelProps) {
+export function MentionDetailPanel({ mention, isOpen, onClose, onSave, showInsights: _showInsights = true }: MentionDetailPanelProps) {
   const [editedMention, setEditedMention] = useState<Partial<Mention>>({})
   const [activeTab, setActiveTab] = useState<'details' | 'engagement'>('details')
 
@@ -95,7 +94,7 @@ export function MentionDetailPanel({ mention, isOpen, onClose, onSave, showInsig
             <div>
               <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Mention Details</h2>
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                {getPlatformIcon(mention.platform)} {mention.channel.name} • {new Date(mention.timestamp).toLocaleString()}
+                {getPlatformIcon(mention.channel.platform)} {mention.channel.name} • {new Date(mention.timestamp).toLocaleString()}
               </p>
             </div>
             <button
@@ -202,6 +201,7 @@ export function MentionDetailPanel({ mention, isOpen, onClose, onSave, showInsig
               </div>
 
               {/* Category Mapping - Editable (Only show if insights enabled) */}
+              {/* Category Mapping - Disabled (property doesn't exist in Mention type)
               {showInsights && (
                 <div>
                   <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
@@ -213,16 +213,17 @@ export function MentionDetailPanel({ mention, isOpen, onClose, onSave, showInsig
                   />
                 </div>
               )}
+              */}
 
-              {/* Classifications - Editable */}
+              {/* Upper Categories - Using correct property */}
               <div>
                 <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                  Classifications
+                  Upper Categories
                 </h3>
                 <MultiSelectPicklist
-                  value={getCurrentValue('classifications')}
+                  value={getCurrentValue('upperCategories')}
                   options={classificationOptions}
-                  onChange={(value) => updateField('classifications', value)}
+                  onChange={(value) => updateField('upperCategories', value as string[])}
                   icon={<Hash className="h-4 w-4" />}
                 />
               </div>

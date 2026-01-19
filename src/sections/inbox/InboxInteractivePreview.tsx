@@ -17,9 +17,25 @@ export default function InboxInteractivePreview() {
     showInsights: false,
     selectedInsights: {
       sentiment: true,
+      entity: false,
+      intent: false,
+      emotion: false,
       category: true,
       aspects: true,
       aspectGroups: true,
+      reasonSurfaced: false,
+      essentials: {
+        customerName: false,
+        avatar: false,
+        handleAndFollowers: false,
+        platformAndType: false,
+        timestamp: false,
+        messageSnippet: false,
+        messageCount: false,
+        priorityBadge: false,
+        slaStatus: false,
+        unreadCount: false,
+      },
     },
   })
 
