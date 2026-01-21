@@ -1,0 +1,135 @@
+<div class="assign-dropdown assign_align" [ngClass]="{'element__disable': loader}">
+  <mat-form-field appearance="outline" class="
+      material__select
+      assign-dropdown__input
+      pr-0
+    " [ngClass]="{ menuwith__sort: showSortMenu }">
+    <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ loader ? ('Loading' | translate) : (label | translate) }}</mat-label>
+    <input [ngClass]="{'small_font-size' : !defaultLayout}" type="text" matInput #inputElement #clickMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="auto"
+      [(ngModel)]="selectedOption" [value]="selectedOption" [readonly]="selectedOption === 'Any User'" (ngModelChange)="filterOptions($event)"
+      autocomplete="off" />
+    <div class="select-placeholder-container" *ngIf="loader">
+      <mat-spinner [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="spinner" diameter="20"></mat-spinner>
+    </div>
+    <mat-menu #auto="matMenu" (optionSelected)="filterSelection($event)" class="ticket__agentName__select">
+      <ng-container *ngIf="filteredOptions && Object.keys(filteredOptions).length > 0; else noData">
+        <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" (click)="(isAssignClickStop ? $event.stopPropagation() : null ); setFormValue('Any User')" class="autocomplete-option" [value]="'Any User'"
+          *ngIf="mode!='analytics' && filteredOptions && filteredOptions.length > 0">
+          <div class="autocomplete-option__item">
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="autocomplete-option__item--status colored__green" fontSet="material-icons-outlined">
+              how_to_reg
+            </mat-icon>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" class="autocomplete-option__item--label text-semibold">{{ 'Any-Available-Users' | translate }}</span>
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="!value" class="autocomplete-option__item--usercheck colored__green">check_circle</mat-icon>
+          </div>
+        </mat-option>
+        <mat-option (click)="setFormValue('Any User')" class="autocomplete-option" [value]="'Any User'"
+          *ngIf="mode=='workflow'">
+          <div class="autocomplete-option__item">
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="autocomplete-option__item--status colored__green" fontSet="material-icons-outlined">
+              how_to_reg
+            </mat-icon>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" class="autocomplete-option__item--label text-semibold">{{ 'Any-Available-Users' | translate }}</span>
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="!value || value == 'Any User'" class="autocomplete-option__item--usercheck colored__green">check_circle</mat-icon>
+          </div>
+        </mat-option>
+        <mat-optgroup class="team team-button" *ngFor="let option of Object.keys(filteredOptions)">
+          <span class="d-flex-items-center team-button-text" [ngClass]="{'element__disable': disableTeamMember}"
+            (click)="isNumber(option) ? (null) : (isAssignClickStop ? $event.stopPropagation() : null ); LogTeamId(filteredOptions[option][0].teamID, option)">
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="colored__locobuzz mr-14">group</mat-icon>
+            <span *ngIf="isNumber(option); else agentText" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Users' | translate }}: {{ UserRoleEnum[+option] | spaceByCapital }}</span>
+            <ng-template #agentText>
+              <span class="team__hover d-flex-items-center" [ngClass]="{
+                colored__locobuzz: filteredOptions[option][0].teamID === value
+              }">
+                <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ option }}</span>
+                <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="filteredOptions[option][0].teamID === value" class="
+                  autocomplete-option__item--usercheck
+                  colored__green
+                  head-click
+                ">
+                  check_circle</mat-icon>
+              </span>
+            </ng-template>
+          </span>
+          <mat-option class="autocomplete-option" *ngFor="let user of filteredOptions[option]"
+            (click)="(isAssignClickStop ? $event.stopPropagation() : null ); setFormValue(user.showonlyteamname ? user.teamID : user.agentID)"
+            [value]="user.showonlyteamname ? user.teamName : user.agentName"
+            [disabled]="user.agentID === value || (user.teamID === value && user.showonlyteamname)"
+            [ngClass]="{ active:user.agentID === value || (user.teamID === value && user.showonlyteamname), 'small_font-size' : !defaultLayout }">
+            <div class="autocomplete-option__item">
+              <mat-icon class="autocomplete-option__item--status ml-18 mr-10" matTooltipClass="custom__tooltip-normal" *ngIf="mode!='analytics'"
+                [matTooltip]="loggedInStatus.includes(user.logIn_Status) ? ('Active' | translate) : user.logIn_Status == 2 ? ('On-Break' | translate) : user.logIn_Status == 10 || user.logIn_Status == 6 ? ('Assignment-Paused' | translate) : ('Inactive' | translate)"
+                [ngClass]="{ colored__green: loggedInStatus.includes(user.logIn_Status),
+                  'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout,
+                  color_oranged: user.logIn_Status == 10 || user.logIn_Status == 6,
+                  colored__yellow: user.logIn_Status == 2, 'small-icon-font-size' : !defaultLayout,
+                  colored__grey: !loggedInStatus.includes(user.logIn_Status) && user.logIn_Status != 10  && user.logIn_Status != 6 && user.logIn_Status != 2
+                }">
+                fiber_manual_record</mat-icon>
+              <mat-icon class="autocomplete-option__item--usericon" fontSet="material-icons-outlined"
+                [ngClass]="{ colored__yellow: user.userRole == 12,
+                  colored__grey: option.userRole !== 12,
+                  'active-icon': user.agentID === value || (user.teamID === value && user.showonlyteamname),
+                  'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout
+                }"
+                >person</mat-icon>
+              <span class="autocomplete-option__item--label">{{ user.showonlyteamname ? user.teamName : user.agentName }} 
+                ({{user.assignedTicketCount}}) 
+              </span>
+
+              <mat-icon [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}"
+                class="autocomplete-option__item--usercheck colored__green"
+                *ngIf="user.agentID === value || (user.teamID === value && user.showonlyteamname)">
+                check_circle</mat-icon>
+            </div>
+          </mat-option>
+        </mat-optgroup>
+        <!-- <ng-container *ngIf="option === 'null'; else userlist">
+          <mat-option (click)="setFormValue(user.agentID)" class="autocomplete-option"
+            *ngFor="let user of filteredOptions[option]" [value]="user.agentName" [disabled]="user.agentID === value">
+
+            <div class="autocomplete-option__item">
+              <mat-icon class="autocomplete-option__item--status ml-18" [ngClass]="{'colored__green': loggedInStatus.includes(user.logIn_Status),'colored__grey': !loggedInStatus.includes(user.logIn_Status)}">fiber_manual_record</mat-icon>
+              <mat-icon class="autocomplete-option__item--usericon" [ngClass]="{'colored__yellow':user.userRole ==
+              12,'colored__grey':user.userRole !== 12}" fontSet="material-icons-outlined">person</mat-icon>
+              <span class="autocomplete-option__item--label">{{ user.agentName}}</span>
+              <mat-icon *ngIf="user.agentID === value" class="autocomplete-option__item--usercheck colored__green">check_circle</mat-icon>
+            </div>
+          </mat-option>
+        </ng-container> -->
+        <!-- <ng-template #userlist>
+
+        </ng-template> -->
+      </ng-container>
+      <ng-template #noData>
+        <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" disabled> {{ 'No-User-Found' | translate }} </mat-option>
+      </ng-template>
+
+    </mat-menu>
+    <!-- <button (click)="clickMenuTrigger.openMenu()" mat-icon-button matSuffix
+      class="materialbtn__icon btn__hover material__select--suffix"> -->
+    <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" (click)="(isAssignClickStop ? $event.stopPropagation() : null ); clickMenuTrigger.openMenu()" matSuffix>expand_more</mat-icon>
+    <!-- </button> -->
+  </mat-form-field>
+  <div *ngIf="showSortMenu" class="assign-dropdown__sort" [ngClass]="!defaultLayout ? 'h-40' : 'h-42 mt-3' " [matMenuTriggerFor]="sortmenu">
+    <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}">sort</mat-icon>
+  </div>
+  <mat-menu #sortmenu="matMenu" xPosition="before" class="pb-0">
+    <ul (click)="(isAssignClickStop ? $event.stopPropagation() : null ); $event.stopPropagation()" class="sort-dropdown">
+      <li class="sort-dropdown__item">
+        <span [ngClass]="{'small_font-size' : !defaultLayout}" class="text__label">{{ 'Sort-By' | translate }}</span>
+        <mat-radio-group aria-label="Select an option">
+          <div class="sort-dropdown__item--input pb-2">
+            <mat-radio-button [ngClass]="{'small_font-size' : !defaultLayout}" value="1" (click)="(isAssignClickStop ? $event.stopPropagation() : null ); sortescalationlist(1)" [checked]="sortvalue === 1 ? true : false">
+              {{ 'Alphabetical' | translate }}</mat-radio-button>
+          </div>
+          <div class="sort-dropdown__item--input">
+            <mat-radio-button [ngClass]="{'small_font-size' : !defaultLayout}" value="2" (click)="(isAssignClickStop ? $event.stopPropagation() : null ); sortescalationlist(2)" [checked]="sortvalue === 2 ? true : false">
+              {{ 'Availability' | translate }}</mat-radio-button>
+          </div>
+        </mat-radio-group>
+      </li>
+    </ul>
+  </mat-menu>
+</div>

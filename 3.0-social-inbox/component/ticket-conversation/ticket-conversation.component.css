@@ -1,0 +1,16 @@
+.post,
+.post-reply {
+  width: 65%;
+  margin-left: auto;
+}
+
+.post-reply {
+  border-radius: 4px;
+}
+
+.post-reply > .post-log {
+  border-radius: 4px;
+  padding-left: 15px;
+  padding-top: 12px;
+  text-decoration: underline;
+}

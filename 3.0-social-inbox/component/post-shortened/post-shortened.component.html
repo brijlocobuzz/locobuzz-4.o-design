@@ -1,0 +1,734 @@
+<div class="post-shortened" [ngClass]="{'new-ui-theme__shortend': !defaultLayout}" (click)="openDetailView()" [ngStyle]="{'background-color':data.ticketId ==0 ?'#FDF8E2':''}">
+  <div class="post-shortened__head">
+    <div class="post-shortened__profile" [ngClass]="{ 'mb-5': postShortenedData.fromMail , 'g-6': !defaultLayout }">
+      <div class="position-relative">
+        <div class="post-shortened__profile--channelImage" *ngIf="defaultLayout">
+          <img class="img__fluid" [src]="data.channelImage" />
+        </div>
+        <ng-container *ngIf="userProfileImg == 'initials'; else showImage">
+          <span class="initials" [ngClass]="{'mr-0': !defaultLayout }">{{ initials }}</span>
+        </ng-container>
+        <ng-template #showImage>
+          <img class="post-shortened__profile--img" onError="this.src='assets/images/agentimages/sample-image.svg'" [src]="userProfileImg" />
+        </ng-template>
+      </div>
+      <div>
+        <p class="post-shortend__profile--name text-short" [ngClass]="{'colored__main--text font-weight-medium' : !defaultLayout, 'colored__grey' : defaultLayout}" [matTooltip]="data.Userinfo.name.length > 20 ? data.Userinfo.name : '' "
+          matTooltipClass="custom__tooltip-normal">
+          {{ data.Userinfo.name.substring(0, 20)}}<span *ngIf="data.Userinfo.name.length > 20">...</span>
+        </p>
+        <div class="text__ellipsis w-170" *ngIf="postShortenedData.channelGroup===channelGroupEnum.Email && defaultLayout">
+         <span class="text__sm post-shortend__profile--email" [matTooltip]="postShortenedData.fromMail.length > 28 ? postShortenedData.fromMail : ''" matTooltipPosition="above"
+          matTooltipClass="custom__tooltip-normal"> {{postShortenedData.fromMail}}</span>
+        </div>
+        <div class="post-shortened__profile--handle" *ngIf="data.Userinfo.screenName && defaultLayout">
+          <span class="post-shortend__profile--channlName" [ngClass]="{'text__sm' : defaultLayout, 'font-size-14 font-weight-500' : !defaultLayout}">{{ data.channelName | translate }}</span>
+        </div>
+        <!-- <span class="text__sm">({{data.Userinfo.screenName}})</span> -->
+      </div> 
+      <ng-container *ngIf="!defaultLayout">
+        <div class="post-shortened__ver-divider"></div>
+        <span class="d-flex-items-center g-4">
+          <img *ngIf="data?.ticketDescription !='null'" class="post-shortened__brand-logo item-img" [src]="data.brandLogo"
+            onError="this.src='assets/social-mention/post/default_brand.svg'"
+            [ngClass]="{'small-image-width' : !defaultLayout}" />
+          <span class="text-short post-shortend__profile--brandName"
+            [ngClass]="{'font-size-12 font-weight-400' : !defaultLayout}">{{data.brandFriendlyName | translate }}</span>
+        </span>
+        <div class="post-shortened__ver-divider"></div>
+        <span class="d-flex-items-center g-4 p-4 border-radius-25" [ngStyle]="{'background': mentionBackGround, 'max-width' : !defaultLayout ? '10rem' : ''}" [ngClass]="{'py-0' : !defaultLayout}">
+          <img class="post-shortened__brand-logo item-img" [src]="data.channelImage" />
+          <span class="text-short post-shortend__profile--channelName"
+            [ngClass]="{'font-size-12 font-weight-500' : !defaultLayout}">{{ data.channelName | translate }}</span>
+        </span>
+      </ng-container>
+    </div>
+    <div class="post-shortened__time no-wrap" [ngClass]="{'colored__grey--dark p-4 pt-0 pb-0 border-radius-5' : !defaultLayout, 'colored__grey' : defaultLayout}" [ngStyle]="{'background': '#F5F5F5'}">{{ data.ticketTime.timetoshow }}</div>
+  </div>
+  <div class="post-shortened__body--top" *ngIf="!defaultLayout">
+        <div class="post__foot--item custom__tooltip--trigger min-width-auto p-0"
+          *ngIf="this.post?.ticketCategory?.mentionUpperCategory">
+          <span class="post__foot--item-wrapper">
+            <span class="d-flex-items-center hover-tooltip width-fit">
+              <div
+                class="post__foot--item-text g-5 pl-5 pr-7 border-radius-16 {{getCategorysSentiment(this.post.ticketCategory.mentionUpperCategory,postShortenedData?.aI_MentionUppercategory)}}">
+                <ng-container>
+                  <mat-icon
+                    *ngIf="getCategorysIcons(this.post.ticketCategory.mentionUpperCategory) && postShortenedData?.aI_MentionUppercategory"
+                    (click)="openCategoryDialog('mentionCategory')" class="post__foot--icon mr-0"
+                    fontSet="material-icons-outlined">{{getCategorysIcons(this.post.ticketCategory.mentionUpperCategory)}}</mat-icon>
+                  <span (click)="openCategoryDialog('mentionCategory',postShortenedData?.aI_MentionUppercategory)"
+                    class="post__foot--label"
+                    [ngClass]="{'small_font-size': !defaultLayout,'font-weight-medium': !defaultLayout}">{{
+                    this.post.ticketCategory.mentionUpperCategory }}</span>
+                </ng-container>
+              </div>
+              <div class="custom__tooltip--hover hover-tooltipdiv custom__tooltip--category">
+                <div class="custom__tooltip--item">
+                  <span class="custom__tooltip--label" [ngClass]="{'small_font-size': !defaultLayout}">
+                    {{'Mention-Upper-Category' | translate}}
+                  </span>
+                  <span class="custom__tooltip--value" [ngClass]="{'small_font-size': !defaultLayout}">{{
+                    this.post.ticketCategory.mentionUpperCategory }}</span>
+                </div>
+              </div>
+            </span>
+          </span>
+        </div>
+        
+        <div class="post__foot--item custom__tooltip--trigger min-width-auto label-title p-0"
+          *ngIf="!this.post?.ticketCategory?.mentionUpperCategory && this.post?.ticketCategory?.ticketUpperCategory">
+          <span class="post__foot--item-wrapper">
+            <span class="d-flex-items-center hover-tooltip width-fit">
+              <div
+                class="post__foot--item-text pl-5 pr-7 border-radius-16 {{getCategorysSentiment(this.post.ticketCategory.ticketUpperCategory, this.postShortenedData?.aI_TicketUppercategory)}}">
+                <mat-icon
+                  *ngIf="getCategorysIcons(this.post.ticketCategory.ticketUpperCategory) && this.postShortenedData?.aI_TicketUppercategory"
+                  (click)="openCategoryDialog('ticketCategory',this.postShortenedData?.aI_TicketUppercategory)" class="post__foot--icon"
+                  fontSet="material-icons-outlined">{{getCategorysIcons(this.post.ticketCategory.ticketUpperCategory)}}</mat-icon>
+                <span (click)="openCategoryDialog('ticketCategory',this.postShortenedData?.aI_TicketUppercategory)"
+                  class="post__foot--label"
+                  [ngClass]="{'small_font-size': !defaultLayout,'font-weight-medium': !defaultLayout}">{{
+                  this.post.ticketCategory.ticketUpperCategory }}</span>
+                <div class="custom__tooltip--hover hover-tooltipdiv custom__tooltip--category">
+                  <div class="custom__tooltip--item">
+                    <span class="custom__tooltip--label" [ngClass]="{'small_font-size': !defaultLayout}">
+                      {{'Ticket-Upper-Category' | translate}}
+                    </span>
+                    <span class="custom__tooltip--value" [ngClass]="{'small_font-size': !defaultLayout}">{{
+                      this.post.ticketCategory.ticketUpperCategory }}</span>
+                  </div>
+                </div>
+              </div>
+            </span>
+          </span>
+        </div>
+        <div class="post__foot--wrapper-category">
+          <div class="post__foot--wrapper order__change layout__default--change"
+            *ngIf="(this.aiAspectsDetailsList?.length && this.aiabsaEnabled) || (this.otherAspectsDetailsList?.length && this.aiabsaEnabled) || (this.postData?.aiIntentIDs?.length && this.pageType === PostsType.TicketHistory)">
+            <ng-container *ngIf="aiAspectsDetailsList?.length && aiabsaEnabled">
+              <div #aspectPositiveTooltip (mouseover)="checkSpaceAndSetPosition(aspectPositiveTooltip)"
+                class="post__foot--item custom__tooltip--trigger min-width-auto">
+                <span class="post__foot--item-wrapper">
+                  <!-- <span class="post__foot--item-title small_font-size">{{'Aspect-Groups' | translate}}</span> -->
+                  <span class="d-flex-items-center g-5">
+                    <span class="post__foot--item-block hover-tooltip g-5"
+                      [ngClass]="{'sentiment-background-positive': aspect.aspectSentiment == aspectSentiment.Positive, 'sentiment-background-neutral': aspect.aspectSentiment == aspectSentiment.Neutral, 'sentiment-background-negative': aspect.aspectSentiment == aspectSentiment.Negative}"
+                      *ngFor="let aspect of aiAspectsDetailsList | slice:0:2">
+                      <img class="post__foot--icon mr-0"
+                        *ngIf="!aspect?.aspectGroupIcon && aspect.aspectSentiment == aspectSentiment.Positive"
+                        src="assets/images/account/positive.svg" />
+                      <img class="post__foot--icon mr-0"
+                        *ngIf="!aspect?.aspectGroupIcon && aspect.aspectSentiment == aspectSentiment.Neutral"
+                        src="assets/images/account/neutral.svg" />
+                      <img class="post__foot--icon mr-0"
+                        *ngIf="!aspect?.aspectGroupIcon && aspect.aspectSentiment == aspectSentiment.Negative"
+                        src="assets/images/account/negative.svg" />
+                      <span class="font-size-16" *ngIf="aspect?.aspectGroupIcon">{{aspect?.aspectGroupIcon}}</span>
+                      <span class="post__foot--label"
+                        [ngClass]="{'small_font-size': !defaultLayout}">{{aspect?.aspectGroupName.substring(0,
+                        characterLimit)}} <span *ngIf="aspect?.aspectGroupName.length > characterLimit">...</span></span>
+                      <div class="custom__tooltip--hover hover-tooltipdiv custom__tooltip--category w-500"
+                        [ngClass]="tooltipPositionAbove ? 'tooltip_above' : 'tooltip_below'"
+                        [ngStyle]="{'left': !defaultLayout ? '0rem' : '', 'right': !defaultLayout ? 'inherit' : ''}">
+                        <div class="custom__tooltip--item p-0">
+                          <span class="custom__tooltip--label border-bottom__light-grey d-flex-items-center">
+                            <div class="service-hover__main" [ngClass]="{'small_font-size' : !defaultLayout}">
+                              <div class="service-hover__header" [ngClass]="{'small_font-size' : !defaultLayout}">
+                                <p class="medium-font-size">{{'aspect-group' | translate}}</p>
+                                <!-- <div class="d-flex-items-center g-10">
+                                                <div class="green-pill service-hover__pill--container"
+                                                  [ngClass]="{'green-pill__checked' : aspect.feedbackStatus == 1}">
+                                                  <mat-icon class="material-icons-outlined service-hover__icon cursor-pointer"
+                                                    *ngIf="aspect.feedbackStatus != 1" matTooltip="{{'Positive-Feedback' | translate}}"
+                                                    matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+                                                    (click)="openAspectFeedback(true,aspect?.aspectsWithOpinion,aspect)">thumb_up</mat-icon>
+                                                  <mat-icon class="service-hover__icon cursor-pointer" *ngIf="aspect.feedbackStatus == 1"
+                                                    matTooltip="{{'Positive-Feedback' | translate}}" matTooltipPosition="above"
+                                                    matTooltipClass="custom__tooltip-normal"
+                                                    (click)="openAspectFeedback(true,aspect?.aspectsWithOpinion,aspect)">thumb_up</mat-icon>
+                                                </div>
+                                                <div class="red-pill service-hover__pill--container"
+                                                  [ngClass]="{'red-pill__checked' : aspect.feedbackStatus == 2}">
+                                                  <mat-icon class="material-icons-outlined service-hover__icon cursor-pointer"
+                                                    *ngIf="aspect.feedbackStatus != 2" matTooltip="{{'Negative-Feedback' | translate}}"
+                                                    matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+                                                    (click)="openAspectFeedback(false,aspect?.aspectsWithOpinion,aspect)">thumb_down</mat-icon>
+                                                  <mat-icon class="service-hover__icon cursor-pointer" *ngIf="aspect.feedbackStatus == 2"
+                                                    matTooltip="{{'Negative-Feedback' | translate}}" matTooltipPosition="above"
+                                                    matTooltipClass="custom__tooltip-normal"
+                                                    (click)="openAspectFeedback(false,aspect?.aspectsWithOpinion,aspect)">thumb_down</mat-icon>
+                                                </div>
+                                              </div> -->
+                              </div>
+                              <div class="right-auto service-hover__body aspect-hover-body-scroll"
+                                [ngClass]="{'small_font-size' : !defaultLayout}">
+                                <div class="service-hover__pill"
+                                  [ngClass]="{'green-pill': aspect.aspectSentiment == aspectSentiment.Positive, 'light-yellow-pill': aspect.aspectSentiment == aspectSentiment.Neutral, 'red-pill': aspect.aspectSentiment == aspectSentiment.Negative}">
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="!aspect?.aspectGroupIcon && aspect?.aspectSentiment == aspectSentiment.Positive"
+                                    src="assets/images/account/positive.svg" />
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="!aspect?.aspectGroupIcon && aspect?.aspectSentiment == aspectSentiment.Neutral"
+                                    src="assets/images/account/neutral.svg" />
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="!aspect?.aspectGroupIcon && aspect?.aspectSentiment == aspectSentiment.Negative"
+                                    src="assets/images/account/negative.svg" />
+                                  <span class="service-hover__icon font-size-18"
+                                    *ngIf="aspect?.aspectGroupIcon">{{aspect?.aspectGroupIcon}}</span>
+                                  <div class="service-hover__pill--right">
+                                    <p class="aspect_capitalize">{{aspect?.aspectGroupName}}</p>
+                                    <div class="d-flex-items-center g-3 colored__main--text" *ngIf="aspect?.entity">
+                                      <p>ENTITY: </p>
+                                      <div class="d-flex-items-center">
+                                        <img class="post__foot--icon mr-0 service-hover__icon"
+                                          style="margin-right: 4px !important;" *ngIf="getEntityIcon(aspect?.entityType)"
+                                          src="{{getEntityIcon(aspect?.entityType)}}" />
+                                        <p class="aspect_capitalize">{{aspect?.entity}}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="right-auto service-hover__opinion-container--green service-hover__opinion-container"
+                                  *ngFor="let aspectData of aspect?.aspectsWithOpinion; let i = index"
+                                  [ngClass]="{'green-aspect-pill': aspectData.sentiment == aspectSentiment.Positive, 'yellow-aspect-pill': aspectData.sentiment == aspectSentiment.Neutral, 'red-aspect-pill': aspectData.sentiment == aspectSentiment.Negative}">
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="aspectData.sentiment == aspectSentiment.Positive"
+                                    src="assets/images/account/positive.svg" />
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="aspectData.sentiment == aspectSentiment.Neutral"
+                                    src="assets/images/account/neutral.svg" />
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="aspectData.sentiment == aspectSentiment.Negative"
+                                    src="assets/images/account/negative.svg" />
+                                  <div class="flex-direction-column g-5">
+                                    <p class="white-space-normal colored__main--text pb-5 border-bottom__light-grey">ASPECT:
+                                      <span class="aspect_capitalize">{{aspectData.aspect}}</span>
+                                    </p>
+                                    <p class="font-weight-medium opinion" *ngIf="aspectData?.opinion.length">
+                                      {{aspectData?.opinion.length > 1 ?
+                                      'OPINIONS:' : 'OPINION:'}} <span *ngIf="aspectData?.opinion.length == 1"
+                                        class="white-space-normal colored__main--text">
+                                        {{aspectData?.opinion[0]}}
+                                      </span></p>
+                                    <ng-container *ngIf="aspectData?.opinion.length > 1">
+                                      <ng-container *ngFor="let opinion of aspectData.opinion; let subIndex = index">
+                                        <p class="white-space-normal colored__main--text">
+                                          <b>{{subIndex+1}}.</b> {{opinion}}
+                                        </p>
+                                      </ng-container>
+                                    </ng-container>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+        
+                    </span>
+                    <span class="hover-tooltip" *ngIf="aiAspectsDetailsList?.length > 2">
+                      <span class="post__foot--item-count colored__locobuzz ml-0 mr-5"
+                        *ngIf="aiAspectsDetailsList?.length > 2">+{{aiAspectsDetailsList?.length - 2}}</span>
+                      <div class="custom__tooltip--hover hover-tooltipdiv custom__tooltip--category w-400"
+                        [ngClass]="tooltipPositionAbove ? 'tooltip_above' : 'tooltip_below'"
+                        [ngStyle]="{'left': !defaultLayout ? '0rem' : '', 'right': !defaultLayout ? 'inherit' : ''}">
+                        <div class="custom__tooltip--item p-0">
+                          <span
+                            class="custom__tooltip--label border-bottom__light-grey pl-10 pr-10 pb-4 pt-10 d-flex-items-center">
+                            <span class="font-weight-medium" [ngClass]="{'medium-font-size': !defaultLayout}">{{'Aspect-Groups'
+                              | translate}}</span>
+                          </span>
+                          <span class="custom__tooltip--label border-bottom__light-grey d-flex-items-center">
+                            <div class="service-hover__main aspect-hover-body-scroll"
+                              [ngClass]="{'small_font-size' : !defaultLayout}">
+                              <div class="service-hover__body" [ngClass]="{'small_font-size' : !defaultLayout}"
+                                *ngFor="let aspect of aiAspectsDetailsList | slice:2; let i = index"
+                                [ngClass]="{'border-top__light-grey pt-5': i > 0}">
+                                <div class="service-hover__pill"
+                                  [ngClass]="{'green-pill': aspect.aspectSentiment == aspectSentiment.Positive, 'light-yellow-pill': aspect.aspectSentiment == aspectSentiment.Neutral, 'red-pill': aspect.aspectSentiment == aspectSentiment.Negative}">
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="!aspect?.aspectGroupIcon && aspect?.aspectSentiment == aspectSentiment.Positive"
+                                    src="assets/images/account/positive.svg" />
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="!aspect?.aspectGroupIcon && aspect?.aspectSentiment == aspectSentiment.Neutral"
+                                    src="assets/images/account/neutral.svg" />
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="!aspect?.aspectGroupIcon && aspect?.aspectSentiment == aspectSentiment.Negative"
+                                    src="assets/images/account/negative.svg" />
+                                  <span class="service-hover__icon font-size-18"
+                                    *ngIf="aspect?.aspectGroupIcon">{{aspect?.aspectGroupIcon}}</span>
+                                  <div class="service-hover__pill--right">
+                                    <p class="aspect_capitalize">{{aspect?.aspectGroupName}}</p>
+                                    <div class="d-flex-items-center g-3 colored__main--text" *ngIf="aspect?.entity">
+                                      <p>ENTITY: </p>
+                                      <div class="d-flex-items-center">
+                                        <img class="post__foot--icon mr-0 service-hover__icon"
+                                          style="margin-right: 4px !important;" *ngIf="getEntityIcon(aspect?.entityType)"
+                                          src="{{getEntityIcon(aspect?.entityType)}}" />
+                                        <p class="aspect_capitalize">{{aspect?.entity}}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="service-hover__opinion-container--green service-hover__opinion-container"
+                                  *ngFor="let aspectData of aspect?.aspectsWithOpinion; let i = index"
+                                  [ngClass]="{'green-aspect-pill': aspectData.sentiment == aspectSentiment.Positive, 'yellow-aspect-pill': aspectData.sentiment == aspectSentiment.Neutral, 'red-aspect-pill': aspectData.sentiment == aspectSentiment.Negative}">
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="aspectData.sentiment == aspectSentiment.Positive"
+                                    src="assets/images/account/positive.svg" />
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="aspectData.sentiment == aspectSentiment.Neutral"
+                                    src="assets/images/account/neutral.svg" />
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="aspectData.sentiment == aspectSentiment.Negative"
+                                    src="assets/images/account/negative.svg" />
+                                  <div class="flex-direction-column g-5">
+                                    <p class="white-space-normal colored__main--text pb-5 border-bottom__light-grey">ASPECT:
+                                      <span class="aspect_capitalize">{{aspectData.aspect}}</span>
+                                    </p>
+                                    <p class="font-weight-medium opinion" *ngIf="aspectData?.opinion.length">
+                                      {{aspectData?.opinion.length > 1 ?
+                                      'OPINIONS:' : 'OPINION:'}} <span *ngIf="aspectData?.opinion.length == 1"
+                                        class="white-space-normal colored__main--text">
+                                        {{aspectData?.opinion[0]}}
+                                      </span></p>
+                                    <ng-container *ngIf="aspectData?.opinion.length > 1">
+                                      <ng-container *ngFor="let opinion of aspectData.opinion; let subIndex = index">
+                                        <p class="white-space-normal colored__main--text">
+                                          <b>{{subIndex+1}}.</b> {{opinion}}
+                                        </p>
+                                      </ng-container>
+                                    </ng-container>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </span>
+        
+                  </span>
+                </span>
+        
+        
+              </div>
+            </ng-container>
+        
+            <!-- <div class="ver-divider" *ngIf="otherAspectsDetailsList?.length && aiabsaEnabled"></div> -->
+        
+            <ng-container *ngIf="otherAspectsDetailsList?.length && aiabsaEnabled">
+              <div #aspectPositiveTooltip (mouseover)="checkSpaceAndSetPosition(aspectPositiveTooltip)"
+                class="post__foot--item custom__tooltip--trigger min-width-auto">
+                <span class="post__foot--item-wrapper">
+                  <span class="post__foot--item-title small_font-size">{{'Aspects' | translate}}</span>
+                  <!-- <img class="h-22" src="assets/ticket-list/Aspect Group.svg" alt="Overview"> -->
+                  <span class="d-flex-items-center g-5">
+                    <span class="post__foot--item-block hover-tooltip"
+                      [ngClass]="{'sentiment-background-positive': aspect.sentiment == aspectSentiment.Positive, 'sentiment-background-neutral': aspect.sentiment == aspectSentiment.Neutral, 'sentiment-background-negative': aspect.sentiment == aspectSentiment.Negative}"
+                      *ngFor="let aspect of otherAspectsDetailsList | slice:0:2">
+                      <img class="w-14 h-14 mr-5" *ngIf="aspect.sentiment == aspectSentiment.Positive"
+                        src="assets/images/account/positive.svg" />
+                      <img class="w-14 h-14 mr-5" *ngIf="aspect.sentiment == aspectSentiment.Neutral"
+                        src="assets/images/account/neutral.svg" />
+                      <img class="w-14 h-14 mr-5" *ngIf="aspect.sentiment == aspectSentiment.Negative"
+                        src="assets/images/account/negative.svg" />
+                      <span class="post__foot--label"
+                        [ngClass]="{'small_font-size': !defaultLayout}">{{aspect?.aspect.substring(0, characterLimit)}} <span
+                          *ngIf="aspect?.aspect.length > characterLimit">...</span></span>
+                      <div class="custom__tooltip--hover hover-tooltipdiv custom__tooltip--category w-400"
+                        *ngIf="aspect?.opinion?.length > 0" [ngClass]="tooltipPositionAbove ? 'tooltip_above' : 'tooltip_below'"
+                        [ngStyle]="{'left': !defaultLayout ? '0rem' : '', 'right': !defaultLayout ? 'inherit' : ''}">
+                        <div class="custom__tooltip--item p-0">
+        
+                          <span class="custom__tooltip--label border-bottom__light-grey d-flex-items-center">
+                            <div class="service-hover__main" [ngClass]="{'small_font-size' : !defaultLayout}">
+                              <div class="service-hover__header" [ngClass]="{'small_font-size' : !defaultLayout}">
+                                <p class="medium-font-size">{{'Aspect' | translate}}</p>
+                                <div class="d-flex-items-center g-10">
+                                  <!-- <div class="green-pill service-hover__pill--container">
+                                                  <img class="aspect-icon"
+                                                    [src]="aspect.feedbackStatus == 1 ? 'assets/images/feedback/Thumbs-up-green.svg' : 'assets/images/feedback/Thumbs-up.svg'"
+                                                    matTooltip="{{'Positive-Feedback' | translate}}" matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+                                                    (click)="openAspectFeedback(true,otherAspectsDetailsList)">
+                                                </div>
+                                                <div class="red-pill service-hover__pill--container">
+                                                  <img class="aspect-icon"
+                                                    [src]="aspect.feedbackStatus == 2 ? 'assets/images/feedback/md-thumbs-down.svg' : 'assets/images/feedback/Thumbs-down.svg'"
+                                                    matTooltip="{{'Negative-Feedback' | translate}}" matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+                                                    (click)="openAspectFeedback(false,otherAspectsDetailsList)">
+                                                </div> -->
+                                  <!-- <div class="green-pill service-hover__pill--container"
+                                                  [ngClass]="{'green-pill__checked' : aspect.feedbackStatus == 1}">
+                                                  <mat-icon class="material-icons-outlined service-hover__icon cursor-pointer"
+                                                    *ngIf="aspect.feedbackStatus != 1" matTooltip="{{'Positive-Feedback' | translate}}"
+                                                    matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+                                                    (click)="openAspectFeedback(true,otherAspectsDetailsList,aspect)">thumb_up</mat-icon>
+                                                  <mat-icon class="service-hover__icon cursor-pointer" *ngIf="aspect.feedbackStatus == 1"
+                                                    matTooltip="{{'Positive-Feedback' | translate}}" matTooltipPosition="above"
+                                                    matTooltipClass="custom__tooltip-normal"
+                                                    (click)="openAspectFeedback(true,otherAspectsDetailsList,aspect)">thumb_up</mat-icon>
+                                                </div>
+                                                <div class="red-pill service-hover__pill--container"
+                                                  [ngClass]="{'red-pill__checked' : aspect.feedbackStatus == 2}">
+                                                  <mat-icon class="material-icons-outlined service-hover__icon cursor-pointer"
+                                                    *ngIf="aspect.feedbackStatus != 2" matTooltip="{{'Negative-Feedback' | translate}}"
+                                                    matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+                                                    (click)="openAspectFeedback(false,otherAspectsDetailsList,aspect)">thumb_down</mat-icon>
+                                                  <mat-icon class="service-hover__icon cursor-pointer" *ngIf="aspect.feedbackStatus == 2"
+                                                    matTooltip="{{'Negative-Feedback' | translate}}" matTooltipPosition="above"
+                                                    matTooltipClass="custom__tooltip-normal"
+                                                    (click)="openAspectFeedback(false,otherAspectsDetailsList,aspect)">thumb_down</mat-icon>
+                                                </div> -->
+                                </div>
+                              </div>
+                              <div class="service-hover__body" [ngClass]="{'small_font-size' : !defaultLayout}">
+                                <div class="service-hover__opinion-container--green service-hover__opinion-container w-100-p"
+                                  [ngClass]="{'green-aspect-pill': aspect.sentiment == aspectSentiment.Positive, 'yellow-aspect-pill': aspect.sentiment == aspectSentiment.Neutral, 'red-aspect-pill': aspect.sentiment == aspectSentiment.Negative}">
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="aspect.sentiment == aspectSentiment.Positive"
+                                    src="assets/images/account/positive.svg" />
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="aspect.sentiment == aspectSentiment.Neutral"
+                                    src="assets/images/account/neutral.svg" />
+                                  <img class="post__foot--icon mr-0 service-hover__icon"
+                                    *ngIf="aspect.sentiment == aspectSentiment.Negative"
+                                    src="assets/images/account/negative.svg" />
+                                  <div class="flex-direction-column g-5 w-100-p">
+                                    <p class="white-space-normal colored__main--text aspect_capitalize">{{aspect?.aspect}}
+                                    </p>
+                                    <div class="d-flex-items-center g-3 colored__main--text pb-5 border-bottom__light-grey"
+                                      *ngIf="aspect?.entity">
+                                      <p class="font-weight-medium opinion">ENTITY: </p>
+                                      <div class="d-flex-items-center" *ngIf="aspect?.entity">
+                                        <img class="post__foot--icon mr-0 service-hover__icon"
+                                          style="margin-right: 4px !important;" *ngIf="getEntityIcon(aspect?.entityType)"
+                                          src="{{getEntityIcon(aspect?.entityType)}}" />
+                                        <p class="aspect_capitalize">{{aspect?.entity}}</p>
+                                      </div>
+                                    </div>
+                                    <p class="font-weight-medium opinion" *ngIf="aspect?.opinion.length">
+                                      {{aspect?.opinion.length > 1 ?
+                                      'OPINIONS:' : 'OPINION:'}} <span *ngIf="aspect?.opinion.length == 1"
+                                        class="white-space-normal colored__main--text">
+                                        {{aspect?.opinion[0]}}</span></p>
+                                    <ng-container *ngIf="aspect?.opinion.length > 1">
+                                      <ng-container *ngFor="let opinion of aspect?.opinion; let subIndex = index">
+                                        <p class="white-space-normal colored__main--text">
+                                          <b>{{subIndex+1}}.</b> {{opinion}}
+                                        </p>
+                                      </ng-container>
+                                    </ng-container>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </span>
+                    <span class="hover-tooltip" *ngIf="otherAspectsDetailsList?.length > 2">
+                      <span class="post__foot--item-count colored__locobuzz ml-0 mr-10"
+                        *ngIf="otherAspectsDetailsList?.length > 2">+{{otherAspectsDetailsList?.length -2}}</span>
+                      <div class="custom__tooltip--hover hover-tooltipdiv custom__tooltip--category w-400"
+                        style="max-height: unset;" [ngClass]="tooltipPositionAbove ? 'tooltip_above' : 'tooltip_below'"
+                        [ngStyle]="{'left': !defaultLayout ? '0rem' : '', 'right': !defaultLayout ? 'inherit' : ''}">
+                        <div class="custom__tooltip--item p-0">
+                          <span
+                            class="custom__tooltip--label border-bottom__light-grey pl-10 pr-10 pb-4 pt-10 d-flex-items-center">
+                            <span class="font-weight-medium"
+                              [ngClass]="{'small_font-size': !defaultLayout}">{{'Aspects-Customer-Opinions' |
+                              translate}}</span>
+                          </span>
+                          <div class="p-10 pb-0 aspect-hover-body-scroll">
+                            <div class="service-hover__body mb-10"
+                              *ngFor="let aspect of otherAspectsDetailsList | slice:2; let i = index"
+                              [ngClass]="{'small_font-size' : !defaultLayout}">
+                              <div class="service-hover__opinion-container--green service-hover__opinion-container w-100-p"
+                                [ngClass]="{'green-aspect-pill': aspect.sentiment == aspectSentiment.Positive, 'yellow-aspect-pill': aspect.sentiment == aspectSentiment.Neutral, 'red-aspect-pill': aspect.sentiment == aspectSentiment.Negative}">
+                                <img class="post__foot--icon mr-0 service-hover__icon"
+                                  *ngIf="aspect.sentiment == aspectSentiment.Positive"
+                                  src="assets/images/account/positive.svg" />
+                                <img class="post__foot--icon mr-0 service-hover__icon"
+                                  *ngIf="aspect.sentiment == aspectSentiment.Neutral" src="assets/images/account/neutral.svg" />
+                                <img class="post__foot--icon mr-0 service-hover__icon"
+                                  *ngIf="aspect.sentiment == aspectSentiment.Negative"
+                                  src="assets/images/account/negative.svg" />
+                                <div class="flex-direction-column g-5 w-100-p">
+                                  <p
+                                    class="white-space-normal colored__main--text pb-5 border-bottom__light-grey aspect_capitalize">
+                                    {{aspect?.aspect}}
+                                  </p>
+                                  <div class="d-flex-items-center g-3 colored__main--text" *ngIf="aspect?.entity">
+                                    <p class="font-weight-medium opinion">ENTITY: </p>
+                                    <div class="d-flex-items-center" *ngIf="aspect?.entity">
+                                      <img class="post__foot--icon mr-0 service-hover__icon"
+                                        style="margin-right: 4px !important;" *ngIf="getEntityIcon(aspect?.entityType)"
+                                        src="{{getEntityIcon(aspect?.entityType)}}" />
+                                      <p class="aspect_capitalize">{{aspect?.entity}}</p>
+                                    </div>
+                                  </div>
+                                  <p class="font-weight-medium opinion" *ngIf="aspect?.opinion.length">
+                                    {{aspect?.opinion.length > 1 ?
+                                    'OPINIONS:' : 'OPINION:'}} <span *ngIf="aspect?.opinion.length == 1"
+                                      class="white-space-normal colored__main--text">
+                                      {{aspect?.opinion[0]}}</span></p>
+                                  <ng-container *ngIf="aspect?.opinion.length > 1">
+                                    <ng-container *ngFor="let opinion of aspect?.opinion; let subIndex = index">
+                                      <p class="white-space-normal colored__main--text">
+                                        <b>{{subIndex+1}}.</b> {{opinion}}
+                                      </p>
+                                    </ng-container>
+                                  </ng-container>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </span>
+        
+                  </span>
+                </span>
+        
+        
+              </div>
+            </ng-container>
+        
+            <div class="ver-divider"
+              *ngIf="postData?.aiIntentIDs?.length && (pageType === PostsType.Tickets || pageType === PostsType.Mentions || pageType === PostsType.TicketHistory)">
+            </div>
+        
+            <ng-container
+              *ngIf="postData?.aiIntentIDs?.length && (pageType === PostsType.Tickets || pageType === PostsType.Mentions || pageType === PostsType.TicketHistory)">
+              <div class="post__foot--item custom__tooltip--trigger min-width-auto">
+                <span class="post__foot--item-wrapper">
+                  <span class="post__foot--item-title font-size-11">{{'SignalSense' | translate}}</span>
+                  <!-- <img class="h-24 mb-5" src="assets/ticket-list/Ai Lables.svg" alt="Overview"> -->
+                  <span class="d-flex-items-center g-5">
+                    <span class="post__foot--item-block colored__locobuzz g-4" matTooltip="{{label.length > 25 ? label : ''}}"
+                      matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+                      [ngClass]="{'small_font-size': !defaultLayout}" *ngFor="let label of postData?.aiIntentIDs | slice:0:2">
+                      <img src="assets/ticket-list/Signal sense-Icon.svg" class="ai-intent-img">
+                      <span class="post__foot--label">{{label.substring(0, 25)}} <span
+                          *ngIf="label.length > 25">...</span></span>
+                    </span>
+                    <span class="post__foot--item-count  colored__locobuzz ml-0  hover-tooltip timeShow-hover"
+                      *ngIf="postData?.aiIntentIDs?.length > 2">+{{postData?.aiIntentIDs?.length
+                      -2}}
+                      <div class="custom__tooltip ticket_label_custom_tooltip p-0" *ngIf="postData?.aiIntentIDs.length > 2"
+                        [ngStyle]="{'left': !defaultLayout ? '0rem' : '', 'right': !defaultLayout ? 'inherit' : ''}">
+                        <div class="custom__tooltip--item p-5 border-bottom__light-grey">
+                          <span class="custom__tooltip--label small_font-size font-weight-medium">
+                            <span [ngClass]="{'small_font-size': !defaultLayout}">
+                              {{'SignalSense' | translate}}</span>
+                          </span>
+                        </div>
+                        <span class="post__foot--item-block colored__locobuzz g-4 m-5"
+                          [ngClass]="{'small_font-size': !defaultLayout}" *ngFor="let label of postData?.aiIntentIDs | slice:2">
+                          <img src="assets/ticket-list/Signal sense-Icon.svg" class="ai-intent-img">
+                          <span class="post__foot--label">{{label}}</span>
+                        </span>
+                      </div>
+                    </span>
+                  </span>
+                </span>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <!-- <span class="post-shortend__pill" [ngStyle]="{'color' : true ? 'var(--color-new-ui-yellow)' : '', 'background' : true ? 'var(--color-new-ui-yellow-lighter)' : ''}">Question</span> -->
+        <!-- <span class="post-shortend__pill" [ngStyle]="{'color' : true ? 'var(--color-new-ui-blue)' : '', 'background' : true ? 'var(--color-new-ui-blue-lighter)' : ''}">Service Experience</span> -->
+    </div>
+  <div class="post-shortened__body text-hover position-relative" [ngClass]="{'mb-7' : !defaultLayout}">
+    <div class="post-shortened__body--left" [ngClass]="{'h-10' : !defaultLayout}">
+      <ng-container *ngIf="defaultLayout">  
+        <img *ngIf="data?.ticketDescription !='null'" class="post-shortened__brand-logo item-img" [matTooltip]="data.brandFriendlyName"
+          matTooltipClass="custom-tooltip" matTooltipPosition="below" [src]="data.brandLogo"
+          onError="this.src='assets/social-mention/post/default_brand.svg'" [ngClass]="{'small-image-width' : !defaultLayout}" />
+      </ng-container>
+      <div *ngIf="selectedTicketView==3" class="priority img-item bg__red--lighter" [ngClass]="{'bg__grey--lighter': postShortenedData.ticketInfo.ticketPriority==0,'bg__red--lighter': postShortenedData.ticketInfo.ticketPriority==0,'bg__yellow--dark': postShortenedData.ticketInfo.ticketPriority==2,'bg__red--dark': postShortenedData.ticketInfo.ticketPriority==3}">
+          <mat-icon fontSet="material-icons-outlined" class="s-12">low_priority</mat-icon>
+      </div>
+    </div>
+    <div class="post-shortened__body--right">
+        <p class="post-shortened__content 2" [ngClass]="{'small_font-size font-weight-medium h-min-unset' : !defaultLayout}"
+          *ngIf="data?.ticketDescription && postShortenedData.channelType !== ChannelType.Email && data?.ticketDescription !='null'"
+          [innerHTML]="formatTextForDirection(data.ticketDescription, getTextDirection())" [dir]="getTextDirection()"></p>
+        <p class="post-shortened__content 1" [ngClass]="{'small_font-size font-weight-medium h-min-unset' : !defaultLayout}"
+          *ngIf="ticketHistoryData?.htmlData && postShortenedData.channelType !== ChannelType.Email"
+          [innerHTML]="ticketHistoryData.htmlData "></p>
+        <p *ngIf="postShortenedData.channelType === ChannelType.Email" class="text__label d-flex-items-centerx mb-10 mt-5"
+          [ngClass]="{'small_font-size font-weight-medium h-min-unset' : !defaultLayout}">
+          <label class="text__label mb-0 to p-5">{{ 'Subject' | translate }}: </label>{{ postShortenedData.title }}
+        </p>
+    </div>
+  </div>
+  <div *ngIf="data.ticketId>0" class="post-shortened__foot" [ngClass]="{'pl-0' : !defaultLayout}">
+    <div class="post-shortened__foot--item custom__tooltip--trigger">
+      <mat-icon [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}"
+        class="post-shortened__foot--icon"
+        fontSet="material-icons-outlined"
+        aria-hidden="false"
+        aria-label="local activity"
+        >local_activity</mat-icon
+      >
+      <span class="post-shortened__foot--label" [ngClass]="{'small_font-size' : !defaultLayout}">{{ data.ticketId }}</span>
+       <div class="custom__tooltip--hover custom__tooltip--category">
+        <div class="custom__tooltip--item">
+          <span class="custom__tooltip--label">
+            <mat-icon fontSet="material-icons-outlined">local_activity</mat-icon
+            >{{ 'Ticket-Id' | translate }}
+          </span>
+          <span class="custom__tooltip--value"
+            >{{ data.ticketId }}
+            <mat-icon
+              (click)="copied('Ticket id'); $event.stopPropagation()"
+              [cdkCopyToClipboard]="data.ticketId"
+            >
+              content_copy
+            </mat-icon>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="post-shortened__foot--item custom__tooltip--trigger">
+      <mat-icon [ngClass]="statusClass"
+        class="post-shortened__foot--icon"
+        fontSet="material-icons-outlined"
+        aria-hidden="false"
+        aria-label="local activity"
+        [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}"
+        >folder</mat-icon
+      >
+      <span [ngClass]="{statusClass, 'small_font-size' : !defaultLayout}" class="post-shortened__foot--label">{{ data.ticketStatus | translate }}</span>
+      <div
+        class="
+          custom__tooltip--hover
+          custom__tooltip--sm
+          custom__tooltip--hover
+          custom__tooltip--category
+        "
+      >
+        <div  class="custom__tooltip--item">
+          <span class="custom__tooltip--label">
+            <mat-icon fontSet="material-icons-outlined">folder</mat-icon> {{ 'Ticket-Status' | translate }}
+          </span>
+          <span class="custom__tooltip--value">
+            {{ data.ticketStatus | translate }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="electedTicketView==1 || !defaultLayout" class="post-shortened__foot--item custom__tooltip--trigger">
+      <mat-icon
+        class="post-shortened__foot--icon "
+        [ngClass]="priorityClass"
+        fontSet="material-icons-outlined"
+        aria-hidden="false"
+        aria-label="local activity"
+        [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}"
+        >low_priority</mat-icon
+      >
+      <span class="post-shortened__foot--label" [ngClass]="{'small_font-size' : !defaultLayout}">{{ data.ticketPriority | translate }}</span>
+      <div
+        class="
+          custom__tooltip--hover
+          custom__tooltip--sm
+          custom__tooltip--hover
+          custom__tooltip--category
+        "
+      >
+        <div class="custom__tooltip--item">
+          <span class="custom__tooltip--label">
+            <mat-icon fontSet="material-icons-outlined" [ngClass]="priorityClass">low_priority</mat-icon> {{ 'Priority' | translate }}
+          </span>
+          <span class="custom__tooltip--value">
+           {{ data.ticketPriority | translate }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="post-shortened__foot--item custom__tooltip--trigger">
+      <span [ngClass]="{statusClass, 'small_font-size' : !defaultLayout}" class="post-shortened__foot--label" 
+      [ngClass] = "ticektSentiment === getSentiment.Positive ? 'sentiment-color-positive' : ticektSentiment === getSentiment.Negative ? 'sentiment-color-negative' : 'sentiment-color-neutral'">
+      {{ticektSentiment === getSentiment.Positive ? 'Positive' : ticektSentiment === getSentiment.Negative ? 'Negative' : 'Neutral' }}</span>
+    </div>
+    <mat-icon class="post__foot--icon ml-auto" fontSet="material-icons-outlined" aria-hidden="false"
+                aria-label="open_in_new">open_in_new</mat-icon>
+  </div>
+    <div *ngIf="data.ticketId==0" class="post-shortened__foot justify-content-space-between">
+    <div class="post-shortened__foot--item custom__tooltip--trigger">
+      <mat-icon
+        class="post-shortened__foot--icon"
+        fontSet="material-icons-outlined"
+        aria-hidden="false"
+        aria-label="local activity"
+        >message</mat-icon
+      >
+      <span class="post-shortened__foot--label">{{ data.mentionId }}</span>
+       <div class="custom__tooltip--hover custom__tooltip--category">
+        <div class="custom__tooltip--item">
+          <span class="custom__tooltip--label">
+            <mat-icon fontSet="material-icons-outlined">local_activity</mat-icon
+            >{{ 'Mention-Id' | translate }}
+          </span>
+          <span class="custom__tooltip--value"
+            >{{ data.mentionId }}
+            <mat-icon
+              (click)="copied('Mention id');$event.stopPropagation()"
+              [cdkCopyToClipboard]="data.mentionId"
+            >
+              content_copy
+            </mat-icon>
+          </span>
+        </div>
+      </div>
+    </div>
+   <div class="post-shortened__foot--item custom__tooltip--trigger">
+      <span class=" colored__yellow--dark no-wrap" style="background-color: #FFF0B5;padding: 0px 5px;">{{ 'Non-Actionable' | translate }}</span>
+      <div
+        class="
+          custom__tooltip--hover
+          custom__tooltip--sm
+          custom__tooltip--hover
+          custom__tooltip--category
+        "
+      >
+        <!-- <div class="custom__tooltip--item">
+          <span class="custom__tooltip--value">
+            Non Actionable
+          </span>
+        </div> -->
+      </div>
+    </div>
+    <div class="post-shortened__foot--item">
+      <mat-icon *ngIf="!actionableLoader && makeActionable"
+      (click)="makeactionable()"
+        class="post-shortened__foot--icon colored__locobuzz"
+        fontSet="material-icons-outlined"
+        aria-hidden="false"
+        aria-label="local activity"
+          matTooltipPosition="above"
+      matTooltipClass="custom-tooltip"
+      matTooltip="Make Actionable"
+      [matTooltip]="'Make-Actionable' | translate"
+        >new_label</mat-icon
+      >
+      <mat-spinner *ngIf="actionableLoader" color="accent" [diameter]="20"></mat-spinner>
+    </div>
+  </div>
+  <div class="post-shortened__hover--text">
+    <p class="post-shortened__content 2"
+      *ngIf="data?.ticketDescription && postShortenedData.channelType !== ChannelType.Email && data?.ticketDescription !='null'"
+      [innerHTML]="data.ticketDescription"></p>
+      <p class="post-shortened__content 1"
+        *ngIf="ticketHistoryData?.htmlData && postShortenedData.channelType !== ChannelType.Email"
+        [innerHTML]="ticketHistoryData.htmlData "></p>
+      <p *ngIf="postShortenedData.channelType === ChannelType.Email" class="text__label d-flex-items-centerx mb-10 mt-5">
+        {{ postShortenedData.title }}
+      </p>
+  </div>
+   
+</div>

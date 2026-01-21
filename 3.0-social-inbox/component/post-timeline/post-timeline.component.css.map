@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "post-timeline.component.scss"
+    ],
+    "names": [],
+    "file": "post-timeline.component.css"
+}

@@ -1,0 +1,59 @@
+.autocomplete-option {
+  &__item {
+    display: flex;
+    align-items: center;
+    &--label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &--usericon {
+      margin-right: 5px;
+    }
+
+    &--usercheck {
+      margin-left: auto;
+    }
+  }
+}
+
+.team {
+  & .mat-mdc-optgroup-label {
+    &:hover {
+      background: rgba(0, 0, 0, 0.04) !important;
+    }
+  }
+  &__hover {
+    flex: auto;
+    cursor: pointer;
+  }
+}
+
+.assign-dropdown {
+  display: flex;
+
+  &__input {
+    flex: 1;
+  }
+
+  &__sort {
+    width: 40px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2px;
+    border-radius: 4px;
+    border-left-width: 0px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    cursor: pointer;
+  }
+}
+.active {
+  color: var(--color-locobuzz) !important;
+  background-color: rgba(24, 94, 223, 0.1);
+  &-icon {
+    color: var(--color-locobuzz) !important;
+  }
+}

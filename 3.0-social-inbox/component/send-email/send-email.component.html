@@ -1,0 +1,134 @@
+<div class="send-email">
+  <div class="send-email__item">
+    <mat-form-field appearance="outline" class="material__select">
+      <mat-label>{{'Subject' | translate}}</mat-label>
+      <input matInput [(ngModel)]="emailsubject"/>
+    </mat-form-field>
+  </div>
+  <div class="send-email__item" cdkDropListGroup>
+    <mat-form-field appearance="outline" class="material__select to_tag_input">
+      <mat-label>{{'To' | translate}}</mat-label>
+      <div class="chip-container" (keydown)="handleKeyboardEvent($event,emailToEmail,'rTo')"
+        (keyup)="onParentKeyup($event)">
+        <mat-chip-grid #sendtoemailchip cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="emailToEmail"
+          (cdkDropListDropped)="reorderDroppedItem($event)" id="rTo">
+          <ng-container *ngFor="let mail of emailToEmail">
+            <mat-chip-row [selectable]="selectable" [removable]="removable"
+              [class.selected]="selectedChips['rTo']?.includes(mail)" (removed)="removeEmailPill(mail, 'to')" cdkDrag
+              [cdkDragData]="selectedChips['rTo']?.length >0 ? selectedChips['rTo'] : mail"
+              (keydown)="handleCtrlKey($event,emailToEmail,'rTo')" (click)="selectChip($event,mail,'rTo')">
+              <span class="cursor_move">{{ mail }}</span>
+              <mat-icon matChipRemove *ngIf=" (!tempToEmail?.includes(mail))"
+                class="s-16 pl-2 pr-0 mt-1">cancel</mat-icon>
+            </mat-chip-row>
+          </ng-container>
+          <input placeholder="{{'Enter-email-address' | translate}}" [matChipInputFor]="sendtoemailchip"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+            (matChipInputTokenEnd)="addEmailPill($event, 'rTo')" (input)="onChangeTo($event,'rTo')"
+            [matAutocomplete]="autoEmailReply1" (click)="selectedChips['rTo'] = []" />
+          <mat-autocomplete #autoEmailReply1="matAutocomplete" (optionSelected)="addForwardEmailGroup($event,'to')">
+            <ng-container *ngIf="inputRecvd['rTo']">
+              <p class="toEmailGroupLabel" *ngIf="emailGroupSuggestList && emailGroupSuggestList.length && inputRecvd">
+                {{'Suggested-Email-Groups' | translate}}</p>
+              <mat-option class="h-30" *ngFor="let email of emailGroupSuggestList" [value]="email">
+                {{ email?.groupName }}
+              </mat-option>
+              <p class="toEmailGroupLabel" *ngIf="allGroupEmailList && allGroupEmailList.length && inputRecvd">
+                {{'Suggested-Emails' | translate}}</p>
+              <mat-option class="h-30" *ngFor="let user of allGroupEmailList" [value]="user.email">
+                {{ user?.email }}
+              </mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-chip-grid>
+      </div>
+      <span matSuffix class="d-flex-items-center" class="material__select--suffix">
+        <a href="javascript:void(0)" class="mr-8" (click)="emailCc=true" *ngIf="!emailCc">+ {{'Cc' | translate}}</a>
+        <a href="javascript:void(0)" (click)="emailBcc=true" *ngIf="!emailBcc">+ {{'Bcc' | translate}}</a>
+      </span>
+    </mat-form-field>
+    <div class="send-email__item" *ngIf="emailCc">
+      <mat-form-field appearance="outline" class="material__select to_tag_input">
+        <mat-label>{{'Cc' | translate}}</mat-label>
+        <div class="chip-container" (keydown)="handleKeyboardEvent($event,emailCCEmails,'rCC')"
+          (keyup)="onParentKeyup($event)">
+          <mat-chip-grid #emailchipList cdkDropList cdkDropListOrientation="horizontal"
+            [cdkDropListData]="emailCCEmails" (cdkDropListDropped)="reorderDroppedItem($event)" id="rCC">
+            <mat-chip-row *ngFor="let mail of emailCCEmails" [selectable]="selectable" [removable]="removable"
+              [class.selected]="selectedChips['rCC']?.includes(mail)" (removed)="removeEmailPill(mail, 'cc')" cdkDrag
+              [cdkDragData]="selectedChips['rCC']?.length >0 ? selectedChips['rCC'] : mail"
+              (keydown)="handleCtrlKey($event,emailCCEmails,'rCC')" (click)="selectChip($event,mail,'rCC')">
+              <span class="cursor_move">{{ mail }}</span>
+              <mat-icon matChipRemove *ngIf="removable" class="s-16 pl-2 pr-0 mt-1">cancel</mat-icon>
+            </mat-chip-row>
+            <input placeholder="{{'Enter-email-address' | translate}}" [matChipInputAddOnBlur]="addOnBlur"
+              [matChipInputFor]="emailchipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              (matChipInputTokenEnd)="addEmailPill($event, 'rCC')" [matAutocomplete]="autoEmailReply2"
+              (input)="onChangeTo($event,'rCC')" (click)="selectedChips['rCC'] = []" />
+            <mat-autocomplete #autoEmailReply2="matAutocomplete" (optionSelected)="addForwardEmailGroup($event,'cc')">
+              <ng-container *ngIf="inputRecvd['rCC']">
+                <p class="toEmailGroupLabel"
+                  *ngIf="emailGroupSuggestList && emailGroupSuggestList.length && inputRecvd">
+                  {{'Suggested-Email-Groups' | translate}}</p>
+                <mat-option class="h-30" *ngFor="let email of emailGroupSuggestList" [value]="email">
+                  {{ email?.groupName }}
+                </mat-option>
+                <p class="toEmailGroupLabel" *ngIf="allGroupEmailList && allGroupEmailList.length && inputRecvd">
+                  {{'Suggested-Emails' | translate}}</p>
+                <mat-option class="h-30" *ngFor="let user of allGroupEmailList" [value]="user.email">
+                  {{ user?.email }}
+                </mat-option>
+              </ng-container>
+            </mat-autocomplete>
+          </mat-chip-grid>
+        </div>
+        <span matSuffix class="d-flex-items-center" class="material__select--suffix">
+          <a href="javascript:void(0)" class="mr-8" (click)="emailCc=false" *ngIf="emailCc">- {{'Cc' | translate}}</a>
+        </span>
+      </mat-form-field>
+    </div>
+    <div class="send-email__item" *ngIf="emailBcc">
+      <mat-form-field appearance="outline" class="material__select to_tag_input cc_bcc_position to_tag_input">
+        <mat-label>{{'Bcc' | translate}}</mat-label>
+        <div class="chip-container" (keydown)="handleKeyboardEvent($event,emailBCCEmails,'rBCC')"
+          (keyup)="onParentKeyup($event)">
+          <mat-chip-grid #bccEmailchipList cdkDropList cdkDropListOrientation="horizontal"
+            [cdkDropListData]="emailBCCEmails" (cdkDropListDropped)="reorderDroppedItem($event)" id="rBCC">
+            <mat-chip-row *ngFor="let mail of emailBCCEmails" [selectable]="selectable" [removable]="removable"
+              [class.selected]="selectedChips['rBCC']?.includes(mail)" (removed)="removeEmailPill(mail, 'bcc')" cdkDrag
+              [cdkDragData]="selectedChips['rBCC']?.length >0 ? selectedChips['rBCC'] : mail"
+              (keydown)="handleCtrlKey($event,emailBCCEmails,'rBCC')" (click)="selectChip($event,mail,'rBCC')">
+              <span class="cursor_move">{{ mail }}</span>
+              <mat-icon matChipRemove *ngIf="removable" class="s-16 pl-2 pr-0 mt-1">cancel</mat-icon>
+            </mat-chip-row>
+            <input #emailField2 placeholder="{{'Enter-email-address' | translate}}" [matChipInputFor]="bccEmailchipList"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+              (matChipInputTokenEnd)="addEmailPill($event, 'rBCC')" (input)="onChangeTo($event,'rBCC')"
+              [matAutocomplete]="autoEmailReply3" (click)="selectedChips['rBCC'] = []" />
+            <mat-autocomplete #autoEmailReply3="matAutocomplete" (optionSelected)="addForwardEmailGroup($event,'bcc')">
+              <ng-container *ngIf="inputRecvd['rBCC']">
+                <p class="toEmailGroupLabel"
+                  *ngIf="emailGroupSuggestList && emailGroupSuggestList.length && inputRecvd">
+                  {{'Suggested-Email-Groups' | translate}}</p>
+                <mat-option class="h-30" *ngFor="let email of emailGroupSuggestList" [value]="email">
+                  {{ email?.groupName }}
+                </mat-option>
+                <p class="toEmailGroupLabel" *ngIf="allGroupEmailList && allGroupEmailList.length && inputRecvd">
+                  {{'Suggested-Emails' | translate}}</p>
+                <mat-option class="h-30" *ngFor="let user of allGroupEmailList" [value]="user.email">
+                  {{ user?.email }}
+                </mat-option>
+              </ng-container>
+            </mat-autocomplete>
+          </mat-chip-grid>
+        </div>
+        <span matSuffix class="d-flex-items-center" class="material__select--suffix">
+          <a href="javascript:void(0)" (click)="emailBcc=false" *ngIf="emailBcc">- {{'Bcc' | translate}}</a>
+        </span>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="send-email__item">
+    <ckeditor [config]="editorConfig" [(ngModel)]="emailBody"></ckeditor>
+  </div>
+</div>

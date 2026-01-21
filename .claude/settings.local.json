@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(test:*)",
+      "Bash(npm run dev:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git clone:*)",
+      "Bash(npm install:*)",
+      "Bash(agent-browser install:*)",
+      "Bash(agent-browser:*)",
+      "Bash(lsof:*)",
+      "Bash(node scripts/update-mentions-data.js:*)",
+      "Bash(node scripts/verify-coverage.js:*)",
+      "Bash(node scripts/update-inbox-data.js:*)",
+      "Bash(git checkout:*)",
+      "Bash(find:*)",
+      "Bash(node scripts/add-multiple-categories.js:*)",
+      "Bash(node scripts/fix-classification-fields.js:*)",
+      "Bash(node -e:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "figma"
+  ]
+}

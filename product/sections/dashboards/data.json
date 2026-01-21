@@ -1,0 +1,522 @@
+{
+  "_meta": {
+    "models": {
+      "dashboards": "Composable analytics canvases containing widgets arranged in a grid layout. Each dashboard has global filters, sharing permissions, and can be exported or scheduled for automated reports.",
+      "widgets": "Individual analytics components like charts, KPI cards, data grids, or AI-generated text insights. Widgets can be saved to a library and reused across multiple dashboards.",
+      "widgetConnections": "Visual connections from AI text widgets to data widgets, enabling the AI to analyze and generate insights from connected widget data.",
+      "users": "Team members using the platform such as agents, managers, or marketers.",
+      "teams": "Groups of users with shared permissions and shared dashboard access."
+    },
+    "relationships": [
+      "Each Dashboard contains multiple Widgets arranged on a grid",
+      "Widgets are positioned on the Dashboard using x, y coordinates and width, height in grid units",
+      "Widgets can be saved to a library and reused across multiple Dashboards",
+      "AI Text Widgets have WidgetConnections linking them to data widgets for AI analysis",
+      "Dashboards can be shared with Users or Teams with view or edit permissions",
+      "Each Widget can configure a deep dive Dashboard that opens on click",
+      "Dashboards have global filters (time range, channels, sentiment) that apply to all widgets"
+    ]
+  },
+  "dashboards": [
+    {
+      "id": "dash-001",
+      "name": "Social Media Performance Overview",
+      "description": "Comprehensive view of social media metrics, sentiment trends, and engagement performance across all channels",
+      "createdBy": "user-001",
+      "createdAt": "2024-11-15T09:00:00Z",
+      "updatedAt": "2025-02-01T14:30:00Z",
+      "lastViewedAt": "2025-02-01T16:45:00Z",
+      "isDefault": true,
+      "sharedWith": [
+        {
+          "type": "team",
+          "id": "team-001",
+          "permission": "view"
+        },
+        {
+          "type": "user",
+          "id": "user-002",
+          "permission": "edit"
+        }
+      ],
+      "globalFilters": {
+        "timeRange": "last_30_days",
+        "channels": ["Twitter", "Instagram", "Facebook"],
+        "sentiment": "all"
+      },
+      "widgetIds": ["widget-001", "widget-002", "widget-003", "widget-004", "widget-005", "widget-006"],
+      "layout": [
+        { "widgetId": "widget-001", "x": 0, "y": 0, "width": 3, "height": 2 },
+        { "widgetId": "widget-002", "x": 3, "y": 0, "width": 3, "height": 2 },
+        { "widgetId": "widget-003", "x": 6, "y": 0, "width": 3, "height": 2 },
+        { "widgetId": "widget-004", "x": 9, "y": 0, "width": 3, "height": 2 },
+        { "widgetId": "widget-005", "x": 0, "y": 2, "width": 6, "height": 4 },
+        { "widgetId": "widget-006", "x": 6, "y": 2, "width": 6, "height": 4 }
+      ],
+      "scheduledReports": [
+        {
+          "id": "report-001",
+          "frequency": "weekly",
+          "dayOfWeek": "monday",
+          "time": "09:00",
+          "recipients": ["manager@company.com", "team-lead@company.com"],
+          "format": "pdf",
+          "isActive": true
+        }
+      ]
+    },
+    {
+      "id": "dash-002",
+      "name": "Sentiment Analysis Deep Dive",
+      "description": "Detailed sentiment breakdown with trend analysis, channel comparison, and topic-level sentiment tracking",
+      "createdBy": "user-002",
+      "createdAt": "2025-01-10T11:20:00Z",
+      "updatedAt": "2025-01-28T16:15:00Z",
+      "lastViewedAt": "2025-01-31T10:20:00Z",
+      "isDefault": false,
+      "sharedWith": [
+        {
+          "type": "team",
+          "id": "team-002",
+          "permission": "view"
+        }
+      ],
+      "globalFilters": {
+        "timeRange": "last_7_days",
+        "channels": ["all"],
+        "sentiment": "all"
+      },
+      "widgetIds": ["widget-007", "widget-008", "widget-009"],
+      "layout": [
+        { "widgetId": "widget-007", "x": 0, "y": 0, "width": 12, "height": 3 },
+        { "widgetId": "widget-008", "x": 0, "y": 3, "width": 6, "height": 4 },
+        { "widgetId": "widget-009", "x": 6, "y": 3, "width": 6, "height": 4 }
+      ],
+      "scheduledReports": []
+    },
+    {
+      "id": "dash-003",
+      "name": "Executive Summary",
+      "description": "High-level KPIs and AI-generated insights for leadership reporting",
+      "createdBy": "user-003",
+      "createdAt": "2025-01-05T08:30:00Z",
+      "updatedAt": "2025-01-30T12:00:00Z",
+      "lastViewedAt": "2025-01-30T15:30:00Z",
+      "isDefault": false,
+      "sharedWith": [
+        {
+          "type": "user",
+          "id": "user-004",
+          "permission": "view"
+        }
+      ],
+      "globalFilters": {
+        "timeRange": "last_90_days",
+        "channels": ["all"],
+        "sentiment": "all"
+      },
+      "widgetIds": ["widget-001", "widget-002", "widget-003", "widget-010"],
+      "layout": [
+        { "widgetId": "widget-001", "x": 0, "y": 0, "width": 3, "height": 2 },
+        { "widgetId": "widget-002", "x": 3, "y": 0, "width": 3, "height": 2 },
+        { "widgetId": "widget-003", "x": 6, "y": 0, "width": 3, "height": 2 },
+        { "widgetId": "widget-010", "x": 0, "y": 2, "width": 12, "height": 3 }
+      ],
+      "scheduledReports": [
+        {
+          "id": "report-002",
+          "frequency": "monthly",
+          "dayOfMonth": 1,
+          "time": "08:00",
+          "recipients": ["ceo@company.com", "cmo@company.com"],
+          "format": "pdf",
+          "isActive": true
+        }
+      ]
+    },
+    {
+      "id": "dash-004",
+      "name": "Channel Performance Comparison",
+      "description": "Side-by-side comparison of engagement metrics, response times, and sentiment across different social channels",
+      "createdBy": "user-001",
+      "createdAt": "2024-12-20T10:00:00Z",
+      "updatedAt": "2025-01-25T14:45:00Z",
+      "lastViewedAt": "2025-01-29T11:15:00Z",
+      "isDefault": false,
+      "sharedWith": [],
+      "globalFilters": {
+        "timeRange": "last_30_days",
+        "channels": ["all"],
+        "sentiment": "all"
+      },
+      "widgetIds": ["widget-011", "widget-012"],
+      "layout": [
+        { "widgetId": "widget-011", "x": 0, "y": 0, "width": 6, "height": 5 },
+        { "widgetId": "widget-012", "x": 6, "y": 0, "width": 6, "height": 5 }
+      ],
+      "scheduledReports": []
+    }
+  ],
+  "widgets": [
+    {
+      "id": "widget-001",
+      "name": "Total Mentions",
+      "description": "Total count of mentions across all channels",
+      "type": "kpi_card",
+      "createdBy": "user-001",
+      "createdAt": "2024-11-15T09:00:00Z",
+      "updatedAt": "2025-01-20T10:15:00Z",
+      "config": {
+        "metric": "total_mentions",
+        "showTrend": true,
+        "trendComparison": "previous_period",
+        "format": "number"
+      },
+      "deepDiveDashboard": "dash-002",
+      "data": {
+        "value": 12847,
+        "trend": 15.3,
+        "trendDirection": "up"
+      }
+    },
+    {
+      "id": "widget-002",
+      "name": "Response Rate",
+      "description": "Percentage of mentions that received a response",
+      "type": "kpi_card",
+      "createdBy": "user-001",
+      "createdAt": "2024-11-15T09:05:00Z",
+      "updatedAt": "2025-01-18T11:30:00Z",
+      "config": {
+        "metric": "response_rate",
+        "showTrend": true,
+        "trendComparison": "previous_period",
+        "format": "percentage"
+      },
+      "deepDiveDashboard": null,
+      "data": {
+        "value": 87.2,
+        "trend": 3.5,
+        "trendDirection": "up"
+      }
+    },
+    {
+      "id": "widget-003",
+      "name": "Avg Response Time",
+      "description": "Average time to first response",
+      "type": "kpi_card",
+      "createdBy": "user-001",
+      "createdAt": "2024-11-15T09:10:00Z",
+      "updatedAt": "2025-01-22T09:45:00Z",
+      "config": {
+        "metric": "avg_response_time",
+        "showTrend": true,
+        "trendComparison": "previous_period",
+        "format": "duration"
+      },
+      "deepDiveDashboard": null,
+      "data": {
+        "value": "2h 15m",
+        "trend": -12.8,
+        "trendDirection": "down"
+      }
+    },
+    {
+      "id": "widget-004",
+      "name": "Sentiment Score",
+      "description": "Overall sentiment score (weighted)",
+      "type": "kpi_card",
+      "createdBy": "user-001",
+      "createdAt": "2024-11-15T09:15:00Z",
+      "updatedAt": "2025-01-25T14:20:00Z",
+      "config": {
+        "metric": "sentiment_score",
+        "showTrend": true,
+        "trendComparison": "previous_period",
+        "format": "score"
+      },
+      "deepDiveDashboard": "dash-002",
+      "data": {
+        "value": 7.8,
+        "trend": 0.6,
+        "trendDirection": "up"
+      }
+    },
+    {
+      "id": "widget-005",
+      "name": "Mention Volume Trend",
+      "description": "Daily mention count over time",
+      "type": "line_chart",
+      "createdBy": "user-001",
+      "createdAt": "2024-11-15T09:20:00Z",
+      "updatedAt": "2025-01-28T16:00:00Z",
+      "config": {
+        "xAxis": "date",
+        "yAxis": "mention_count",
+        "groupBy": "channel",
+        "showLegend": true,
+        "showDataPoints": true
+      },
+      "deepDiveDashboard": null,
+      "data": {
+        "series": [
+          {
+            "name": "Twitter",
+            "data": [345, 389, 412, 398, 425, 456, 478, 502, 489, 512, 534, 558, 542, 567, 589, 612, 598, 634, 656, 678, 692, 715, 728, 745, 761, 782, 798, 815, 832, 847]
+          },
+          {
+            "name": "Instagram",
+            "data": [278, 292, 305, 318, 332, 345, 358, 371, 384, 397, 410, 423, 436, 449, 462, 475, 488, 501, 514, 527, 540, 553, 566, 579, 592, 605, 618, 631, 644, 657]
+          },
+          {
+            "name": "Facebook",
+            "data": [198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 317, 324, 331, 338, 345, 352, 359, 366, 373, 380, 387, 394, 401]
+          }
+        ],
+        "labels": ["Jan 3", "Jan 4", "Jan 5", "Jan 6", "Jan 7", "Jan 8", "Jan 9", "Jan 10", "Jan 11", "Jan 12", "Jan 13", "Jan 14", "Jan 15", "Jan 16", "Jan 17", "Jan 18", "Jan 19", "Jan 20", "Jan 21", "Jan 22", "Jan 23", "Jan 24", "Jan 25", "Jan 26", "Jan 27", "Jan 28", "Jan 29", "Jan 30", "Jan 31", "Feb 1"]
+      }
+    },
+    {
+      "id": "widget-006",
+      "name": "Sentiment Distribution",
+      "description": "Breakdown of mentions by sentiment",
+      "type": "pie_chart",
+      "createdBy": "user-001",
+      "createdAt": "2024-11-15T09:25:00Z",
+      "updatedAt": "2025-01-30T13:15:00Z",
+      "config": {
+        "showLabels": true,
+        "showPercentages": true,
+        "showLegend": true
+      },
+      "deepDiveDashboard": "dash-002",
+      "data": {
+        "series": [
+          { "name": "Positive", "value": 6234, "percentage": 48.5 },
+          { "name": "Neutral", "value": 4512, "percentage": 35.1 },
+          { "name": "Negative", "value": 2101, "percentage": 16.4 }
+        ]
+      }
+    },
+    {
+      "id": "widget-007",
+      "name": "Sentiment Trend Analysis",
+      "description": "Daily sentiment distribution over time",
+      "type": "stacked_area_chart",
+      "createdBy": "user-002",
+      "createdAt": "2025-01-10T11:30:00Z",
+      "updatedAt": "2025-01-28T10:45:00Z",
+      "config": {
+        "xAxis": "date",
+        "yAxis": "percentage",
+        "stacked": true,
+        "showLegend": true
+      },
+      "deepDiveDashboard": null,
+      "data": {
+        "series": [
+          {
+            "name": "Positive",
+            "data": [45, 47, 46, 48, 49, 48, 50]
+          },
+          {
+            "name": "Neutral",
+            "data": [38, 36, 37, 35, 34, 36, 35]
+          },
+          {
+            "name": "Negative",
+            "data": [17, 17, 17, 17, 17, 16, 15]
+          }
+        ],
+        "labels": ["Jan 26", "Jan 27", "Jan 28", "Jan 29", "Jan 30", "Jan 31", "Feb 1"]
+      }
+    },
+    {
+      "id": "widget-008",
+      "name": "Channel Sentiment Comparison",
+      "description": "Sentiment breakdown by channel",
+      "type": "grouped_bar_chart",
+      "createdBy": "user-002",
+      "createdAt": "2025-01-10T11:35:00Z",
+      "updatedAt": "2025-01-27T15:20:00Z",
+      "config": {
+        "xAxis": "channel",
+        "yAxis": "count",
+        "groupBy": "sentiment",
+        "showLegend": true
+      },
+      "deepDiveDashboard": null,
+      "data": {
+        "series": [
+          {
+            "name": "Positive",
+            "data": [2845, 1987, 1402]
+          },
+          {
+            "name": "Neutral",
+            "data": [2012, 1534, 966]
+          },
+          {
+            "name": "Negative",
+            "data": [890, 645, 566]
+          }
+        ],
+        "labels": ["Twitter", "Instagram", "Facebook"]
+      }
+    },
+    {
+      "id": "widget-009",
+      "name": "Top Negative Topics",
+      "description": "Most frequent topics in negative mentions",
+      "type": "data_grid",
+      "createdBy": "user-002",
+      "createdAt": "2025-01-10T11:40:00Z",
+      "updatedAt": "2025-01-28T09:30:00Z",
+      "config": {
+        "columns": ["topic", "mention_count", "sentiment_score", "trend"],
+        "sortBy": "mention_count",
+        "sortDirection": "desc",
+        "pageSize": 10
+      },
+      "deepDiveDashboard": null,
+      "data": {
+        "rows": [
+          { "topic": "Delivery delays", "mention_count": 456, "sentiment_score": -0.72, "trend": "up" },
+          { "topic": "App crashes", "mention_count": 342, "sentiment_score": -0.85, "trend": "up" },
+          { "topic": "Customer service wait time", "mention_count": 289, "sentiment_score": -0.63, "trend": "down" },
+          { "topic": "Product quality issues", "mention_count": 234, "sentiment_score": -0.68, "trend": "stable" },
+          { "topic": "Pricing concerns", "mention_count": 198, "sentiment_score": -0.55, "trend": "up" }
+        ]
+      }
+    },
+    {
+      "id": "widget-010",
+      "name": "AI Executive Summary",
+      "description": "AI-generated insights from dashboard data",
+      "type": "ai_text",
+      "createdBy": "user-003",
+      "createdAt": "2025-01-05T08:45:00Z",
+      "updatedAt": "2025-01-30T12:15:00Z",
+      "config": {
+        "prompt": "Analyze the KPI metrics and provide a concise executive summary highlighting key trends, areas of concern, and positive developments. Focus on actionable insights.",
+        "connectedWidgetIds": ["widget-001", "widget-002", "widget-003"]
+      },
+      "deepDiveDashboard": null,
+      "data": {
+        "generatedText": "Social media performance shows strong positive momentum this period. Total mentions increased 15.3% to 12.8K, indicating growing brand awareness and engagement. Response rate improved to 87.2% (+3.5%), demonstrating enhanced customer service efficiency. Most notably, average response time decreased by 12.8% to 2h 15m, suggesting operational improvements. Overall sentiment score of 7.8/10 (+0.6) reflects positive brand perception. Key recommendation: maintain current service levels while monitoring mention volume growth to ensure response capacity scales appropriately."
+      }
+    },
+    {
+      "id": "widget-011",
+      "name": "Channel Engagement Metrics",
+      "description": "Comparative engagement rates across channels",
+      "type": "bar_chart",
+      "createdBy": "user-001",
+      "createdAt": "2024-12-20T10:15:00Z",
+      "updatedAt": "2025-01-25T11:40:00Z",
+      "config": {
+        "xAxis": "channel",
+        "yAxis": "engagement_rate",
+        "showDataLabels": true,
+        "showLegend": false
+      },
+      "deepDiveDashboard": "dash-004",
+      "data": {
+        "series": [
+          {
+            "name": "Engagement Rate",
+            "data": [4.8, 6.2, 3.5, 5.1, 2.9]
+          }
+        ],
+        "labels": ["Twitter", "Instagram", "Facebook", "LinkedIn", "TikTok"]
+      }
+    },
+    {
+      "id": "widget-012",
+      "name": "Channel Response Time Comparison",
+      "description": "Average response time by channel",
+      "type": "horizontal_bar_chart",
+      "createdBy": "user-001",
+      "createdAt": "2024-12-20T10:20:00Z",
+      "updatedAt": "2025-01-24T16:30:00Z",
+      "config": {
+        "xAxis": "response_time",
+        "yAxis": "channel",
+        "showDataLabels": true,
+        "unit": "minutes"
+      },
+      "deepDiveDashboard": null,
+      "data": {
+        "series": [
+          {
+            "name": "Avg Response Time",
+            "data": [98, 142, 165, 112, 187]
+          }
+        ],
+        "labels": ["Twitter", "Instagram", "Facebook", "LinkedIn", "TikTok"]
+      }
+    }
+  ],
+  "widgetConnections": [
+    {
+      "id": "conn-001",
+      "fromWidgetId": "widget-010",
+      "toWidgetId": "widget-001",
+      "createdAt": "2025-01-05T08:50:00Z"
+    },
+    {
+      "id": "conn-002",
+      "fromWidgetId": "widget-010",
+      "toWidgetId": "widget-002",
+      "createdAt": "2025-01-05T08:50:00Z"
+    },
+    {
+      "id": "conn-003",
+      "fromWidgetId": "widget-010",
+      "toWidgetId": "widget-003",
+      "createdAt": "2025-01-05T08:50:00Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "user-001",
+      "name": "Sarah Johnson",
+      "email": "sarah.johnson@company.com",
+      "role": "Social Media Manager",
+      "avatar": "https://i.pravatar.cc/150?img=5"
+    },
+    {
+      "id": "user-002",
+      "name": "Michael Chen",
+      "email": "michael.chen@company.com",
+      "role": "Data Analyst",
+      "avatar": "https://i.pravatar.cc/150?img=6"
+    },
+    {
+      "id": "user-003",
+      "name": "Emily Rodriguez",
+      "email": "emily.rodriguez@company.com",
+      "role": "Marketing Director",
+      "avatar": "https://i.pravatar.cc/150?img=7"
+    },
+    {
+      "id": "user-004",
+      "name": "David Kim",
+      "email": "david.kim@company.com",
+      "role": "VP of Customer Experience",
+      "avatar": "https://i.pravatar.cc/150?img=8"
+    }
+  ],
+  "teams": [
+    {
+      "id": "team-001",
+      "name": "Social Media Team",
+      "memberIds": ["user-001", "user-002"]
+    },
+    {
+      "id": "team-002",
+      "name": "Analytics Team",
+      "memberIds": ["user-002", "user-003"]
+    }
+  ]
+}

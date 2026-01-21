@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "audio-slider.component.scss"
+    ],
+    "names": [],
+    "file": "audio-slider.component.css"
+}

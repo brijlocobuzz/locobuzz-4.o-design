@@ -1,0 +1,39 @@
+.crm {
+  &__details {
+    width: 100%;
+  }
+}
+.down_arow {
+  position: absolute;
+  background: var(--color-locobuzz-dark);
+  width: 36px;
+  height: 36px;
+  position: absolute;
+  z-index: 111;
+  cursor: pointer;
+  color: #fff;
+  border-left: 1px solid #0945bf;
+  top: 0;
+  right: 0px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.customer_data {
+  width: 100% !important;
+}
+.right_side{
+  & .no-data{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 270px);
+    gap: 12px;
+  }
+}

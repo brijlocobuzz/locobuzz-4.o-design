@@ -1,0 +1,244 @@
+<div class="replyRephraseMenu bg__white" *ngIf="rephraseOptions?.isRephrase && !aiAutoResponse" cdkDragBoundary=".app__wrapper" cdkDrag [ngStyle]="{ 'z-index' : isFromEmailPopUp ? '9999' : '9999'}">
+    <div class="replyRephraseMenu__item replyRephraseMenu__item--drag" *ngIf = "!aiAutoResponse">
+        <div class="block-center drag-hover">
+            <mat-icon fontSet="material-icons-outlined" [matTooltip]="'Drag' | translate"
+                matTooltipClass="custom-tooltip">drag_indicator</mat-icon>
+        </div>
+    </div>
+    <div  class="replyRephraseMenu__item replyRephraseMenu__item--one">
+        <span [matTooltip]="'Undo' | translate" matTooltipClass="custom-tooltip">
+            <div class="block-center icon-hover mr-0"
+                (click)="undoRedoRephrase('undo'); $event.stopPropagation();"
+                [ngClass]="{'element__disable': undoArr.length  <= 1 || rephraseLoader}">
+                <mat-icon fontSet="material-icons-outlined">undo</mat-icon>
+            </div>
+        </span>
+        <span [matTooltip]="'Redo' | translate" matTooltipClass="custom-tooltip">
+            <div class="block-center icon-hover mr-0"
+                (click)="undoRedoRephrase('redo'); $event.stopPropagation();"
+                [ngClass]="{'element__disable': redoArr.length  <= 0 || rephraseLoader}">
+                <mat-icon fontSet="material-icons-outlined">redo</mat-icon>
+            </div>
+        </span>
+    </div>
+    <ng-container *ngIf="rephraseOptions?.isRephrase">
+        <div class="replyRephraseMenu__item replyRephraseMenu__item--two" (click)="$event.stopPropagation()" *ngFor="let action of rephraseAction; let i = index;">
+            <div class="block-center icon-hover mr-0"
+                (click)="selectRephraseOption(i); $event.stopPropagation();"
+                [matTooltip]="action.name | translate" matTooltipClass="custom-tooltip" [ngClass]="{'element__disable': rephraseLoader}">
+                <ng-container *ngIf="action.icon > 0; else iconPath">
+                    <img *ngIf="messageManner != action.name" [src]="action.iconInactive">
+                    <img *ngIf="messageManner == action.name" [src]="action.iconActive">
+                </ng-container>
+                <ng-template #iconPath>
+                    <ng-container  *ngIf="action.path?.includes('http'); else matIcon">
+                        <div class="img-icon-block">
+                            <img *ngIf="messageManner != action.name" [src]="action.iconInactive">
+                            <img *ngIf="messageManner == action.name" [src]="action.iconActive">
+                        </div>
+                    </ng-container>
+                    <ng-template #matIcon>
+                        <div class="mat-icon-block">
+                           <mat-icon fontSet="material-icons-outlined">{{action.path}}</mat-icon>
+                        </div>
+                    </ng-template>
+                </ng-template>
+            </div>
+            <!-- <div class="block-center icon-hover mr-0"
+                (click)="messageManner = rephraseAction[1].name; settingOption='Rephrase'; applyRephraseData(); $event.stopPropagation();"
+                [matTooltip]="rephraseAction[1].name" matTooltipClass="custom-tooltip" [ngClass]="{'element__disable': rephraseLoader}">
+                <img class="w-22 h-22" *ngIf="messageManner !=  rephraseAction[1].name"
+                    [src]="rephraseAction[1].iconInactive">
+                <img class="w-22 h-22" *ngIf="messageManner ==  rephraseAction[1].name"
+                   [src]="rephraseAction[1].iconActive">
+            </div> -->
+        </div>
+    </ng-container>
+    <div class="replyRephraseMenu__item replyRephraseMenu__item--three"  *ngIf="rephraseOptions?.isShowPrompt && rephraseOptions?.isRephrase" (click)="$event.stopPropagation()">
+        <!-- <ng-container *ngIf="rephraseOptions.isRephrase">
+            <div class="block-center icon-hover mr-0"
+                (click)="messageTone='professional'; settingOption='Rephrase'; applyRephraseData();$event.stopPropagation();"
+                matTooltip="Professional" matTooltipClass="custom-tooltip" [ngClass]="{'element__disable': rephraseLoader}">
+                <img class="w-22 h-22" src="assets/images/media/replyRephrase__professional1.png"
+                    *ngIf="messageTone != 'professional'">
+                <img class="w-22 h-22" src="assets/images/media/replyRephrase__professional_clicked1.png"
+                    *ngIf="messageTone=='professional'">
+            </div>
+    
+            <div class="block-center icon-hover mr-0"
+                (click)="messageTone='casual'; settingOption='Rephrase'; applyRephraseData();$event.stopPropagation();"
+                matTooltip="Casual" matTooltipClass="custom-tooltip" [ngClass]="{'element__disable': rephraseLoader}">
+                <img class="w-22 h-22" src="assets/images/media/replyRephrase__casual1.png" *ngIf="messageTone !='casual'">
+                <img class="w-22 h-22" src="assets/images/media/replyRephrase__casual_clicked1.png"
+                    *ngIf="messageTone=='casual'">
+            </div>
+    
+            <div class="block-center icon-hover mr-0"
+                (click)="messageTone='friendly'; settingOption='Rephrase'; applyRephraseData();$event.stopPropagation();"
+                matTooltip="Friendly" matTooltipClass="custom-tooltip" [ngClass]="{'element__disable': rephraseLoader}">
+                <mat-icon fontSet="material-icons-outlined" *ngIf="messageTone !='friendly'">people</mat-icon>
+                <mat-icon class="colored__blue" fontSet="material-icons-outlined"
+                    *ngIf="messageTone=='friendly'">people</mat-icon>
+            </div>
+        </ng-container> -->
+
+        <div class="block-center icon-hover mr-0" (click)="$event.stopPropagation();" [matTooltip]="'Prompt' | translate"
+            matTooltipClass="custom-tooltip" [ngClass]="{'element__disable': rephraseLoader}">
+            <mat-icon fontSet="material-icons-outlined" *ngIf = "aiAutoResponse"
+                (click)="$event.stopPropagation(); settingOption='Prompt'; isPrompt = true">terminal</mat-icon>
+            <mat-icon fontSet="material-icons-outlined" *ngIf = "!aiAutoResponse" (click)="$event.stopPropagation(); settingOption='Prompt'"
+                [matMenuTriggerFor]="promptMenu" #promptMenuTrigger="matMenuTrigger">terminal</mat-icon>
+            
+                <mat-menu #promptMenu="matMenu" class="w-400 mb-7" (click)="$event.stopPropagation();">
+                <div class="promptMenu">
+                    <div class="promptMenu__head border-bottom__light-grey">
+                        <h3 class="promptMenu__head--title mb-0">{{ 'Write-your-own-prompt' | translate }}</h3>
+                        <mat-icon fontSet="material-icons-outlined" class="cursor-pointer" [mat-dialog-close]="true">
+                            close</mat-icon>
+                    </div>
+                    <div class="promptMenu__body">
+                        <p class="promptMenu__body--title">{{ 'Give-instruction-text' | translate }}</p>
+                        <div class="textarea-featured__block" (click)=" $event.stopPropagation();">
+                            <textarea [placeholder]="'write-like-a-language-expert' | translate"
+                                class="textarea-featured__input line-height-1.25" [value]="promptText"
+                                (input)="promptText = $event.target.value;"></textarea>
+                        </div>
+                    </div>
+                    <div class="promptMenu__foot border-top__light-grey">
+                        <!-- <span class="promptMenu__foot--title">Guide to write your prompt</span> -->
+                        <button mat-stroked-button class="textarea-featured__foot--item ml-auto mr-15"  (click)="promptText = ''" [mat-dialog-close]="true"
+                            color="accent">
+                            {{ 'Cancel' | translate }}
+                        </button>
+                        <button mat-flat-button color="accent"
+                            (click)="applyRephraseData(); $event.stopPropagation(); settingOption='Prompt'; promptMenuTrigger?.closeMenu()">
+                            {{ 'Apply' | translate }}
+                        </button>
+                    </div>
+                </div>
+            </mat-menu>
+        </div>
+    </div>
+    <!-- rephraseOptions.isTranslate -->
+    <ng-container *ngIf="rephraseOptions?.isTranslate">
+        <div class="replyRephraseMenu__item replyRephraseMenu__item--four" (click)="$event.stopPropagation();">
+            <mat-icon fontSet="material-icons-outlined" *ngIf="settingOption !='Translate'">translate</mat-icon>
+            <mat-icon fontSet="material-icons-outlined" *ngIf="settingOption=='Translate'"
+                class="colored__blue">translate</mat-icon>
+            <mat-form-field appearance="outline" class="outline--none material__select material__select--adaptive w-70-p" floatLabel="always">
+                <!-- <mat-label></mat-label> -->
+                <mat-select [placeholder]="'Select-language' | translate" [(value)]="selectedLanguageTo"
+                    (selectionChange)="selectLanguageTo($event); settingOption='Translate';" (closed)="removeData()">
+                    <div class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput sticky-top__ticketbrand">
+                        <mat-form-field appearance="outline" class="material__select p-10">
+                            <input type="text" autocomplete="off" id="selectSearchBrand" [placeholder]="'Search-language' | translate"
+                                matInput class=" material-icons-outlined " [(ngModel)]="searchText"
+                                (keyup)="searchRephraseLanguage($event.target.value)" />
+                            <button  matSuffix mat-icon-button>
+                                <mat-icon class="material-icons-outlined">search</mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                    <mat-option *ngFor="let lang of language" [value]="lang" [ngClass]="{'element__disable': lang == selectedLanguageTo || (selectedLanguageTo == '' && lang == 'English')}">
+                        {{lang}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </ng-container>
+</div>
+
+<div class="aiinsertMenu__foot" *ngIf="rephraseOptions?.isRephrase && aiAutoResponse">
+    <div class="aiinsertMenu__foot--item border__light-grey">
+        <span [matTooltip]="'Undo' | translate" matTooltipClass="custom-tooltip">
+            <div (click)="undoRedoRephrase('undo')"
+                [ngClass]="{'element__disable': undoArr.length  <= 1 || rephraseLoader}">
+                <mat-icon fontSet="material-icons-outlined">undo</mat-icon>
+            </div>
+        </span>
+        <!-- <img src="assets/images/account/Professional_1.svg"> -->
+    </div>
+    <div class="aiinsertMenu__foot--item border__light-grey">
+        <span [matTooltip]="'Redo' | translate" matTooltipClass="custom-tooltip">
+            <div (click)="undoRedoRephrase('redo')"
+                [ngClass]="{'element__disable': redoArr.length  <= 0 || rephraseLoader}">
+                <mat-icon fontSet="material-icons-outlined">redo</mat-icon>
+            </div>
+        </span>
+        <!-- <img src="assets/images/account/Professional_1.svg"> -->
+    </div>
+    <div class="aiinsertMenu__foot--item border__light-grey"  *ngFor="let action of rephraseAction; let i = index;">
+        <div (click)="selectRephraseOption(i)"
+            [matTooltip]="action.name" matTooltipClass="custom-tooltip" [ngClass]="{'element__disable': rephraseLoader}">
+            <ng-container *ngIf="action.icon > 0; else iconPath">
+                <img *ngIf="messageManner != action.name" [src]="action.iconInactive">
+                <img *ngIf="messageManner == action.name" [src]="action.iconActive">
+            </ng-container>
+            <ng-template #iconPath>
+                <ng-container *ngIf="action.path?.includes('http'); else matIcon">
+                    <div class="img-icon-block ">
+                        <img *ngIf="messageManner != action.name" class="h-24 w-34" [src]="action.iconInactive">
+                        <img *ngIf="messageManner == action.name" class="h-24 w-34" [src]="action.iconActive">
+                    </div>
+                </ng-container>
+                <ng-template #matIcon>
+                    <div class="mat-icon-block">
+                        <mat-icon fontSet="material-icons-outlined">{{action.path}}</mat-icon>
+                    </div>
+                </ng-template>
+            </ng-template>
+        </div>
+        <!-- <img src="assets/images/account/Professional_1.svg"> -->
+    </div>
+    <div class="aiinsertMenu__foot--item border__light-grey" *ngIf="rephraseOptions?.isShowPrompt && rephraseOptions?.isRephrase">
+        <div [matTooltip]="'Prompt' | translate"
+            matTooltipClass="custom-tooltip" [ngClass]="{'element__disable': rephraseLoader}">
+            <mat-icon fontSet="material-icons-outlined" [ngClass] = "settingOption == 'Prompt' && isPrompt ? 'active_isPrompt' : ''"  *ngIf="aiAutoResponse"
+                (click)="settingOption='Prompt'; isPrompt = true">terminal</mat-icon>
+        </div>
+        <!-- <img src="assets/images/account/Professional_1.svg"> -->
+    </div>
+    <!-- <div class="aiinsertMenu__foot--item border__light-grey">
+        <img src="assets/images/account/Professional_1.svg">
+    </div> -->
+    <div class="aiinsertMenu__foot--translate replyRephraseMenu__item--four h-42 right-auto" [ngClass]="{'pr-0' : layout =='ltr', 'pl-0' : layout == 'rtl'}" *ngIf="rephraseOptions?.isTranslate">
+        <!-- <div> -->
+            <mat-icon fontSet="material-icons-outlined" class="colored__purple s-20" *ngIf="settingOption !='Translate'">translate</mat-icon>
+            <mat-icon fontSet="material-icons-outlined" *ngIf="settingOption=='Translate'"
+                class="colored__blue s-20">translate</mat-icon>
+            <mat-form-field appearance="outline" class="outline--none material__select material__select--adaptive h-42" floatLabel="always" style="margin-top: -4px;">
+                <!-- <mat-label></mat-label> -->
+                <mat-select [placeholder]="'Select-language' | translate" [(value)]="selectedLanguageTo"
+                    (selectionChange)="selectLanguageTo($event); settingOption='Translate';" (closed)="removeData()">
+                    <div
+                        class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput sticky-top__ticketbrand">
+                        <mat-form-field appearance="outline" class="material__select p-10">
+                            <input type="text" autocomplete="off" id="selectSearchBrand" [placeholder]="'Search-language' | translate"
+                                matInput class=" material-icons-outlined " [(ngModel)]="searchText"
+                                (keyup)="searchRephraseLanguage($event.target.value)" />
+                            <button  matSuffix mat-icon-button>
+                                <mat-icon class="material-icons-outlined">search</mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                    <mat-option *ngFor="let lang of language" [value]="lang"
+                        [ngClass]="{'element__disable': lang == selectedLanguageTo || (selectedLanguageTo == '' && lang == 'English')}">
+                        {{lang}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        <!-- </div> -->
+        <!-- call rephrase component -->
+    </div>
+</div>
+
+<div class="account-profile__brandsearchinput pr-10 pl-10" *ngIf = "aiAutoResponse && settingOption == 'Prompt' && isPrompt">
+    <mat-form-field appearance="outline" class="material__select p-0">
+        <input type="text" [placeholder]="'Tell-us-to' | translate" matInput class="
+                            material-icons-outlined
+                            managebrands__headnavigationband__search-input
+                          " [(ngModel)]="promptText" (keyup.enter) = "applyRephraseData();settingOption='Prompt'" autocomplete="off" />
+        <button  matSuffix mat-icon-button [ngClass]="{'element__disable': !promptText}" (click)="applyRephraseData();settingOption='Prompt'">
+            <mat-icon class="material-icons-outlined colored__locobuzz" >send</mat-icon>
+        </button>
+    </mat-form-field>
+</div>
+

@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unified Filter Component - Interactive Prototype</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --bg-tertiary: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      --border-color: #e2e8f0;
+      --accent: #6366f1;
+      --accent-light: #eef2ff;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+
+    .dark {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border-color: #334155;
+      --accent: #818cf8;
+      --accent-light: #312e81;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    /* Demo Controls */
+    .demo-controls {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      display: flex;
+      gap: 12px;
+    }
+
+    .demo-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      box-shadow: var(--shadow-md);
+      transition: all 0.15s;
+    }
+
+    .demo-btn:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Backdrop */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.15s, visibility 0.15s;
+    }
+
+    .backdrop.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Command Palette */
+    .command-palette {
+      position: fixed;
+      top: 15%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      width: 600px;
+      max-width: 90vw;
+      background: var(--bg-primary);
+      border-radius: 16px;
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--border-color);
+      z-index: 300;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.15s ease-out, transform 0.15s ease-out, visibility 0.15s;
+      overflow: hidden;
+    }
+
+    .command-palette.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .palette-search {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .palette-search svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .palette-search input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 16px;
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .palette-search input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .palette-content {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .palette-section {
+      padding: 12px 0;
+    }
+
+    .palette-section-title {
+      padding: 0 20px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .palette-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .palette-item:hover, .palette-item.selected {
+      background: var(--accent-light);
+    }
+
+    .palette-item-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      font-size: 18px;
+    }
+
+    .palette-item-content {
+      flex: 1;
+    }
+
+    .palette-item-title {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .palette-item-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .palette-item-badge {
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      color: var(--text-secondary);
+    }
+
+    .palette-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+    }
+
+    .palette-footer-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .palette-footer-left span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .palette-footer-link {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .palette-footer-link:hover {
+      text-decoration: underline;
+    }
+
+    /* NLP Preview Card */
+    .nlp-preview {
+      margin: 12px 20px;
+      padding: 16px;
+      background: linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%);
+      border-radius: 12px;
+      border: 1px solid #c7d2fe;
+      display: none;
+    }
+
+    .dark .nlp-preview {
+      background: linear-gradient(135deg, #312e81 0%, #4c1d95 100%);
+      border-color: #4338ca;
+    }
+
+    .nlp-preview.active {
+      display: block;
+    }
+
+    .nlp-preview-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .nlp-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .nlp-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-primary);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+    }
+
+    .nlp-chip-label {
+      color: var(--text-secondary);
+    }
+
+    .nlp-chip-value {
+      color: var(--text-primary);
+    }
+
+    .nlp-chip-remove {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-tertiary);
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .nlp-chip-remove:hover {
+      background: var(--error);
+      color: white;
+    }
+
+    .nlp-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nlp-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+
+    .nlp-btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .nlp-btn-primary:hover {
+      filter: brightness(1.1);
+    }
+
+    .nlp-btn-secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+
+    .nlp-btn-secondary:hover {
+      background: var(--accent-light);
+    }
+
+    /* Slash Commands Dropdown */
+    .slash-dropdown {
+      display: none;
+      padding: 8px;
+    }
+
+    .slash-dropdown.active {
+      display: block;
+    }
+
+    .slash-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .slash-item:hover, .slash-item.selected {
+      background: var(--accent-light);
+    }
+
+    .slash-command {
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      min-width: 100px;
+    }
+
+    .slash-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Filter Panel (Sidebar) */
+    .filter-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 480px;
+      max-width: 100vw;
+      background: var(--bg-primary);
+      box-shadow: var(--shadow-xl);
+      border-left: 1px solid var(--border-color);
+      z-index: 400;
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filter-panel.active {
+      transform: translateX(0);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .panel-close {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+
+    .panel-close:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .panel-search {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-search-input {
+      width: 100%;
+      padding: 10px 12px 10px 40px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 14px;
+      color: var(--text-primary);
+      position: relative;
+    }
+
+    .panel-search-wrapper {
+      position: relative;
+    }
+
+    .panel-search-wrapper svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+    }
+
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+    }
+
+    .active-filters {
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .section-count {
+      background: var(--accent);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    /* Query Builder */
+    .query-builder {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .query-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 8px;
+    }
+
+    .query-field {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      min-width: 100px;
+    }
+
+    .query-operator {
+      padding: 4px 10px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border: none;
+      cursor: pointer;
+    }
+
+    .query-value {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .query-value-chip {
+      padding: 4px 10px;
+      background: var(--accent-light);
+      color: var(--accent);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .query-remove {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+
+    .query-remove:hover {
+      background: #fee2e2;
+      color: var(--error);
+    }
+
+    .logic-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 8px 0;
+    }
+
+    .logic-btn {
+      padding: 4px 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .logic-btn:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+
+    .logic-btn:last-child {
+      border-radius: 0 6px 6px 0;
+      border-left: none;
+    }
+
+    .logic-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .add-filter-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background: transparent;
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-top: 8px;
+    }
+
+    .add-filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    /* Filter Families Accordion */
+    .filter-families {
+      margin-bottom: 24px;
+    }
+
+    .family-item {
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    .family-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg-secondary);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .family-header:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .family-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-light);
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .family-name {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .family-count {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .family-chevron {
+      width: 20px;
+      height: 20px;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+
+    .family-item.expanded .family-chevron {
+      transform: rotate(180deg);
+    }
+
+    .family-content {
+      display: none;
+      padding: 8px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .family-item.expanded .family-content {
+      display: block;
+    }
+
+    .attr-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .attr-item:hover {
+      background: var(--accent-light);
+    }
+
+    .attr-name {
+      flex: 1;
+      font-size: 13px;
+    }
+
+    .attr-slash {
+      font-family: monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 2px 6px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+    }
+
+    /* Saved Filters */
+    .saved-filters {
+      margin-bottom: 24px;
+    }
+
+    .saved-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+
+    .saved-item:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .saved-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .saved-content {
+      flex: 1;
+    }
+
+    .saved-name {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .saved-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Panel Footer */
+    .panel-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-secondary);
+    }
+
+    .clear-btn {
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .clear-btn:hover {
+      color: var(--error);
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .save-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .save-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .apply-btn {
+      padding: 10px 20px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .apply-btn:hover {
+      filter: brightness(1.1);
+    }
+
+    /* Value Pickers Inline */
+    .inline-picker {
+      margin: 16px 20px;
+      padding: 16px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      display: none;
+    }
+
+    .inline-picker.active {
+      display: block;
+    }
+
+    .picker-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .picker-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .picker-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .picker-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .picker-option:hover {
+      border-color: var(--accent);
+    }
+
+    .picker-option.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .option-indicator {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .picker-option.selected .option-indicator {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .option-indicator::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: white;
+      opacity: 0;
+    }
+
+    .picker-option.selected .option-indicator::after {
+      opacity: 1;
+    }
+
+    .option-label {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .sentiment-positive { color: var(--success); }
+    .sentiment-negative { color: var(--error); }
+    .sentiment-neutral { color: var(--warning); }
+
+    /* Demo Page Background */
+    .demo-bg {
+      padding: 100px 40px 40px;
+      text-align: center;
+    }
+
+    .demo-bg h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .demo-bg p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .demo-instructions {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 24px 32px;
+      background: var(--bg-primary);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+
+    .demo-instructions li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    .demo-instructions .step-num {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Dark mode toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <!-- Demo Controls -->
+  <div class="demo-controls">
+    <button class="demo-btn" onclick="openCommandPalette()">
+      <span>Open Command Palette</span>
+      <span class="kbd">⌘K</span>
+    </button>
+    <button class="demo-btn" onclick="openFilterPanel()">
+      <span>Open Filter Panel</span>
+      <span class="kbd">⌘⇧F</span>
+    </button>
+  </div>
+
+  <!-- Theme Toggle -->
+  <button class="demo-btn theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌙</span>
+    <span id="theme-label">Dark Mode</span>
+  </button>
+
+  <!-- Demo Background -->
+  <div class="demo-bg">
+    <h1>Unified Filter Component</h1>
+    <p>Interactive Prototype - LocoBuzz Design System</p>
+    
+    <ul class="demo-instructions">
+      <li>
+        <span class="step-num">1</span>
+        <span>Press <strong>⌘K</strong> or click "Open Command Palette" to try the quick filter</span>
+      </li>
+      <li>
+        <span class="step-num">2</span>
+        <span>Type <strong>/sentiment</strong> to see slash command autocomplete</span>
+      </li>
+      <li>
+        <span class="step-num">3</span>
+        <span>Type <strong>"negative open tickets about refunds"</strong> to see NLP preview</span>
+      </li>
+      <li>
+        <span class="step-num">4</span>
+        <span>Click <strong>"Open Advanced Filters"</strong> for the full filter panel</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Backdrop -->
+  <div class="backdrop" id="backdrop" onclick="closeAll()"></div>
+
+  <!-- Command Palette -->
+  <div class="command-palette" id="commandPalette">
+    <div class="palette-search">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      <input type="text" id="paletteInput" placeholder="Search tickets, use /commands, or type naturally..." oninput="handlePaletteInput(this.value)">
+    </div>
+
+    <!-- Slash Commands Dropdown -->
+    <div class="slash-dropdown" id="slashDropdown">
+      <div class="slash-item selected" onclick="selectSlashCommand('status')">
+        <span class="slash-command">/status</span>
+        <span class="slash-desc">Filter by Ticket Status</span>
+      </div>
+      <div class="slash-item" onclick="selectSlashCommand('sentiment')">
+        <span class="slash-command">/sentiment</span>
+        <span class="slash-desc">Filter by Sentiment</span>
+      </div>
+      <div class="slash-item" onclick="selectSlashCommand('priority')">
+        <span class="slash-command">/priority</span>
+        <span class="slash-desc">Filter by Priority Level</span>
+      </div>
+      <div class="slash-item" onclick="selectSlashCommand('channel')">
+        <span class="slash-command">/channel</span>
+        <span class="slash-desc">Filter by Channel</span>
+      </div>
+      <div class="slash-item" onclick="selectSlashCommand('assigned')">
+        <span class="slash-command">/assigned</span>
+        <span class="slash-desc">Filter by Assigned User</span>
+      </div>
+      <div class="slash-item" onclick="selectSlashCommand('date')">
+        <span class="slash-command">/date</span>
+        <span class="slash-desc">Filter by Date Range</span>
+      </div>
+      <div class="slash-item" onclick="selectSlashCommand('filters')">
+        <span class="slash-command">/filters</span>
+        <span class="slash-desc">Open Advanced Filter Panel</span>
+      </div>
+    </div>
+
+    <!-- Inline Picker (after slash command selection) -->
+    <div class="inline-picker" id="inlinePicker">
+      <div class="picker-header">
+        <span class="picker-title" id="pickerTitle">Select Sentiment</span>
+      </div>
+      <div class="picker-options" id="pickerOptions">
+        <div class="picker-option" onclick="selectOption(this, 'Positive')">
+          <span class="option-indicator"></span>
+          <span class="option-label sentiment-positive">✓ Positive</span>
+        </div>
+        <div class="picker-option" onclick="selectOption(this, 'Neutral')">
+          <span class="option-indicator"></span>
+          <span class="option-label sentiment-neutral">○ Neutral</span>
+        </div>
+        <div class="picker-option" onclick="selectOption(this, 'Negative')">
+          <span class="option-indicator"></span>
+          <span class="option-label sentiment-negative">✕ Negative</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NLP Preview -->
+    <div class="nlp-preview" id="nlpPreview">
+      <div class="nlp-preview-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 3l1.912 5.813a2 2 0 0 0 1.275 1.275L21 12l-5.813 1.912a2 2 0 0 0-1.275 1.275L12 21l-1.912-5.813a2 2 0 0 0-1.275-1.275L3 12l5.813-1.912a2 2 0 0 0 1.275-1.275L12 3Z"/>
+        </svg>
+        <span>Detected Filters</span>
+      </div>
+      <div class="nlp-filters">
+        <div class="nlp-chip">
+          <span class="nlp-chip-label">Sentiment:</span>
+          <span class="nlp-chip-value">Negative</span>
+          <span class="nlp-chip-remove">×</span>
+        </div>
+        <div class="nlp-chip">
+          <span class="nlp-chip-label">Status:</span>
+          <span class="nlp-chip-value">Open</span>
+          <span class="nlp-chip-remove">×</span>
+        </div>
+        <div class="nlp-chip">
+          <span class="nlp-chip-label">Keyword:</span>
+          <span class="nlp-chip-value">"refunds"</span>
+          <span class="nlp-chip-remove">×</span>
+        </div>
+      </div>
+      <div class="nlp-actions">
+        <button class="nlp-btn nlp-btn-primary" onclick="applyNLPFilters()">Apply Filters</button>
+        <button class="nlp-btn nlp-btn-secondary" onclick="editInQueryBuilder()">Edit in Query Builder →</button>
+      </div>
+    </div>
+
+    <!-- Default Content -->
+    <div class="palette-content" id="paletteContent">
+      <div class="palette-section">
+        <div class="palette-section-title">Recent Filters</div>
+        <div class="palette-item selected">
+          <div class="palette-item-icon">⚡</div>
+          <div class="palette-item-content">
+            <div class="palette-item-title">High Priority Open Tickets</div>
+            <div class="palette-item-desc">Priority: High • Status: Open</div>
+          </div>
+          <span class="palette-item-badge">3 filters</span>
+        </div>
+        <div class="palette-item">
+          <div class="palette-item-icon">😠</div>
+          <div class="palette-item-content">
+            <div class="palette-item-title">Negative Sentiment - Last 7 Days</div>
+            <div class="palette-item-desc">Sentiment: Negative • Date: Last 7 days</div>
+          </div>
+          <span class="palette-item-badge">2 filters</span>
+        </div>
+        <div class="palette-item">
+          <div class="palette-item-icon">👤</div>
+          <div class="palette-item-content">
+            <div class="palette-item-title">Unassigned Tickets</div>
+            <div class="palette-item-desc">Assigned To: Unassigned</div>
+          </div>
+          <span class="palette-item-badge">1 filter</span>
+        </div>
+      </div>
+
+      <div class="palette-section">
+        <div class="palette-section-title">Quick Commands</div>
+        <div class="palette-item">
+          <div class="palette-item-icon">📊</div>
+          <div class="palette-item-content">
+            <div class="palette-item-title">Type /status for ticket status filter</div>
+            <div class="palette-item-desc">Open, On Hold, Pending, Closed</div>
+          </div>
+        </div>
+        <div class="palette-item">
+          <div class="palette-item-icon">😊</div>
+          <div class="palette-item-content">
+            <div class="palette-item-title">Type /sentiment for sentiment filter</div>
+            <div class="palette-item-desc">Positive, Neutral, Negative</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="palette-footer">
+      <div class="palette-footer-left">
+        <span><span class="kbd">↑</span><span class="kbd">↓</span> Navigate</span>
+        <span><span class="kbd">↵</span> Select</span>
+        <span><span class="kbd">esc</span> Close</span>
+      </div>
+      <div class="palette-footer-link" onclick="openFilterPanel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+        </svg>
+        Open Advanced Filters
+        <span class="kbd">⌘⇧F</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Panel (Sidebar) -->
+  <div class="filter-panel" id="filterPanel">
+    <div class="panel-header">
+      <h2>Filters</h2>
+      <button class="panel-close" onclick="closeFilterPanel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="panel-search">
+      <div class="panel-search-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input type="text" class="panel-search-input" placeholder="Search filters...">
+      </div>
+    </div>
+
+    <div class="panel-content">
+      <!-- Active Filters / Query Builder -->
+      <div class="active-filters">
+        <div class="section-header">
+          <span class="section-title">Active Filters</span>
+          <span class="section-count">3</span>
+        </div>
+        
+        <div class="query-builder">
+          <div class="query-row">
+            <span class="query-field">Ticket Status</span>
+            <button class="query-operator">is</button>
+            <div class="query-value">
+              <span class="query-value-chip">Open</span>
+            </div>
+            <button class="query-remove">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="logic-toggle">
+            <button class="logic-btn active">AND</button>
+            <button class="logic-btn">OR</button>
+          </div>
+
+          <div class="query-row">
+            <span class="query-field">Sentiment</span>
+            <button class="query-operator">is</button>
+            <div class="query-value">
+              <span class="query-value-chip" style="color: #ef4444;">Negative</span>
+            </div>
+            <button class="query-remove">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="logic-toggle">
+            <button class="logic-btn active">AND</button>
+            <button class="logic-btn">OR</button>
+          </div>
+
+          <div class="query-row">
+            <span class="query-field">Keyword</span>
+            <button class="query-operator">contains</button>
+            <div class="query-value">
+              <span class="query-value-chip">"refund"</span>
+            </div>
+            <button class="query-remove">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
+
+          <button class="add-filter-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Add Filter
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Families -->
+      <div class="filter-families">
+        <div class="section-header">
+          <span class="section-title">Filter Families</span>
+        </div>
+
+        <div class="family-item expanded">
+          <div class="family-header" onclick="toggleFamily(this)">
+            <div class="family-icon">🎫</div>
+            <span class="family-name">Tickets & Mentions</span>
+            <span class="family-count">24 filters</span>
+            <svg class="family-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </div>
+          <div class="family-content">
+            <div class="attr-item">
+              <span class="attr-name">Ticket Status</span>
+              <span class="attr-slash">/status</span>
+            </div>
+            <div class="attr-item">
+              <span class="attr-name">Reply Status</span>
+            </div>
+            <div class="attr-item">
+              <span class="attr-name">Assigned To</span>
+              <span class="attr-slash">/assigned</span>
+            </div>
+            <div class="attr-item">
+              <span class="attr-name">Priority</span>
+              <span class="attr-slash">/priority</span>
+            </div>
+            <div class="attr-item">
+              <span class="attr-name">Sentiment</span>
+              <span class="attr-slash">/sentiment</span>
+            </div>
+            <div class="attr-item">
+              <span class="attr-name">Channel</span>
+              <span class="attr-slash">/channel</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="family-item">
+          <div class="family-header" onclick="toggleFamily(this)">
+            <div class="family-icon">🤖</div>
+            <span class="family-name">AI Features</span>
+            <span class="family-count">5 filters</span>
+            <svg class="family-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </div>
+          <div class="family-content">
+            <div class="attr-item">
+              <span class="attr-name">Aspects</span>
+            </div>
+            <div class="attr-item">
+              <span class="attr-name">SignalSense</span>
+            </div>
+            <div class="attr-item">
+              <span class="attr-name">Response Genie</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="family-item">
+          <div class="family-header" onclick="toggleFamily(this)">
+            <div class="family-icon">📊</div>
+            <span class="family-name">Surveys & Ratings</span>
+            <span class="family-count">7 filters</span>
+            <svg class="family-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </div>
+          <div class="family-content">
+            <div class="attr-item">
+              <span class="attr-name">CSAT Score</span>
+            </div>
+            <div class="attr-item">
+              <span class="attr-name">NPS Rating</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="family-item">
+          <div class="family-header" onclick="toggleFamily(this)">
+            <div class="family-icon">👤</div>
+            <span class="family-name">User Characteristics</span>
+            <span class="family-count">8 filters</span>
+            <svg class="family-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </div>
+          <div class="family-content">
+            <div class="attr-item">
+              <span class="attr-name">Followers Count</span>
+            </div>
+            <div class="attr-item">
+              <span class="attr-name">Verified Status</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="family-item">
+          <div class="family-header" onclick="toggleFamily(this)">
+            <div class="family-icon">📍</div>
+            <span class="family-name">Location Intelligence</span>
+            <span class="family-count">6 filters</span>
+            <svg class="family-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </div>
+          <div class="family-content">
+            <div class="attr-item">
+              <span class="attr-name">Country</span>
+            </div>
+            <div class="attr-item">
+              <span class="attr-name">City</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved Filters -->
+      <div class="saved-filters">
+        <div class="section-header">
+          <span class="section-title">Saved Filters</span>
+        </div>
+
+        <div class="saved-item">
+          <div class="saved-icon">💾</div>
+          <div class="saved-content">
+            <div class="saved-name">High Priority Complaints</div>
+            <div class="saved-desc">Priority: High • Sentiment: Negative</div>
+          </div>
+        </div>
+
+        <div class="saved-item">
+          <div class="saved-icon">💾</div>
+          <div class="saved-content">
+            <div class="saved-name">Unassigned SLA Breach</div>
+            <div class="saved-desc">SLA: Breached • Assigned: Unassigned</div>
+          </div>
+        </div>
+
+        <div class="saved-item">
+          <div class="saved-icon">➕</div>
+          <div class="saved-content">
+            <div class="saved-name" style="color: var(--accent);">Save current filter</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      <button class="clear-btn">Clear All</button>
+      <div class="footer-actions">
+        <button class="save-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+            <polyline points="7 3 7 8 15 8"/>
+          </svg>
+          Save
+        </button>
+        <button class="apply-btn">Apply Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let isPaletteOpen = false;
+    let isPanelOpen = false;
+    let isDarkMode = false;
+
+    // Open Command Palette
+    function openCommandPalette() {
+      isPaletteOpen = true;
+      document.getElementById('backdrop').classList.add('active');
+      document.getElementById('commandPalette').classList.add('active');
+      document.getElementById('paletteInput').focus();
+      // Reset state
+      document.getElementById('paletteContent').style.display = 'block';
+      document.getElementById('slashDropdown').classList.remove('active');
+      document.getElementById('inlinePicker').classList.remove('active');
+      document.getElementById('nlpPreview').classList.remove('active');
+    }
+
+    // Close Command Palette
+    function closeCommandPalette() {
+      isPaletteOpen = false;
+      document.getElementById('backdrop').classList.remove('active');
+      document.getElementById('commandPalette').classList.remove('active');
+      document.getElementById('paletteInput').value = '';
+    }
+
+    // Open Filter Panel
+    function openFilterPanel() {
+      closeCommandPalette();
+      isPanelOpen = true;
+      document.getElementById('filterPanel').classList.add('active');
+    }
+
+    // Close Filter Panel
+    function closeFilterPanel() {
+      isPanelOpen = false;
+      document.getElementById('filterPanel').classList.remove('active');
+    }
+
+    // Close All
+    function closeAll() {
+      closeCommandPalette();
+      closeFilterPanel();
+    }
+
+    // Handle Palette Input
+    function handlePaletteInput(value) {
+      const content = document.getElementById('paletteContent');
+      const slashDropdown = document.getElementById('slashDropdown');
+      const inlinePicker = document.getElementById('inlinePicker');
+      const nlpPreview = document.getElementById('nlpPreview');
+
+      // Reset all
+      content.style.display = 'none';
+      slashDropdown.classList.remove('active');
+      inlinePicker.classList.remove('active');
+      nlpPreview.classList.remove('active');
+
+      if (value === '') {
+        content.style.display = 'block';
+      } else if (value.startsWith('/')) {
+        // Show slash commands
+        slashDropdown.classList.add('active');
+        filterSlashCommands(value);
+      } else if (value.length > 15 && (value.includes('negative') || value.includes('open') || value.includes('ticket'))) {
+        // Show NLP preview for natural language
+        nlpPreview.classList.add('active');
+      } else {
+        content.style.display = 'block';
+      }
+    }
+
+    // Filter slash commands
+    function filterSlashCommands(value) {
+      const items = document.querySelectorAll('.slash-item');
+      const query = value.toLowerCase().slice(1);
+      items.forEach(item => {
+        const command = item.querySelector('.slash-command').textContent.toLowerCase().slice(1);
+        if (command.includes(query)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    // Select slash command
+    function selectSlashCommand(command) {
+      if (command === 'filters') {
+        openFilterPanel();
+        return;
+      }
+
+      const slashDropdown = document.getElementById('slashDropdown');
+      const inlinePicker = document.getElementById('inlinePicker');
+      const pickerTitle = document.getElementById('pickerTitle');
+      const pickerOptions = document.getElementById('pickerOptions');
+
+      slashDropdown.classList.remove('active');
+      inlinePicker.classList.add('active');
+
+      // Update picker based on command
+      const pickers = {
+        status: {
+          title: 'Select Ticket Status',
+          options: [
+            { label: '🟢 Open', value: 'Open' },
+            { label: '🟡 On Hold', value: 'On Hold' },
+            { label: '🔵 Pending', value: 'Pending' },
+            { label: '⚪ Closed', value: 'Closed' }
+          ]
+        },
+        sentiment: {
+          title: 'Select Sentiment',
+          options: [
+            { label: '✓ Positive', value: 'Positive', class: 'sentiment-positive' },
+            { label: '○ Neutral', value: 'Neutral', class: 'sentiment-neutral' },
+            { label: '✕ Negative', value: 'Negative', class: 'sentiment-negative' }
+          ]
+        },
+        priority: {
+          title: 'Select Priority',
+          options: [
+            { label: '🔴 Critical', value: 'Critical' },
+            { label: '🟠 High', value: 'High' },
+            { label: '🟡 Medium', value: 'Medium' },
+            { label: '🟢 Low', value: 'Low' }
+          ]
+        },
+        channel: {
+          title: 'Select Channel',
+          options: [
+            { label: '𝕏 Twitter', value: 'Twitter' },
+            { label: '📘 Facebook', value: 'Facebook' },
+            { label: '📸 Instagram', value: 'Instagram' },
+            { label: '💼 LinkedIn', value: 'LinkedIn' }
+          ]
+        },
+        assigned: {
+          title: 'Assigned To',
+          options: [
+            { label: '👤 Me', value: 'Me' },
+            { label: '👥 Unassigned', value: 'Unassigned' },
+            { label: '🔍 Search...', value: 'search' }
+          ]
+        },
+        date: {
+          title: 'Select Date Range',
+          options: [
+            { label: '📅 Today', value: 'Today' },
+            { label: '📅 Yesterday', value: 'Yesterday' },
+            { label: '📅 Last 7 days', value: 'Last 7 days' },
+            { label: '📅 Last 30 days', value: 'Last 30 days' }
+          ]
+        }
+      };
+
+      const picker = pickers[command];
+      pickerTitle.textContent = picker.title;
+      pickerOptions.innerHTML = picker.options.map(opt => `
+        <div class="picker-option" onclick="selectOption(this, '${opt.value}')">
+          <span class="option-indicator"></span>
+          <span class="option-label ${opt.class || ''}">${opt.label}</span>
+        </div>
+      `).join('');
+    }
+
+    // Select option
+    function selectOption(el, value) {
+      document.querySelectorAll('.picker-option').forEach(opt => opt.classList.remove('selected'));
+      el.classList.add('selected');
+      console.log('Selected:', value);
+      // In real implementation, this would add to active filters
+    }
+
+    // Apply NLP Filters
+    function applyNLPFilters() {
+      closeCommandPalette();
+      alert('Filters applied: Sentiment: Negative, Status: Open, Keyword: "refunds"');
+    }
+
+    // Edit in Query Builder
+    function editInQueryBuilder() {
+      openFilterPanel();
+    }
+
+    // Toggle Family
+    function toggleFamily(header) {
+      const item = header.parentElement;
+      item.classList.toggle('expanded');
+    }
+
+    // Toggle Theme
+    function toggleTheme() {
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark', isDarkMode);
+      document.getElementById('theme-icon').textContent = isDarkMode ? '☀️' : '🌙';
+      document.getElementById('theme-label').textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        if (isPaletteOpen) {
+          closeCommandPalette();
+        } else {
+          openCommandPalette();
+        }
+      }
+
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'f') {
+        e.preventDefault();
+        openFilterPanel();
+      }
+
+      if (e.key === 'Escape') {
+        closeAll();
+      }
+    });
+  </script>
+</body>
+</html>

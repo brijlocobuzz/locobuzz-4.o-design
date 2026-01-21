@@ -1,0 +1,2218 @@
+<span class="side-modal--close" [mat-dialog-close]="true">
+  <mat-icon [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">close</mat-icon>
+</span>
+<mat-tab-group (selectedTabChange)="onTabChanged($event);" [selectedIndex]="1" #matTabGrop [ngClass]="{'small_font-size new-ui__post-detail--tab' : !defaultLayout}" class="custom-padding--tab">
+  <mat-tab *ngFor="let lable of Object.keys(profileInfo)" [label]="lable | translate">
+    <!-- Overview Details -->
+    <div *ngIf="lable === 'Overview' || lable === 'Ticket Overview'" class="post-overview" [ngClass]="{'pl-2 p-10 new-ui__height--post-overview' : !defaultLayout}">
+      <div *ngIf="defaultLayout" class="post-overview__ticket">
+        <span class="post-section__title" [ngClass]="{'small_font-size mb-5' : !defaultLayout}">{{ 'Ticket-Overview' | translate }}</span>
+        
+        <div class="post-overview__ticket--row" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+          <div class="post-overview__ticket--column custom__inputwrapper material__select--wrapper" fxFlex="100%">
+            <!-- for client based required we remove disbale code -->
+            <!-- [ngClass]="{ element__disable: ticketidDisableClass }" -->
+            <!-- for client based required we remove disbale code -->
+            <mat-form-field appearance="outline" class="material__select material__select--adaptive">
+              <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Ticket-ID' | translate }}</mat-label>
+              <mat-select [ngClass]="{'small_font-size' : !defaultLayout}" [(ngModel)]="selectedTicketID" (selectionChange)="ticketChange($event)">
+                <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" *ngFor="let item of ticketTimeline?.ticketIds" [value]="item">{{ item }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="post-overview__ticket--row" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px" *ngIf="!sfdcTicketView">
+          <div class="
+              post-overview__ticket--column
+              custom__inputwrapper
+              material__select--wrapper
+            " fxFlex="100%" [ngClass]="{ element__disable: assignToDisableClass }">
+            <div class="d-flex-items-center w-100-p">
+              <app-assign-user-dropdown [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="userinfoUser" [assignToPopup]="true" [postDetailFlag]="true" [value]="AssignedTo"
+                [loader]="assignLoading" [applyForAIModel]="true" [options]="assignTo | async"
+                [label]="assignAgentName=='Not Assigned'?(assignAgentName | translate):('Assign-To' | translate)" (selectedTeamData)="teamSelectedData = $event" (selectedData)="changeAssignTo($event)"
+                class="w-100-p">
+              </app-assign-user-dropdown>
+              <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" fontSet="material-icons-outlined" class="pl-4" style="margin-top: -0.8rem;cursor: pointer;"
+                (click)="refreshAssignList()" *ngIf="!loadingUserList" [matTooltip]="'Refresh' | translate">refresh</mat-icon>
+            </div>
+          </div>
+        </div>
+        <div class="post-overview__ticket--row g-12" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+          <div class="
+              post-overview__ticket--column
+              custom__inputwrapper
+              material__select--wrapper mr-0
+            " fxFlex="50%">
+            <mat-form-field appearance="outline" class="material__select material__select--adaptive mat-form-field-space"
+              [ngClass]="{ element__disable: priorityDisableClass }">
+              <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Ticket-Priority' | translate }}</mat-label>
+              <mat-select [ngClass]="{'small_font-size' : !defaultLayout}" [(value)]="ticketPriority" (selectionChange)="changePriority($event)">
+                <!-- <mat-select-trigger>
+                  <mat-icon>low_priority</mat-icon>&nbsp;{{ticketPriority}}
+                </mat-select-trigger> -->
+                <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" [value]="3">
+                  <!-- <mat-icon class="colored__red--dark">low_priority</mat-icon>  -->
+                  {{'Urgent' | translate}}
+                </mat-option>
+                <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" [value]="2">
+                  <!-- <mat-icon class="colored__red">low_priority</mat-icon>  -->
+                  {{'High' | translate}}
+                </mat-option>
+                <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" [value]="1">
+                  <!-- <mat-icon class="colored__yellow">low_priority</mat-icon>  -->
+                  {{'Medium' | translate}}
+                </mat-option>
+                <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" [value]="0">
+                  <!-- <mat-icon class="colored__green">low_priority</mat-icon>  -->
+                  {{'Low' | translate}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="
+              post-overview__ticket--column
+              custom__inputwrapper
+              material__select--wrapper
+            " fxFlex="50%">
+            <mat-form-field appearance="outline" class="material__select material__select--adaptive mat-form-field-space"
+              [ngClass]="{ element__disable: ticketstatusDisableClass }">
+              <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Ticket-Status' | translate }}</mat-label>
+              <mat-select [ngClass]="{'small_font-size' : !defaultLayout}" panelClass="status-option" [(value)]="ticketStatus" (selectionChange)="$event.value==3?changeTicketStatusDialog():changeTicketStatus($event,true,true)">
+                <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" [value]="0" *ngIf="showstatusopen" [ngClass]="{ element__disable: showstatusopendisabled, 'small_font-size' : !defaultLayout }">
+                  {{ 'Open' | translate }}
+                </mat-option>
+                <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" [value]="3" *ngIf="showstatusclose">
+                  {{ 'Close' | translate }}
+                </mat-option>
+                <mat-option [value]="onholdstatus" *ngIf="showstatusonhold"
+                  [ngClass]="{ element__disable: showstatusonholddisabled, 'small_font-size' : !defaultLayout }">
+                  <!-- <mat-icon>folder</mat-icon>  -->
+                  {{ 'On-Hold' | translate }}
+                </mat-option>
+                <mat-option [value]="7" *ngIf="showstatusinfoawaited" [ngClass]="{
+                    element__disable: showstatusinfoawaiteddisabled, 'small_font-size' : !defaultLayout
+                  }">
+                  {{ 'Awaiting-Response-From-Customer' | translate }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <!-- <div *ngIf="sfdcTicketView" class="post-overview__ticket--row mb-10" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+          <div class="
+                      post-overview__ticket--column
+                      custom__inputwrapper
+                      material__select--wrapper
+                    " fxFlex="50%">
+              <div class="post-overview__ticket--column custom__inputwrapper">
+                <label class="text__label custom__inputlabel mb-0">CRM Contact ID</label>
+                <div class="d-flex-align-center">
+                  <span>
+                    1234567
+                  </span>
+                </div>
+              </div>
+          </div>
+        </div> -->
+        <div class="post-overview__ticket--row" fxLayout="column" fxLayout.xs="column" fxLayoutGap="8px">
+          <div *ngIf="upperCategory" class="
+              post-overview__ticket--column
+              custom__inputwrapper
+              material__select--wrapper
+            " fxFlex="50%">
+            <label class="text__label custom__inputlabel" [ngClass]="{'small-font-size' : !defaultLayout}">{{ 'Upper-Ticket-Category' | translate }}</label>
+            <div class="d-flex-align-center" *ngIf = "!AiUpperCategoryList.includes(upperCategory)">
+              <span class="category-text d-flex-items-center g-5" [ngClass]="{'small_font-size' : !defaultLayout}">
+                <mat-icon class="post__foot--icon colored__locobuzz mr-0"
+                  fontSet="material-icons-outlined" [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">local_activity</mat-icon>
+                {{ upperCategory }}
+              </span>
+            </div>
+            <div class="d-flex-align-center" *ngIf="AiUpperCategoryList.includes(upperCategory)">
+              <span class="bg__green--lighter colored__main--text border-radius-16 px-5 d-flex-items-center width-fit">
+                <mat-icon class="post__foot--icon colored__locobuzz" fontSet="material-icons-outlined" [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">local_activity</mat-icon>
+                <span [ngClass]="{'small_font-size' : !defaultLayout}">{{upperCategory}}</span>
+                <img src="assets/images/AI_Icon.svg" [ngClass]="{'small-image-width' : !defaultLayout}" class="ml-3 mt-5 w-15">
+              </span>
+            </div>
+          </div>
+          <div *ngIf="showTicketCategoryMapping" class="
+              post-overview__ticket--column
+              custom__inputwrapper
+              material__select--wrapper
+            " fxFlex="50%">
+            <label class="text__label custom__inputlabel d-flex-items-center" [ngClass]="{'small_font-size mb-0' : !defaultLayout}">{{ 'Ticket-Category' | translate }}
+              <mat-icon (click)="openCategoryDialog('ticketCategory')" fontSet="material-icons-outlined" [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}"
+                class="colored__locobuzz ml-auto cursor-pointer" [matTooltip]="'Edit-Category' | translate" matTooltipPosition="above"
+                matTooltipClass="custom-tooltip" *ngIf="!isReadOnly">edit</mat-icon>
+            </label>
+            <!-- <a class="post__foot--categoryaction" (click)="openCategoryDialog('ticketCategory')"
+              matTooltip="Edit Category" matTooltipPosition="above" matTooltipClass="custom-tooltip">
+            </a> -->
+            <div>
+              <div class="d-flex-items-center" *ngFor="let category of ticketcategories">
+                <mat-icon class="mr-4 custom__icon" [ngClass]="{
+                    colored__red:
+                      category.sentiment === getSentiment.Negative ||
+                      category.sentiment === getSentiment.Mixed,
+                    colored__green: category.sentiment === getSentiment.Positive,
+                    'colored__yellow--dark':
+                      category.sentiment === getSentiment.Neutral,
+                    'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout
+                  }" fontSet="material-icons-outlined">
+                  local_activity
+                </mat-icon>
+                <span [ngClass]="{'small_font-size' : !defaultLayout}">
+                  {{ category.name }}
+                </span>
+              </div>
+            </div>
+
+          </div>
+        <div class="post-overview__ticket--column custom__inputwrapper" fxFlex="50%">
+          <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size mb-0' : !defaultLayout}">
+            {{ 'Total-Mentions' | translate }}
+          </label>
+        
+          <div class="d-flex-align-center">
+        
+            <!-- Show skeleton while loading -->
+            <ng-container *ngIf="ticketSummaryLoader(); else showValue">
+              <div class="skeleton-loader"></div>
+            </ng-container>
+        
+            <ng-template #showValue>
+                <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="mr-4 colored__yellow--dark custom__icon"
+                  fontSet="material-icons-outlined">
+                  question_answer
+                </mat-icon>
+              <span [ngClass]="{'small_font-size font-weight-bold' : !defaultLayout}">
+                {{ totalMention }}
+              </span>
+            </ng-template>
+          </div>
+        </div>
+
+        </div>
+        <div class="post-overview__ticket--row pt-10" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+          <div class="post-overview__ticket--column custom__inputwrapper" fxflex="1">
+            <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size mb-0' : !defaultLayout}">{{ 'Ticket-Created-on' | translate }}</label>
+            <ng-container *ngIf="ticketSummaryLoader(); else showValue1">
+              <div class="skeleton-loader"></div>
+            </ng-container>
+            <ng-template #showValue1>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ ticketCreatedOn }}</span>
+            </ng-template>
+            <!-- <span class="text__light">{{
+                profileInfo[lable]["ticketOverview"]["createdOnTime"]
+                }}</span></span> -->
+          </div>
+        </div>
+        <!-- <div class="post-overview__ticket--row mb-10" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px" *ngIf="ticketAssignedToOn !== ''">
+          <div class="post-overview__ticket--column custom__inputwrapper" fxflex="1">
+            <label class="text__label custom__inputlabel">Ticket Assigned on</label>
+            <span>{{ ticketAssignedToOn }}</span>
+            </div>
+        </div>
+        <div class="post-overview__ticket--row mb-10" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px" *ngIf="ticketExcalatedToOn !== ''">
+          <div class="post-overview__ticket--column custom__inputwrapper" fxflex="1">
+            <label class="text__label custom__inputlabel">Ticket Escalated on</label>
+            <span>{{ ticketExcalatedToOn }}</span>
+            </div>
+        </div> -->
+        <div class="post-overview__ticket--row pt-10" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+          <div class="post-overview__ticket--column custom__inputwrapper" fxflex="1">
+            <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size mb-0' : !defaultLayout}">{{ 'Ticket-Updated-on' | translate }}</label>
+            <ng-container *ngIf="ticketSummaryLoader(); else showValue2">
+              <div class="skeleton-loader"></div>
+            </ng-container>
+            <ng-template #showValue2>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ ticketUpdatedOn }}</span>
+            </ng-template>
+          </div>
+        </div>
+        <!-- <div *ngIf="lable === 'Profile'">
+          <mat-expansion-panel>
+            <mat-expansion-panel-header [collapsedHeight]="'47px'" [expandedHeight]="'47px'" class="accordian_headers">
+              <mat-panel-title>Profile</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="post-profile__info--profilecontact">
+              <div class="post-profile__info--profilecontactitem">
+                <mat-icon class="post-profile__info--profilecontacticon" fontSet="material-icons-outlined">call
+                </mat-icon>
+                <span>{{ profileInfo[lable]['call'] }}</span>
+                <mat-icon class="post-profile__info--profilecopy" fontSet="material-icons-outlined">content_copy
+                </mat-icon>
+              </div>
+              <div class="post-profile__info--profilecontactitem">
+                <mat-icon class="post-profile__info--profilecontacticon" fontSet="material-icons-outlined">
+                  alternate_email</mat-icon>
+                <span>{{ profileInfo[lable]['alternateEmail'] }}</span>
+                <mat-icon class="post-profile__info--profilecopy" fontSet="material-icons-outlined">content_copy
+                </mat-icon>
+              </div>
+            </div>
+            <ul class="post-profile__info--social post-section">
+              <li *ngFor="
+                  let each of profileInfo[lable]['postSection']['socialImg']
+                " class="post-profile__info--socialitem">
+                <img class="post-profile__info--socialimage" [src]="each['img']" alt="twitter icon /" />
+                <span>{{ each['name'] }}<span>({{ each['handle'] }})</span></span>
+              </li>
+              <li *ngFor="
+                  let each of profileInfo[lable]['postSection']['socialstats']
+                " class="post-profile__info--socialstats">
+                <span>{{ each['type'] }} - </span>
+                <span class="text__dark--sm text-semibold">
+                  {{ each['value'] }}</span>
+              </li>
+              <li class="post-profile__info--socialitem">
+                <a href="javascript:void(0)">
+                  <mat-icon>add</mat-icon>
+                  <span>Add Associate Channel</span>
+                </a>
+              </li>
+            </ul>
+
+            <div class="post-section">
+              <div class="post-profile__info--bio">
+                <span class="post-section__title">Bio</span>
+                <p>{{ profileInfo[lable]['Bio'] }}</p>
+              </div>
+              <div class="post-profile__info--traits">
+                <span class="post-section__title">Traits</span>
+                <div class="custom__pill">
+                  <span *ngFor="let each of profileInfo[lable]['traits']" class="custom__pill--item">{{ each }}</span>
+                </div>
+              </div>
+            </div>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header [collapsedHeight]="'47px'" [expandedHeight]="'47px'" class="accordian_headers">
+              <mat-panel-title>CRM Details</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="post-crm post-section">
+              <ul>
+                <li *ngFor="
+                    let each of Object.keys(profileInfo[lable]['CRMDetails'])
+                  " class="post-crm--item">
+                  <span class="post-crm--label">{{ each }} : </span>
+                  <span class="post-crm--value">{{
+                    profileInfo[lable]['CRMDetails'][each]
+                    }}</span>
+                </li>
+              </ul>
+            </div>
+          </mat-expansion-panel>
+        </div> -->
+        <div class="post-overview__ticket--row pt-10" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+          <div class="post-overview__ticket--column custom__inputwrapper" fxFlex="50%">
+            <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Brand' | translate }}</label>
+            <div class="d-flex-items-center g-5">
+              <img [src]="brandImageUrl" onError="this.src='assets/social-mention/post/default_brand.svg'"
+                class="custom__icon profile__img w-24 h-24" [ngClass]="{'small-image-width' : !defaultLayout}" />
+              <span class="text__light" [ngClass]="{'small_font-size' : !defaultLayout}">
+                {{ brand }}
+              </span>
+            </div>
+          </div>
+          <div class="post-overview__ticket--column custom__inputwrapper" *ngIf="showProfile" fxFlex="50%">
+            <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Profile' | translate }}</label>
+            <div class="d-flex-items-center g-5">
+              <img [src]="pageImageUrl" onError="this.src='assets/images/agentimages/sample-image.svg'"
+                class="custom__icon profile__img w-24 h-24" [ngClass]="{'small-image-width' : !defaultLayout}" />
+              <span class="text__light" [ngClass]="{'small_font-size' : !defaultLayout}">{{ profileName }}</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="ticketStatus == TicketStatusEnum.Close && postObj?.dispositionName" class="post-overview__ticket--row pt-12" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+          <div class="post-overview__ticket--column custom__inputwrapper" fxFlex="50%">
+            <div class="d-flex-align-center">
+              <img src="assets/images/common/Ticket_dispositions.svg"
+                class="custom__icon mr-4 profile__img border-radius-none" [ngClass]="{'small-image-width' : !defaultLayout}" />
+                        <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Ticket-Disposition' | translate }} </label>
+            </div>
+            <span class="text__light" [ngClass]="{'small_font-size' : !defaultLayout}">
+              {{ postObj?.dispositionName }}
+            </span>
+          </div>
+        </div>
+
+        <!-- <div class="post-overview__ticket--summary" *ngIf="isTicketSummarizationEnable">
+          <div class="summary-head" (click)="onTicketSummaryClick()">
+            <div class="d-flex-items-center">
+              <img src="{{ticketSummaryLogo}}" class="w-16" matTooltip="{{ticketSummaryTooltip}}" matTooltipClass="custom__tooltip-normal">
+              <span class="text__label--sm ml-7">Ticket Summary</span>
+            </div>
+            <mat-icon *ngIf="!showTicketSummary" fontSet="material-icons-outlined" class="w-18 cursor-pointer">
+              chevron_right
+            </mat-icon>
+          </div>
+          <div class="summary-body position-relative" *ngIf="showTicketSummary">
+            <app-component-loader *ngIf="summarizationLoader" [postCountTotal]="2" [loaderType]="loaderTypeEnum.messageline" [summarizationLoader]="true">
+            </app-component-loader>
+            <div class="summary-body__item" *ngIf="!summarizationLoader">
+              <div class="block-center">
+                <div class="bg__blue summary-body__item--circle"></div>
+              </div>
+              <div class="summary-body__item--details">{{ticketSummarizationDetail}}</div>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- <span class="post-section__title">Ticket Details</span>
+        <form [formGroup]="ticketDetailsForm" (ngSubmit)="updateTicketDetails()">
+          <div class="post-overview__ticket--row" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+            <div class="post-overview__ticket--column custom__inputwrapper material__select--wrapper" fxFlex="100%">
+              <mat-form-field appearance="outline" class="material__select material__select--adaptive">
+                <mat-label>Booking/ref no.</mat-label>
+                <input matInput formControlName="bookingNumber" autocomplete="off" />
+                <mat-error *ngIf="!bookingNumber?.valid"> Character limit exceeded.
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="post-overview__ticket--row" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+            <div class="post-overview__ticket--column custom__inputwrapper material__select--wrapper" fxFlex="100%">
+              <mat-form-field appearance="outline" class="material__select material__select--adaptive">
+                <mat-label>Customer Id</mat-label>
+                <input matInput formControlName="customerID" autocomplete="off" />
+               <mat-error *ngIf="!customerID?.valid"> Character limit exceeded.
+               </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="post-overview__ticket--row" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+            <div class="post-overview__ticket--column custom__inputwrapper material__select--wrapper" fxFlex="100%">
+              <mat-form-field appearance="outline" class="material__select material__select--adaptive">
+                <mat-label>Description</mat-label>
+                <textarea matInput formControlName="ticketDescription"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="post-section--footer" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px" *ngIf="showTicketUpdate">
+            <button [loading]="updateTicketDetailsLoader" type="submit"  [disabled]="!ticketDetailsForm.valid"
+              mat-flat-button color="accent">
+              Update
+            </button>
+          </div>
+        </form> -->
+      </div>
+
+      <!-- New Ticket Overview UI -->
+      <div *ngIf="!defaultLayout" class="new-ui__main-container">
+        <!-- Ticket Summary -->
+        <ng-container *ngIf="isTicketSummarizationEnable">
+          <div class="post-detail__conversations--item ticket__summary"
+            [ngClass]="{'new-ui__ticket-summary' : !defaultLayout, 'py-10 pl-10 pr-15' : defaultLayout}"
+            [ngStyle]="{'max-height' : isCreditExpire ? '25rem' : ''}">
+            <div class="ticket__summary--head cursor-pointer" (click)="expandTicketSummary()"
+              [ngClass]="{ element__disable: isSummaryAPICalling }">
+              <div class="ticket__summary--head-title">
+                <span class="d-flex-items-center g-8">
+                  <ng-container *ngIf="isCreditExpire else noExpireIcon">
+                    <img src="assets/images/AI_Ticket_Summary.svg" alt=""
+                      matTooltip="AI Ticket Summary feature credit has expired and is no longer available for use."
+                      matTooltipClass="custom-tooltip">
+                  </ng-container>
+                  <ng-template #noExpireIcon>
+                    <img class="img" src="assets/ticket-summary/AI_Icon.svg" [ngClass]="{'small-image-width' : !defaultLayout}"
+                      alt="">
+                  </ng-template>
+                  <p *ngIf="!sfdcTicketView" [ngClass]="{'text__label' : defaultLayout, 'small_font-size' : !defaultLayout}">{{
+                    'view-ticket-summary' | translate }} :
+                    <span [ngClass]="{'text__label' : defaultLayout, 'medium-font-size font-weight-bold' : !defaultLayout}">
+                      {{postObj.ticketID}}
+                    </span>
+                  </p>
+                  <p *ngIf="sfdcTicketView" class="text__label ml-8">{{ 'Case-Summary' | translate }}</p>
+                </span>
+              </div>
+              <ng-container *ngIf="isSummaryAPICalling else expandButton">
+                <div class="ticket__summary--head-collapse">
+                  <mat-spinner [diameter]="25" class="mat-spinner-dark"></mat-spinner>
+                </div>
+              </ng-container>
+              <ng-template #expandButton>
+                <div class="ticket__summary--head-collapse">
+                  <mat-icon class="cursor-pointer"
+                    [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">
+                    {{ticketSummary ? 'expand_less' : 'expand_more'}}</mat-icon>
+                </div>
+              </ng-template>
+            </div>
+            <div class="ticket__summary--body height-unset" *ngIf="ticketSummary && !isSummaryAPICalling">
+              <div class="ticket__summary--conversations">
+                <div class="summary__conversations">
+                  <span class="summary__conversations--label" [ngClass]="{'small_font-size' : !defaultLayout}">
+                    {{ 'Total-Conversation' | translate }}: <span class="text-semibold"
+                      [ngClass]="{'font-weight-bold' : !defaultLayout}"> {{TicketSummaryDetails?.totalMention}} </span>
+                  </span>
+                </div>
+                <div class="summary__conversations">
+                  <span class="summary__conversations--label" [matTooltip]="'User-Mentions' | translate"
+                    matTooltipPosition="above" matTooltipClass="custom-tooltip">
+                    <img src="assets/ticket-summary/User_Mentions.svg" [ngClass]="{'small-image-width' : !defaultLayout}"
+                      alt="">
+                    <span class="text__label colored__purple--dark"
+                      [ngClass]="{'small_font-size font-weight-bold' : !defaultLayout}">
+                      {{TicketSummaryDetails?.userMention}}
+                    </span>
+                  </span>
+                </div>
+                <div class="summary__conversations">
+                  <span class="summary__conversations--label" [matTooltip]="'Brand-Mentions' | translate"
+                    matTooltipPosition="above" matTooltipClass="custom-tooltip">
+                    <img class="img" [ngClass]="{'small-image-width' : !defaultLayout}"
+                      [src]="TicketSummaryDetails?.brandMention ? TicketSummaryDetails?.brandImage : 'assets/social-mention/post/default_brand.svg'"
+                      alt="">
+                    <span class="text__label colored__locobuzz"
+                      [ngClass]="{'small_font-size font-weight-bold' : !defaultLayout}">
+                      {{TicketSummaryDetails?.brandMention}}
+                    </span>
+                  </span>
+                </div>
+                <div class="summary__conversations" *ngIf="TicketSummaryDetails?.reopenedCount">
+                  <span class="summary__conversations--label" [ngClass]="{'small_font-size' : !defaultLayout}">
+                    {{ 'Reopened' | translate }}: <span class="text__label colored__red"
+                      [ngClass]="{'font-weight-bold' : !defaultLayout}"> {{TicketSummaryDetails?.reopenedCount}} </span>
+                  </span>
+                </div>
+                <div class="summary__conversations ml-auto right-auto border-none pr-10">
+                  <span class="summary__conversations--label" [ngClass]="{'small_font-size' : !defaultLayout}">
+                    {{ 'Total-Duration' | translate }}: <span class="text__label colored__locobuzz"
+                      [ngClass]="{'font-weight-bold' : !defaultLayout}"> {{TicketSummaryDetails?.diffHours}}
+                    </span>
+                  </span>
+                </div>
+              </div>
+              <ng-container *ngIf="isCreditExpire else noExpireView">
+                <div class="no-data mt-35">
+                  <div class="no-data__img">
+                    <img src="assets/images/AI_Ticket_Summary.svg" [ngClass]="{'small-image-width' : !defaultLayout}" alt=""
+                      class="w-40">
+                  </div>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Credit-limit-exceeded' | translate }}</span>
+                </div>
+              </ng-container>
+              <ng-template #noExpireView>
+                <!-- Quick Summary -->
+                <div>
+                  <p class="text__label" [ngClass]="{'medium-font-size' : !defaultLayout}">{{'Quick-Summary' | translate}}</p>
+                  <ul class="ticket__summary--tab-ul mb-5">
+                    <ng-container *ngIf="TicketSummaryDetails?.summaryText else dataLoading">
+                      <ng-container *ngFor="let summary of TicketSummaryDetails?.summaryText || []">
+                        <li class="ticket__summary--tab-li">
+                          <span>
+                            <mat-icon
+                              [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">circle</mat-icon>
+                          </span>
+                          <span [ngClass]="{'small_font-size' : !defaultLayout}">
+                            {{summary}}
+                          </span>
+                        </li>
+                      </ng-container>
+                    </ng-container>
+                    <ng-template #dataLoading>
+                      <app-component-loader class="line-content" [postCountTotal]="2" [loaderType]="loaderTypeEnum.content">
+                      </app-component-loader>
+                    </ng-template>
+                  </ul>
+                </div>
+
+                <!-- Emotional Journey -->
+                <div *ngIf="TicketSummaryDetails?.emotionalJourney" class="emotional-journey-container">
+                  <div class="emotion-text" [ngClass]="{'small_font-size' : !defaultLayout}">
+                    <span class="text__label" [ngClass]="{'medium-font-size' : !defaultLayout}">{{'emotional-journey' |
+                      translate}}</span>
+                    <div class="emotion-journey-block">
+                      <span class="emotion-text-body" [style.background-color]="TicketSummaryDetails?.startJourneyColor"
+                        *ngIf="TicketSummaryDetails?.startJourney">
+                        <img class="small-image-width" *ngIf="TicketSummaryDetails?.startJourneyIcon"
+                          src="{{TicketSummaryDetails?.startJourneyIcon}}" />
+                        {{TicketSummaryDetails?.startJourney}}
+                      </span>
+                      <span class="arrow" *ngIf="TicketSummaryDetails?.middleJourney">→</span>
+                      <span class="emotion-text-body" [style.background-color]="TicketSummaryDetails?.middleJourneyColor"
+                        *ngIf="TicketSummaryDetails?.middleJourney">
+                        <img class="small-image-width" *ngIf="TicketSummaryDetails?.middleJourneyIcon"
+                          src="{{TicketSummaryDetails?.middleJourneyIcon}}" />
+                      
+                        {{TicketSummaryDetails?.middleJourney}}</span>
+                      <span class="arrow" *ngIf="TicketSummaryDetails?.endJourney">→</span>
+                      <span class="emotion-text-body" [style.background-color]="TicketSummaryDetails?.endJourneyColor"
+                        *ngIf="TicketSummaryDetails?.endJourney">
+                        <img class="small-image-width" *ngIf="TicketSummaryDetails?.endJourneyIcon"
+                          src="{{TicketSummaryDetails?.endJourneyIcon}}" /> {{TicketSummaryDetails?.endJourney}}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Detailed Summary -->
+                <div>
+                  <p class="text__label" [ngClass]="{'medium-font-size' : !defaultLayout}">{{'detailed-summary' | translate}}</p>
+                  <ul class="ticket__summary--tab-ul mb-5">
+                    <ng-container *ngIf="TicketSummaryDetails?.detailedSummary else dataLoading">
+                      <ng-container *ngFor="let summary of TicketSummaryDetails?.detailedSummary || []">
+                        <li class="ticket__summary--tab-li">
+                          <span>
+                            <mat-icon
+                              [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">circle</mat-icon>
+                          </span>
+                          <span [ngClass]="{'small_font-size' : !defaultLayout}">
+                            {{summary}}
+                          </span>
+                        </li>
+                      </ng-container>
+                    </ng-container>
+                    <ng-template #dataLoading>
+                      <app-component-loader class="line-content" [postCountTotal]="2" [loaderType]="loaderTypeEnum.content">
+                      </app-component-loader>
+                    </ng-template>
+                  </ul>
+                </div>
+
+                <!-- Timeline Summary -->
+                <div>
+                  <p class="text__label" [ngClass]="{'medium-font-size' : !defaultLayout}">{{ 'Timeline-Summary' | translate }}</p>
+                  <ng-container *ngIf="TicketSummaryDetails?.timelineSummary else dataLoading">
+                    <ul class="ticket__summary--tab-ul">
+                      <ng-container *ngFor="let summary of TicketSummaryDetails?.timelineSummary">
+                        <li class="ticket__summary--tab-li">
+                          <span>
+                            <mat-icon [class]="summary.className"
+                              [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">circle</mat-icon>
+                          </span>
+                          <span [ngClass]="{'small_font-size' : !defaultLayout}">
+                            <span class="text__label" [ngClass]="{'small_font-size' : !defaultLayout}">
+                              {{summary.key}}</span> : {{summary.value}}
+                          </span>
+                        </li>
+                      </ng-container>
+                    </ul>
+                  </ng-container>
+                  <ng-template #dataLoading>
+                    <app-component-loader class="line-content" [postCountTotal]="3" [loaderType]="loaderTypeEnum.content">
+                    </app-component-loader>
+                  </ng-template>
+                </div>
+
+                <!-- Issue Summary -->
+                <div>
+                  <p class="text__label" [ngClass]="{'medium-font-size' : !defaultLayout}">{{ 'Issue-Summary' | translate }}</p>
+                  <ul class="ticket__summary--tab-ul">
+                    <ng-container *ngIf="TicketSummaryDetails?.issueSummary else dataLoading">
+                      <ng-container *ngIf="TicketSummaryDetails?.issueSummary">
+                        <li class="ticket__summary--tab-li">
+                          <span>
+                            <mat-icon
+                              [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">circle</mat-icon>
+                          </span>
+                          <span [ngClass]="{'small_font-size' : !defaultLayout}">
+                            {{TicketSummaryDetails?.issueSummary}}
+                          </span>
+                        </li>
+                      </ng-container>
+                    </ng-container>
+                    <ng-template #dataLoading>
+                      <app-component-loader class="line-content" [postCountTotal]="3" [loaderType]="loaderTypeEnum.content">
+                      </app-component-loader>
+                    </ng-template>
+                  </ul>
+                  <span class="d-flex-items-center">
+                    <span *ngIf="sfdcTicketView" (cdkCopyToClipboardCopied)="copied('Mention id')"
+                      [cdkCopyToClipboard]="TicketSummaryDetails?.issueSummary"
+                      class="custom-btn__purple--outline width-fit ml-auto mr-10 px-7">
+                      <mat-icon class="mr-3 s-16">content_copy</mat-icon>
+                      {{ 'Copy' | translate }}
+                    </span>
+                  </span>
+                </div>
+
+                <!-- Customer Expectation -->
+                <div>
+                  <p class="text__label" [ngClass]="{'medium-font-size' : !defaultLayout}">{{ 'Customer-Expectation' | translate }}</p>
+                  <ul class="ticket__summary--tab-ul">
+                    <ng-container *ngIf="TicketSummaryDetails?.customerExpectation else dataLoading">
+                      <ng-container>
+                        <li class="ticket__summary--tab-li">
+                          <span>
+                            <mat-icon
+                              [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">circle</mat-icon>
+                          </span>
+                          <span [ngClass]="{'small_font-size' : !defaultLayout}">
+                            {{TicketSummaryDetails?.customerExpectation}}
+                          </span>
+                        </li>
+                      </ng-container>
+                    </ng-container>
+                    <ng-template #dataLoading>
+                      <app-component-loader class="line-content" [postCountTotal]="3" [loaderType]="loaderTypeEnum.content">
+                      </app-component-loader>
+                    </ng-template>
+                  </ul>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </ng-container>
+        
+        <!-- Ticket Overview -->
+        <div class="post-overview__ticket new-ui__overview-ticket">
+          <div class="new-ui__overview-ticket--header">
+            <span class="post-section__title" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Ticket-Overview' |
+              translate }}</span>
+          </div>
+        
+          <div class="p-8">
+            <div class="ticket-input-container">
+              <div class="post-overview__ticket--row" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+                <div class="post-overview__ticket--column custom__inputwrapper material__select--wrapper" fxFlex="100%">
+                  <!-- for client based required we remove disbale code -->
+                  <!-- [ngClass]="{ element__disable: ticketidDisableClass }" -->
+                  <!-- for client based required we remove disbale code -->
+                  <mat-form-field appearance="outline" class="material__select material__select--adaptive">
+                    <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Ticket-ID' | translate }}</mat-label>
+                    <mat-select [ngClass]="{'small_font-size' : !defaultLayout}" [(ngModel)]="selectedTicketID"
+                      (selectionChange)="ticketChange($event)">
+                      <mat-option [ngClass]="{'small_font-size' : !defaultLayout}"
+                        *ngFor="let item of ticketTimeline?.ticketIds" [value]="item">{{ item }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+        
+              <div class="post-overview__ticket--row" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px"
+                *ngIf="!sfdcTicketView">
+                <div class="post-overview__ticket--column
+                                                        custom__inputwrapper w-80-p
+                                                        material__select--wrapper"
+                  [ngClass]="{ element__disable: assignToDisableClass }">
+                  <div class="d-flex-items-center w-100-p">
+                    <app-assign-user-dropdown [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="userinfoUser"
+                      [assignToPopup]="true" [postDetailFlag]="true" [value]="AssignedTo" [loader]="assignLoading"
+                      [applyForAIModel]="true" [options]="assignTo | async"
+                      [label]="assignAgentName=='Not Assigned'?(assignAgentName | translate):('Assign-To' | translate)"
+                      (selectedTeamData)="teamSelectedData = $event" (selectedData)="changeAssignTo($event)" class="w-100-p">
+                    </app-assign-user-dropdown>
+                    <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" fontSet="material-icons-outlined"
+                      class="pl-4" style="margin-top: -0.8rem;cursor: pointer;" (click)="refreshAssignList()"
+                      *ngIf="!loadingUserList" [matTooltip]="'Refresh' | translate">refresh</mat-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+        
+            <div class="post-overview__ticket--row g-5 priority-status-input" fxLayout="row" fxLayout.xs="column"
+              fxLayoutGap="16px">
+              <div class="
+                                                    post-overview__ticket--column
+                                                    custom__inputwrapper
+                                                    material__select--wrapper mr-0
+                                                  " fxFlex="50%">
+                <mat-form-field appearance="outline" class="material__select material__select--adaptive mat-form-field-space"
+                  [ngClass]="{ element__disable: priorityDisableClass }">
+                  <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Ticket-Priority' | translate }}</mat-label>
+                  <mat-select [ngClass]="{'small_font-size' : !defaultLayout}" [(value)]="ticketPriority"
+                    (selectionChange)="changePriority($event)">
+                    <!-- <mat-select-trigger>
+                                                        <mat-icon>low_priority</mat-icon>&nbsp;{{ticketPriority}}
+                                                      </mat-select-trigger> -->
+                    <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" [value]="3">
+                      <!-- <mat-icon class="colored__red--dark">low_priority</mat-icon>  -->
+                      {{'Urgent' | translate}}
+                    </mat-option>
+                    <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" [value]="2">
+                      <!-- <mat-icon class="colored__red">low_priority</mat-icon>  -->
+                      {{'High' | translate}}
+                    </mat-option>
+                    <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" [value]="1">
+                      <!-- <mat-icon class="colored__yellow">low_priority</mat-icon>  -->
+                      {{'Medium' | translate}}
+                    </mat-option>
+                    <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" [value]="0">
+                      <!-- <mat-icon class="colored__green">low_priority</mat-icon>  -->
+                      {{'Low' | translate}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="
+                                                    post-overview__ticket--column
+                                                    custom__inputwrapper
+                                                    material__select--wrapper
+                                                  " fxFlex="50%">
+                <mat-form-field appearance="outline" class="material__select material__select--adaptive mat-form-field-space"
+                  [ngClass]="{ element__disable: ticketstatusDisableClass }">
+                  <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Ticket-Status' | translate }}</mat-label>
+                  <mat-select [ngClass]="{'small_font-size' : !defaultLayout}" panelClass="status-option"
+                    [(value)]="ticketStatus"
+                    (selectionChange)="$event.value==3?changeTicketStatusDialog():changeTicketStatus($event,true,true)">
+                    <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" [value]="0" *ngIf="showstatusopen"
+                      [ngClass]="{ element__disable: showstatusopendisabled, 'small_font-size' : !defaultLayout }">
+                      {{ 'Open' | translate }}
+                    </mat-option>
+                    <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" [value]="3" *ngIf="showstatusclose">
+                      {{ 'Close' | translate }}
+                    </mat-option>
+                    <mat-option [value]="onholdstatus" *ngIf="showstatusonhold"
+                      [ngClass]="{ element__disable: showstatusonholddisabled, 'small_font-size' : !defaultLayout }">
+                      <!-- <mat-icon>folder</mat-icon>  -->
+                      {{ 'On-Hold' | translate }}
+                    </mat-option>
+                    <mat-option [value]="7" *ngIf="showstatusinfoawaited" [ngClass]="{
+                                                          element__disable: showstatusinfoawaiteddisabled, 'small_font-size' : !defaultLayout
+                                                        }">
+                      {{ 'Awaiting-Response-From-Customer' | translate }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+        
+            <!-- <div *ngIf="sfdcTicketView" class="post-overview__ticket--row mb-10" fxLayout="row" fxLayout.xs="column"
+                                          fxLayoutGap="16px">
+                                          <div class="
+                                                                    post-overview__ticket--column
+                                                                    custom__inputwrapper
+                                                                    material__select--wrapper
+                                                                  " fxFlex="50%">
+                                            <div class="post-overview__ticket--column custom__inputwrapper">
+                                              <label class="text__label custom__inputlabel mb-0">CRM Contact ID</label>
+                                              <div class="d-flex-align-center">
+                                                <span>
+                                                  1234567
+                                                </span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div> -->
+        
+            <div class="post-overview__ticket--row ticket-category-container" fxLayout="column" fxLayout.xs="column"
+              fxLayoutGap="8px">
+              <div *ngIf="upperCategory" class="
+                                                                      post-overview__ticket--column
+                                                                      custom__inputwrapper
+                                                                      material__select--wrapper
+                                                                    " fxFlex="50%">
+                <label class="text__label custom__inputlabel" [ngClass]="{'small-font-size' : !defaultLayout}">{{
+                  'Upper-Ticket-Category' | translate }}</label>
+                <div class="d-flex-align-center" *ngIf="!AiUpperCategoryList.includes(upperCategory)">
+                  <span class="category-text d-flex-items-center g-5" [ngClass]="{'small_font-size' : !defaultLayout}">
+                    <mat-icon class="post__foot--icon colored__locobuzz mr-0" fontSet="material-icons-outlined"
+                      [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">local_activity</mat-icon>
+                    {{ upperCategory }}
+                  </span>
+                </div>
+                <div class="d-flex-align-center" *ngIf="AiUpperCategoryList.includes(upperCategory)">
+                  <span class="bg__green--lighter colored__main--text border-radius-16 px-5 d-flex-items-center width-fit">
+                    <mat-icon class="post__foot--icon colored__locobuzz" fontSet="material-icons-outlined"
+                      [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}">local_activity</mat-icon>
+                    <span [ngClass]="{'small_font-size' : !defaultLayout}">{{upperCategory}}</span>
+                    <img src="assets/images/AI_Icon.svg" [ngClass]="{'small-image-width' : !defaultLayout}"
+                      class="ml-3 mt-5 w-15">
+                  </span>
+                </div>
+              </div>
+              <div *ngIf="showTicketCategoryMapping" class="
+                                                                      post-overview__ticket--column
+                                                                      custom__inputwrapper
+                                                                      material__select--wrapper
+                                                                    " fxFlex="50%">
+                <label class="text__label custom__inputlabel d-flex-items-center"
+                  [ngClass]="{'small_font-size mb-0' : !defaultLayout}">{{ 'Ticket-Category' | translate }}
+                  <mat-icon (click)="openCategoryDialog('ticketCategory')" fontSet="material-icons-outlined"
+                    [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}"
+                    class="colored__locobuzz ml-auto cursor-pointer" [matTooltip]="'Edit-Category' | translate"
+                    matTooltipPosition="above" matTooltipClass="custom-tooltip" *ngIf="!isReadOnly">edit</mat-icon>
+                </label>
+                <!-- <a class="post__foot--categoryaction" (click)="openCategoryDialog('ticketCategory')"
+                                                                      matTooltip="Edit Category" matTooltipPosition="above" matTooltipClass="custom-tooltip">
+                                                                    </a> -->
+                <div>
+                  <div class="d-flex-items-center" *ngFor="let category of ticketcategories">
+                    <mat-icon class="mr-4 custom__icon" [ngClass]="{
+                                                                            colored__red:
+                                                                              category.sentiment === getSentiment.Negative ||
+                                                                              category.sentiment === getSentiment.Mixed,
+                                                                            colored__green: category.sentiment === getSentiment.Positive,
+                                                                            'colored__yellow--dark':
+                                                                              category.sentiment === getSentiment.Neutral,
+                                                                            'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout
+                                                                          }" fontSet="material-icons-outlined">
+                      local_activity
+                    </mat-icon>
+                    <span [ngClass]="{'small_font-size' : !defaultLayout}">
+                      {{ category.name }}
+                    </span>
+                  </div>
+                </div>
+        
+              </div>
+              <div class="post-overview__ticket--column custom__inputwrapper" fxFlex="50%">
+                <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size mb-0' : !defaultLayout}">
+                  {{ 'Total-Mentions' | translate }}
+                </label>
+        
+                <div class="d-flex-align-center">
+        
+                  <!-- Show skeleton while loading -->
+                  <ng-container *ngIf="ticketSummaryLoader(); else showValue">
+                    <div class="skeleton-loader"></div>
+                  </ng-container>
+        
+                  <ng-template #showValue>
+                    <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+                      class="mr-4 colored__yellow--dark custom__icon" fontSet="material-icons-outlined">
+                      question_answer
+                    </mat-icon>
+                    <span [ngClass]="{'small_font-size font-weight-bold' : !defaultLayout}">
+                      {{ totalMention }}
+                    </span>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+        
+            <div class="ticket-info-container">
+              <div class="post-overview__ticket--row pt-10" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+                <div class="post-overview__ticket--column custom__inputwrapper" fxflex="1">
+                  <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size mb-0' : !defaultLayout}">{{
+                    'Ticket-Created-on' | translate }}</label>
+                  <ng-container *ngIf="ticketSummaryLoader(); else showValue1">
+                    <div class="skeleton-loader"></div>
+                  </ng-container>
+                  <ng-template #showValue1>
+                    <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ ticketCreatedOn }}</span>
+                  </ng-template>
+                  <!-- <span class="text__light">{{
+                                                                profileInfo[lable]["ticketOverview"]["createdOnTime"]
+                                                                }}</span></span> -->
+                </div>
+              </div>
+        
+              <!-- <div class="post-overview__ticket--row mb-10" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px"
+                                                    *ngIf="ticketAssignedToOn !== ''">
+                                                    <div class="post-overview__ticket--column custom__inputwrapper" fxflex="1">
+                                                      <label class="text__label custom__inputlabel">Ticket Assigned on</label>
+                                                      <span>{{ ticketAssignedToOn }}</span>
+                                                    </div>
+                                                  </div>
+                                                  <div class="post-overview__ticket--row mb-10" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px"
+                                                    *ngIf="ticketExcalatedToOn !== ''">
+                                                    <div class="post-overview__ticket--column custom__inputwrapper" fxflex="1">
+                                                      <label class="text__label custom__inputlabel">Ticket Escalated on</label>
+                                                      <span>{{ ticketExcalatedToOn }}</span>
+                                                    </div>
+                                                  </div> -->
+        
+              <div class="post-overview__ticket--row pt-10" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+                <div class="post-overview__ticket--column custom__inputwrapper" fxflex="1">
+                  <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size mb-0' : !defaultLayout}">{{
+                    'Ticket-Updated-on' | translate }}</label>
+                  <ng-container *ngIf="ticketSummaryLoader(); else showValue2">
+                    <div class="skeleton-loader"></div>
+                  </ng-container>
+                  <ng-template #showValue2>
+                    <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ ticketUpdatedOn }}</span>
+                  </ng-template>
+                </div>
+              </div>
+        
+              <!-- <div *ngIf="lable === 'Profile'">
+                                                    <mat-expansion-panel>
+                                                      <mat-expansion-panel-header [collapsedHeight]="'47px'" [expandedHeight]="'47px'" class="accordian_headers">
+                                                        <mat-panel-title>Profile</mat-panel-title>
+                                                      </mat-expansion-panel-header>
+                                                      <div class="post-profile__info--profilecontact">
+                                                        <div class="post-profile__info--profilecontactitem">
+                                                          <mat-icon class="post-profile__info--profilecontacticon" fontSet="material-icons-outlined">call
+                                                          </mat-icon>
+                                                          <span>{{ profileInfo[lable]['call'] }}</span>
+                                                          <mat-icon class="post-profile__info--profilecopy" fontSet="material-icons-outlined">content_copy
+                                                          </mat-icon>
+                                                        </div>
+                                                        <div class="post-profile__info--profilecontactitem">
+                                                          <mat-icon class="post-profile__info--profilecontacticon" fontSet="material-icons-outlined">
+                                                            alternate_email</mat-icon>
+                                                          <span>{{ profileInfo[lable]['alternateEmail'] }}</span>
+                                                          <mat-icon class="post-profile__info--profilecopy" fontSet="material-icons-outlined">content_copy
+                                                          </mat-icon>
+                                                        </div>
+                                                      </div>
+                                                      <ul class="post-profile__info--social post-section">
+                                                        <li *ngFor="
+                                                                          let each of profileInfo[lable]['postSection']['socialImg']
+                                                                        " class="post-profile__info--socialitem">
+                                                          <img class="post-profile__info--socialimage" [src]="each['img']" alt="twitter icon /" />
+                                                          <span>{{ each['name'] }}<span>({{ each['handle'] }})</span></span>
+                                                        </li>
+                                                        <li *ngFor="
+                                                                          let each of profileInfo[lable]['postSection']['socialstats']
+                                                                        " class="post-profile__info--socialstats">
+                                                          <span>{{ each['type'] }} - </span>
+                                                          <span class="text__dark--sm text-semibold">
+                                                            {{ each['value'] }}</span>
+                                                        </li>
+                                                        <li class="post-profile__info--socialitem">
+                                                          <a href="javascript:void(0)">
+                                                            <mat-icon>add</mat-icon>
+                                                            <span>Add Associate Channel</span>
+                                                          </a>
+                                                        </li>
+                                                      </ul>
+                                                  
+                                                      <div class="post-section">
+                                                        <div class="post-profile__info--bio">
+                                                          <span class="post-section__title">Bio</span>
+                                                          <p>{{ profileInfo[lable]['Bio'] }}</p>
+                                                        </div>
+                                                        <div class="post-profile__info--traits">
+                                                          <span class="post-section__title">Traits</span>
+                                                          <div class="custom__pill">
+                                                            <span *ngFor="let each of profileInfo[lable]['traits']" class="custom__pill--item">{{ each }}</span>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </mat-expansion-panel>
+                                                    <mat-expansion-panel>
+                                                      <mat-expansion-panel-header [collapsedHeight]="'47px'" [expandedHeight]="'47px'" class="accordian_headers">
+                                                        <mat-panel-title>CRM Details</mat-panel-title>
+                                                      </mat-expansion-panel-header>
+                                                      <div class="post-crm post-section">
+                                                        <ul>
+                                                          <li *ngFor="
+                                                                            let each of Object.keys(profileInfo[lable]['CRMDetails'])
+                                                                          " class="post-crm--item">
+                                                            <span class="post-crm--label">{{ each }} : </span>
+                                                            <span class="post-crm--value">{{
+                                                              profileInfo[lable]['CRMDetails'][each]
+                                                              }}</span>
+                                                          </li>
+                                                        </ul>
+                                                      </div>
+                                                    </mat-expansion-panel>
+                                                  </div> -->
+        
+              <div class="post-overview__ticket--row pt-10" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+                <div class="post-overview__ticket--column custom__inputwrapper" fxFlex="50%">
+                  <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Brand' |
+                    translate }}</label>
+                  <div class="d-flex-items-center g-5">
+                    <img [src]="brandImageUrl" onError="this.src='assets/social-mention/post/default_brand.svg'"
+                      class="custom__icon profile__img w-24 h-24" [ngClass]="{'small-image-width' : !defaultLayout}" />
+                    <span class="text__light" [ngClass]="{'small_font-size' : !defaultLayout}">
+                      {{ brand }}
+                    </span>
+                  </div>
+                </div>
+                <div class="post-overview__ticket--column custom__inputwrapper" *ngIf="showProfile" fxFlex="50%">
+                  <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Profile' |
+                    translate }}</label>
+                  <div class="d-flex-items-center g-5">
+                    <img [src]="pageImageUrl" onError="this.src='assets/images/agentimages/sample-image.svg'"
+                      class="custom__icon profile__img w-24 h-24" [ngClass]="{'small-image-width' : !defaultLayout}" />
+                    <span class="text__light" [ngClass]="{'small_font-size' : !defaultLayout}">{{ profileName }}</span>
+                  </div>
+                </div>
+              </div>
+        
+              <div *ngIf="ticketStatus == TicketStatusEnum.Close && postObj?.dispositionName"
+                class="post-overview__ticket--row pt-12" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+                <div class="post-overview__ticket--column custom__inputwrapper" fxFlex="50%">
+                  <div class="d-flex-align-center">
+                    <img src="assets/images/common/Ticket_dispositions.svg"
+                      class="custom__icon mr-4 profile__img border-radius-none"
+                      [ngClass]="{'small-image-width' : !defaultLayout}" />
+                    <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size' : !defaultLayout}">{{
+                      'Ticket-Disposition' | translate }} </label>
+                  </div>
+                  <span class="text__light" [ngClass]="{'small_font-size' : !defaultLayout}">
+                    {{ postObj?.dispositionName }}
+                  </span>
+                </div>
+              </div>
+        
+              <!-- <div class="post-overview__ticket--summary" *ngIf="isTicketSummarizationEnable">
+                                                    <div class="summary-head" (click)="onTicketSummaryClick()">
+                                                      <div class="d-flex-items-center">
+                                                        <img src="{{ticketSummaryLogo}}" class="w-16" matTooltip="{{ticketSummaryTooltip}}"
+                                                          matTooltipClass="custom__tooltip-normal">
+                                                        <span class="text__label--sm ml-7">Ticket Summary</span>
+                                                      </div>
+                                                      <mat-icon *ngIf="!showTicketSummary" fontSet="material-icons-outlined" class="w-18 cursor-pointer">
+                                                        chevron_right
+                                                      </mat-icon>
+                                                    </div>
+                                                    <div class="summary-body position-relative" *ngIf="showTicketSummary">
+                                                      <app-component-loader *ngIf="summarizationLoader" [postCountTotal]="2" [loaderType]="loaderTypeEnum.messageline"
+                                                        [summarizationLoader]="true">
+                                                      </app-component-loader>
+                                                      <div class="summary-body__item" *ngIf="!summarizationLoader">
+                                                        <div class="block-center">
+                                                          <div class="bg__blue summary-body__item--circle"></div>
+                                                        </div>
+                                                        <div class="summary-body__item--details">{{ticketSummarizationDetail}}</div>
+                                                      </div>
+                                                    </div>
+                                                  </div> -->
+        
+              <!-- <span class="post-section__title">Ticket Details</span>
+                                                  <form [formGroup]="ticketDetailsForm" (ngSubmit)="updateTicketDetails()">
+                                                    <div class="post-overview__ticket--row" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+                                                      <div class="post-overview__ticket--column custom__inputwrapper material__select--wrapper" fxFlex="100%">
+                                                        <mat-form-field appearance="outline" class="material__select material__select--adaptive">
+                                                          <mat-label>Booking/ref no.</mat-label>
+                                                          <input matInput formControlName="bookingNumber" autocomplete="off" />
+                                                          <mat-error *ngIf="!bookingNumber?.valid"> Character limit exceeded.
+                                                          </mat-error>
+                                                        </mat-form-field>
+                                                      </div>
+                                                    </div>
+                                                    <div class="post-overview__ticket--row" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+                                                      <div class="post-overview__ticket--column custom__inputwrapper material__select--wrapper" fxFlex="100%">
+                                                        <mat-form-field appearance="outline" class="material__select material__select--adaptive">
+                                                          <mat-label>Customer Id</mat-label>
+                                                          <input matInput formControlName="customerID" autocomplete="off" />
+                                                          <mat-error *ngIf="!customerID?.valid"> Character limit exceeded.
+                                                          </mat-error>
+                                                        </mat-form-field>
+                                                      </div>
+                                                    </div>
+                                                    <div class="post-overview__ticket--row" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+                                                      <div class="post-overview__ticket--column custom__inputwrapper material__select--wrapper" fxFlex="100%">
+                                                        <mat-form-field appearance="outline" class="material__select material__select--adaptive">
+                                                          <mat-label>Description</mat-label>
+                                                          <textarea matInput formControlName="ticketDescription"></textarea>
+                                                        </mat-form-field>
+                                                      </div>
+                                                    </div>
+                                                    <div class="post-section--footer" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px" *ngIf="showTicketUpdate">
+                                                      <button [loading]="updateTicketDetailsLoader" type="submit" [disabled]="!ticketDetailsForm.valid" mat-flat-button
+                                                        color="accent">
+                                                        Update
+                                                      </button>
+                                                    </div>
+                                                  </form> -->
+            </div>
+          </div>
+        
+          <!-- <div class="p-12 pl-17" *ngIf="customTicketFieldLoader">
+            <app-component-loader [loaderType]="loaderTypeEnum.customTicketField"></app-component-loader>
+          </div> -->
+        </div>
+        
+        <!-- Ticket Arrtibutes -->
+        <div class="new-ui__ticket-attributes">
+          <div class="new-ui__ticket-attributes--header">
+            <span class="post-section__title" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Ticket-Attributes' |
+              translate }}</span>
+            
+            <mat-icon class="new-ui__ticket-attributes--header-edit-icon material-icons-outlined" *ngIf="!editAttributesEnabled" (click)="editTicketAttributes()" [ngClass]="{'element__disable' : customTicketFieldLoader}">edit</mat-icon>
+
+            <mat-icon class="new-ui__ticket-attributes--header-close-icon" *ngIf="editAttributesEnabled" (click)="editTicketAttributes()">close</mat-icon>
+          </div>
+        
+          <div class="new-ui__ticket-attributes--body">
+            <app-component-loader *ngIf="customTicketFieldLoader" [loaderType]="loaderTypeEnum.ticketAttributesLoader"></app-component-loader>
+            <ng-template [ngIf]="ticketAuthor">
+              <form [formGroup]="TicketFieldForm" class="ticket-attributes__form-group" (ngSubmit)="onTicketSubmit()">
+                <div class="post-personal post-section">
+                  <div *ngIf="customTicketCrmColumns && !customTicketFieldLoader" class="post-section--content">
+                    <div *ngFor="let column of customTicketCrmColumns;let zIndex=index" class="custom__inputwrapper" [ngClass]="{'input-disabled' : !editAttributesEnabled}">
+                      <ng-template [ngIf]="column.value != undefined">
+                        <mat-form-field appearance="outline" class="material__select"
+                          *ngIf="column.columnDataType!=2 && column.columnDataType!=5 && column.columnDataType!=8">
+                          <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ column.dbColumnName | translate
+                            }}</mat-label>
+                          <input [ngClass]="{'small_font-size' : !defaultLayout}" matInput pattern={{column.regex}}
+                            [matTooltip]="input.value.length > 50 ? input.value : ''" #input maxlength={{column.maxlength}}
+                            [formControlName]="column.dbColumn" [value]="column.value" />
+                          <mat-hint [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="column.maxlength"
+                            align="end">{{input.value.length}} / {{column.maxlength}}
+                          </mat-hint>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="material__select" *ngIf="column.columnDataType==2">
+                          <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ column.dbColumnName }}</mat-label>
+                          <input matInput readonly [formControlName]="column.dbColumn" autocomplete="off"
+                            [matDatepicker]="picker" [value]="column.value">
+                          <mat-hint [ngClass]="{'small_font-size' : !defaultLayout}" align="end">DD/MM/YYYY</mat-hint>
+                          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                          <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                        <ng-container *ngIf="column.columnDataType==5">
+                          <mat-form-field appearance="outline" class="material__select">
+                            <mat-label
+                              [ngClass]="{'small_font-size' : !defaultLayout}">{{column?.dropDownData?.DropDownName}}</mat-label>
+                            <mat-select panelClass="attri-height" [formControlName]="column.dbColumn"
+                              (closed)="closeDropDown('Parent')">
+                              <div
+                                class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput account-profile__brandselectwithicon--brandsearchinput-dark"
+                                *ngIf="column?.dropDownData?.DropDownData?.length > 10">
+                                <mat-form-field appearance="outline" class="material__select">
+                                  <input [ngClass]="{'small_font-size' : !defaultLayout}" autocomplete="off" type="text"
+                                    placeholder="Search" matInput id="parentSearchText"
+                                    (input)="updateSearchText('Parent', $event.target.value)" class="material-icons-outlined"
+                                    (keydown)="_handleKeydown($event)" />
+                                  <button matSuffix mat-icon-button>
+                                    <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+                                      class="material-icons-outlined">search</mat-icon>
+                                  </button>
+                                </mat-form-field>
+                              </div>
+                              <mat-option *ngFor="let item of column?.dropDownData?.DropDownData;let i=index"
+                                [value]="item.Value"
+                                [ngClass]="{'d-none': !item.Value.toLowerCase().includes(searchParent), 'small_font-size' : !defaultLayout}"
+                                (click)="changeTicketFirstLevelDropdown(column?.dropDownData,i,zIndex)">{{item.Value}}</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                          <ng-container
+                            *ngIf="column?.dropDownData?.index >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData.length>0">
+                            <mat-form-field appearance="outline" class="material__select">
+                              <mat-label
+                                [ngClass]="{'small_font-size' : !defaultLayout}">{{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownName}}</mat-label>
+                              <mat-select panelClass="attri-height" [formControlName]="column.dbColumn2"
+                                [(value)]="column.value2" (closed)="closeDropDown('Child')">
+                                <div
+                                  class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput account-profile__brandselectwithicon--brandsearchinput-dark"
+                                  *ngIf="column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData?.length > 10">
+                                  <mat-form-field appearance="outline" class="material__select">
+                                    <input [ngClass]="{'small_font-size' : !defaultLayout}" autocomplete="off" type="text"
+                                      placeholder="Search" matInput id="childSearchText"
+                                      (input)="updateSearchText('Child', $event.target.value)" class="material-icons-outlined"
+                                      (keydown)="_handleKeydown($event)" />
+                                    <button matSuffix mat-icon-button>
+                                      <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+                                        class="material-icons-outlined">search</mat-icon>
+                                    </button>
+                                  </mat-form-field>
+                                </div>
+                                <mat-option
+                                  *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData;let i=index;"
+                                  [value]="item.Value" (click)="changeTicketSecondLevelDropdown(column?.dropDownData,i,zIndex)"
+                                  [ngClass]="{'d-none': !item.Value.toLowerCase().includes(searchChild), 'small_font-size' : !defaultLayout}">{{item.Value}}</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                            <!-- [(ngModel)]="column.dropDownData.DropDownData[column.dropDownData.index].selected" -->
+                            <!-- {{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.selected}} -->
+                            <ng-container
+                              *ngIf="column?.dropDownData?.indexOne >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData.length>0">
+                              <mat-form-field appearance="outline" class="material__select">
+                                <mat-label
+                                  [ngClass]="{'small_font-size' : !defaultLayout}">{{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownName}}</mat-label>
+                                <mat-select panelClass="attri-height" [formControlName]="column.dbColumn3"
+                                  [(value)]="column.value3" (closed)="closeDropDown('Sub Child')">
+                                  <div
+                                    class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput account-profile__brandselectwithicon--brandsearchinput-dark"
+                                    *ngIf="column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne].DropDownData?.length > 10">
+                                    <mat-form-field appearance="outline" class="material__select">
+                                      <input [ngClass]="{'small_font-size' : !defaultLayout}" autocomplete="off" type="text"
+                                        placeholder="Search" matInput id="subChildSearchText"
+                                        (input)="updateSearchText('Sub Child', $event.target.value)"
+                                        class="material-icons-outlined" (keydown)="_handleKeydown($event)" />
+                                      <button matSuffix mat-icon-button>
+                                        <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+                                          class="material-icons-outlined">search</mat-icon>
+                                      </button>
+                                    </mat-form-field>
+                                  </div>
+                                  <mat-option
+                                    *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne].DropDownData;let i=index;"
+                                    [value]="item.Value" (click)="changeTicketThirdLevelDropdown(column?.dropDownData,i,zIndex)"
+                                    [ngClass]="{'d-none': !item.Value.toLowerCase().includes(searchSubChild), 'small_font-size' : !defaultLayout}">{{item.Value}}</mat-option>
+                                </mat-select>
+                              </mat-form-field>
+                              <ng-container
+                                *ngIf="column?.dropDownData?.indexTwo >= 0 &&
+                                                                              column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData?.length > 0">
+                                <mat-form-field appearance="outline" class="material__select">
+                                  <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">
+                                    {{
+                                    column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]
+                                    ?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownName
+                                    }}
+                                  </mat-label>
+                                  <mat-select panelClass="attri-height" [formControlName]="column.dbColumn4"
+                                    [(value)]="column.value4" (closed)="closeDropDown('Level 4')">
+                                    <div
+                                      *ngIf="column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData?.length > 10"
+                                      class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput-dark">
+                                      <mat-form-field appearance="outline" class="material__select">
+                                        <input [ngClass]="{'small_font-size' : !defaultLayout}" autocomplete="off" type="text"
+                                          placeholder="Search" matInput id="levelFourSearchText"
+                                          (input)="updateSearchText('LevelFour', $event.target.value)"
+                                          class="material-icons-outlined" (keydown)="_handleKeydown($event)" />
+                                        <button matSuffix mat-icon-button>
+                                          <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+                                            class="material-icons-outlined">search</mat-icon>
+                                        </button>
+                                      </mat-form-field>
+                                    </div>
+                                    <mat-option
+                                      *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]
+                                                                                    ?.DropDownData[column?.dropDownData?.indexOne]
+                                                                                    ?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData; let i=index"
+                                      [value]="item.Value"
+                                      (click)="changeTicketFourthLevelDropdown(column?.dropDownData, i, zIndex)"
+                                      [ngClass]="{'d-none': !item.Value.toLowerCase().includes(searchLevelFour), 'small_font-size' : !defaultLayout}">
+                                      {{item.Value}}
+                                    </mat-option>
+                                  </mat-select>
+                                </mat-form-field>
+        
+                                <!-- Level 5 -->
+                                <ng-container
+                                  *ngIf="column?.dropDownData?.indexThree >= 0 &&
+                                                                                column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]
+                                                                                  ?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData?.length > 0">
+                                  <mat-form-field appearance="outline" class="material__select">
+                                    <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">
+                                      {{
+                                      column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]
+                                      ?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownName
+                                      }}
+                                    </mat-label>
+                                    <mat-select panelClass="attri-height" [formControlName]="column.dbColumn5"
+                                      [(value)]="column.value5" (closed)="closeDropDown('Level 5')">
+                                      <mat-option
+                                        *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]
+                                                                                      ?.DropDownData[column?.dropDownData?.indexOne]
+                                                                                      ?.DropDownData[column?.dropDownData?.indexTwo]
+                                                                                      ?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData; let i=index"
+                                        [value]="item.Value"
+                                        (click)="changeTicketFifthLevelDropdown(column?.dropDownData, i, zIndex)"
+                                        [ngClass]="{'d-none': !item.Value.toLowerCase().includes(searchLevelFive), 'small_font-size' : !defaultLayout}">
+                                        {{item.Value}}
+                                      </mat-option>
+                                    </mat-select>
+                                  </mat-form-field>
+        
+                                  <!-- Level 6 -->
+                                  <ng-container
+                                    *ngIf="column?.dropDownData?.indexFour >= 0 &&
+                                                                                  column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]
+                                                                                    ?.DropDownData[column?.dropDownData?.indexTwo]
+                                                                                    ?.DropDownData[column?.dropDownData?.indexThree]
+                                                                                    ?.DropDownData[column?.dropDownData?.indexFour]?.DropDownData?.length > 0">
+                                    <mat-form-field appearance="outline" class="material__select">
+                                      <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">
+                                        {{
+                                        column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]
+                                        ?.DropDownData[column?.dropDownData?.indexTwo]
+                                        ?.DropDownData[column?.dropDownData?.indexThree]
+                                        ?.DropDownData[column?.dropDownData?.indexFour]?.DropDownName
+                                        }}
+                                      </mat-label>
+                                      <mat-select panelClass="attri-height" [formControlName]="column.dbColumn6"
+                                        [(value)]="column.value6" (closed)="closeDropDown('Level 6')">
+                                        <mat-option
+                                          *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]
+                                                                                        ?.DropDownData[column?.dropDownData?.indexOne]
+                                                                                        ?.DropDownData[column?.dropDownData?.indexTwo]
+                                                                                        ?.DropDownData[column?.dropDownData?.indexThree]
+                                                                                        ?.DropDownData[column?.dropDownData?.indexFour]?.DropDownData; let i=index"
+                                          [value]="item.Value"
+                                          [ngClass]="{'d-none': !item.Value.toLowerCase().includes(searchLevelSix), 'small_font-size' : !defaultLayout}">
+                                          {{item.Value}}
+                                        </mat-option>
+                                      </mat-select>
+                                    </mat-form-field>
+                                  </ng-container>
+                                </ng-container>
+                              </ng-container>
+                            </ng-container>
+                          </ng-container>
+                        </ng-container>
+                        <ng-container>
+                          <mat-form-field *ngIf="column.columnDataType==8" appearance="outline" class="material__select">
+                            <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{column?.dbColumnName}}</mat-label>
+        
+                            <mat-select panelClass="attri-height" [formControlName]="column.dbColumn"
+                              [compareWith]="compareValuesParams">
+                              <div
+                                class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput account-profile__brandselectwithicon--brandsearchinput-dark"
+                                *ngIf="column?.dropDownData?.length > 10">
+                                <mat-form-field appearance="outline" class="material__select">
+                                  <input [ngClass]="{'small_font-size' : !defaultLayout}" autocomplete="off" type="text"
+                                    placeholder="Search" matInput id="parentSearchText"
+                                    (input)="updateSearchText('Parent', $event.target.value)" class="material-icons-outlined"
+                                    (keydown)="_handleKeydown($event)" />
+                                  <button matSuffix mat-icon-button>
+                                    <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+                                      class="material-icons-outlined">search</mat-icon>
+                                  </button>
+                                </mat-form-field>
+                              </div>
+                              <mat-option *ngFor="let item of column?.dropDownData;let i=index" [value]="item"
+                                [ngClass]="{'d-none': !item.value.toLowerCase().includes(searchParent), 'small_font-size' : !defaultLayout}">{{item.value}}</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </ng-container>
+                      </ng-template>
+                    </div>
+                  </div>
+                  
+                  <div class="post-section--footer" [ngClass]="{'position-unset' : !defaultLayout}">
+                    <button [loading]="updateLoader" class="btn__update-attributes"
+                      [ngClass]="{'element__disable': !editPersonalDetailsEnabled, 'small_font-size' : !defaultLayout}"
+                      type="submit" mat-flat-button color="accent">
+                      {{'Update' | translate}}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </ng-template>
+          </div>
+        </div>
+        
+        <!-- Ticket Overview Buttons -->
+        <div class="new-ui__overview-ticket--btn-container">
+          <div *ngIf="ticketHistoryData?.crmcreatereqpop && (postObj.ticketInfo.status != 3 || (postObj.ticketInfo.status == 3 &&
+                                    (postObj.ticketInfo.srid !== null && postObj.ticketInfo.srid !== '') || (postObj.ticketInfo?.leadID !== null && postObj.ticketInfo?.leadID !== '')))" (click)="!clickHoverMenuTriggerFlag?getRequestPopup():''"
+            [matMenuTriggerFor]="clickHoverMenuTriggerFlag?clickHoverMenu:null" #clickHoverMenuTrigger="matMenuTrigger">
+                  <button mat-flat-button color="accent" class="btn__push-crm">
+                            <img src="assets/images/CRM_Icon.svg" alt=""
+                              *ngIf="(postObj.ticketInfo.srid !== null &&  postObj.ticketInfo?.srid !== '' ) || (postObj.ticketInfo?.leadID !== null && postObj.ticketInfo?.leadID !== '')"
+                              class="w-14"> {{'Push-To-CRM' | translate}}
+                              <mat-spinner color="accent" class="ml-2" *ngIf="crmGetAuthorTicketDetails" [diameter]="15"></mat-spinner>
+                  </button>
+            </div>
+            <mat-menu #clickHoverMenu="matMenu" yPosition="below">
+              <ng-container *ngIf="clickHoverMenuTriggerFlag">
+                <button mat-menu-item class="d-flex-items-center"
+                  *ngIf="(ticketHistoryData.currentticketstatus == 'Closed' && !postObj?.ticketInfo?.srid) ? false : true"
+                  (click)="(postObj.ticketInfo.srid !== null && postObj.ticketInfo.srid !== '' && postObj?.ticketInfo?.srid) ? CaseLeadFormOpenView('Case'):CaseLeadFormOpen('Case')">
+                  <mat-icon class="colored__locobuzz mr-0" fontSet="material-icons-outlined">work_outline</mat-icon>
+                  <span class="ml-7">{{ 'Case' | translate }}</span>
+                  <mat-icon
+                    *ngIf="postObj?.ticketInfo.srid !== null && postObj?.ticketInfo.srid !== '' && postObj?.ticketInfo?.srid"
+                    class="post__foot--icon s-22 mr-3 colored__green--dark ml-7 icon" fontSet="material-icons-outlined"
+                    aria-hidden="false" aria-label="done">
+                    check_circle_outline</mat-icon>
+                </button>
+                <button mat-menu-item class="d-flex-items-center"
+                  *ngIf="(ticketHistoryData.currentticketstatus == 'Closed' && !postObj?.ticketInfo?.leadID) ? false:true"
+                  (click)="(postObj.ticketInfo?.leadID !== null && postObj.ticketInfo?.leadID !== '' && postObj?.ticketInfo?.leadID) ?  CaseLeadFormOpenView('Lead') :CaseLeadFormOpen('Lead')">
+                  <img src="assets/images/channel-logos/Lead_Icon.svg" alt="">
+                  <span class="ml-5">{{ 'Lead' | translate }}</span>
+                  <mat-icon
+                    *ngIf="postObj?.ticketInfo.srid !== null && postObj?.ticketInfo.srid !== '' && postObj?.ticketInfo?.leadID"
+                    class="post__foot--icon mr-3 colored__green--dark s-22 ml-7 icon" fontSet="material-icons-outlined"
+                    aria-hidden="false" aria-label="done">
+                    check_circle_outline</mat-icon>
+                </button>
+              </ng-container>
+            </mat-menu>
+
+          <div *ngIf="(postObj.ticketInfo.status != 3 || (postObj.ticketInfo.status == 3 &&
+                    (postObj.ticketInfo.srid !== null && postObj.ticketInfo.srid !== '') ||
+                    (postObj.ticketInfo?.leadID !== null && postObj.ticketInfo?.leadID !== ''))) && typeOfCrm==102"
+            [matTooltip]="'Sync-data-from-CRM' | translate" matTooltipPosition="above" matTooltipClass="custom__tooltip-normal"
+            class="post__pill workflow-pill btn__crm-sync" (click)="syncSFDCData()">
+            <img src="/assets/social-mention/post/Sync_icon.svg" class="w-20" [class.rotate]="rotate">
+            <p>{{'sync-data' | translate}}</p>
+          </div>
+        
+          <ng-container *ngIf="!sfdcTicketView">
+            <button mat-stroked-button class="materialbtn__md blank-hoverBtn block-center" (click)="clearnote();"
+              [matMenuTriggerFor]="addnote" #menuTrigger="matMenuTrigger" *ngIf="!noteSpinner"
+              [ngClass]="{ element__disable: isReadOnly, 'small_font-size h-25 px-5' : !defaultLayout }">
+              <mat-icon class="btn__icon d-flex-items-center justify-content__center"
+                [ngClass]="{'small-icon-font-size mr-0' : !defaultLayout}">add</mat-icon> {{ 'Add-Note' | translate }}
+            </button>
+          </ng-container>
+          <button mat-stroked-button class="materialbtn__md blank-hoverBtn account-profile__spinner--locobuzz h-36 w-113"
+            *ngIf="noteSpinner">
+            <mat-spinner [diameter]="25"></mat-spinner>
+          </button>
+          <mat-menu #addnote="matMenu" class="note-elem__dropdown p-6">
+            <div class="note-elem" [ngClass]="{'p-0' : !defaultLayout}">
+              <div class="note-elem__input"
+                [ngClass]="{'pt-7 add-note-height__default-layout' : defaultLayout, 'add-note-height__ai-layout' : !defaultLayout}"
+                (click)="$event.stopPropagation()">
+                <mat-form-field appearance="outline" class="material__select">
+                  <mat-label class="text-capitalize">{{ 'Add-Note' | translate }}</mat-label>
+                  <textarea matInput #noteTextArea [(ngModel)]="note" (input)="noteTextChange(noteTextArea, 'note')"
+                    class="resize addnote__textarea" [ngClass]="{'pt-0 small_font-size' : !defaultLayout}"></textarea>
+                </mat-form-field>
+              </div>
+              <div [ngClass]="{ element__disable: ssreSimulationRight }" *ngIf="mediaSelectedAsync$ | async as MediaSelected"
+                class="textarea-featured__foot--item--media note-elem__attach mt-15" [ngClass]="{'pt-10' : defaultLayout}">
+                <ng-template ngFor let-ugc [ngForOf]="MediaSelected">
+                  <span *ngIf="ugc.mediaType == 2" matTooltip="{{ugc?.displayFileName}}"
+                    class="textarea-featured__foot--item--icon">
+                    <img class="media__img--icon" [src]="ugc.mediaPath" alt="" />
+                    <span class="item__overlay">
+                      <mat-icon class="delete__img--icon"
+                        (click)="$event.stopPropagation();$event.preventDefault();removeSelectedNoteMedia(ugc)">delete_outline</mat-icon>
+                    </span>
+                  </span>
+                  <span *ngIf="ugc.mediaType == 3" matTooltip="{{ugc?.displayFileName}}"
+                    class="textarea-featured__foot--item--icon">
+                    <video class="media__img--icon">
+                      <source [src]="ugc.mediaPath" data-autoplay="false" type="video/m4v" />
+                      <source [src]="ugc.mediaPath" data-autoplay="false" type="video/mp4" />
+                      <source [src]="ugc.mediaPath" data-autoplay="false" type="video/mpeg" />
+                      <source [src]="ugc.mediaPath" data-autoplay="false" type="video/x-msvideo" />
+                      <source [src]="ugc.mediaPath" data-autoplay="false" type="video/x-ms-wmv" />
+                      <source [src]="ugc.mediaPath" data-autoplay="false" type="video/avi" />
+                    </video>
+                    <span class="item__overlay--video">
+                      <mat-icon class="delete__img--icon"
+                        (click)="$event.stopPropagation();$event.preventDefault();removeSelectedNoteMedia(ugc)">delete_outline</mat-icon>
+                      <mat-icon class="play__img--icon">play_circle_outline</mat-icon>
+                    </span>
+                  </span>
+                  <span matTooltip="{{ugc?.displayFileName}}"
+                    *ngIf="ugc.mediaType == mediaTypeEnum.PDF || ugc.mediaType == mediaTypeEnum.DOC || ugc.mediaType == mediaTypeEnum.EXCEL"
+                    class="textarea-featured__foot--item--icon">
+                    <img src="assets/images/account/pdf__icon.svg" *ngIf="ugc.mediaType == mediaTypeEnum.PDF"
+                      class="media__img--icon">
+                    <img src="assets/images/account/doc__icon.svg" *ngIf="ugc.mediaType == mediaTypeEnum.DOC"
+                      class="media__img--icon">
+                    <img src="assets/images/account/excl__icon.svg" *ngIf="ugc.mediaType == mediaTypeEnum.EXCEL"
+                      class="media__img--icon">
+                    <span class="item__overlay">
+                      <mat-icon class="delete__img--icon"
+                        (click)="$event.stopPropagation();$event.preventDefault();removeSelectedNoteMedia(ugc)">delete_outline</mat-icon>
+                    </span>
+                  </span>
+                </ng-template>
+                <span class="textarea-featured__foot--item--icon block-center cursor-pointer"
+                  *ngIf="selectedNoteMedia.length > 0"
+                  (click)="$event.stopPropagation();$event.preventDefault();openMediaDialog();">
+                  <mat-icon fontSet="material-icons-outlined" class="colored__locobuzz">add</mat-icon>
+                </span>
+              </div>
+              <div class="textarea-featured__foot--item" [ngClass]="{'mt-10' : defaultLayout}"
+                *ngIf="selectedNoteMedia.length <= 0">
+                <a [ngClass]="{ element__disable: ssreSimulationRight }" class="textarea-featured__foot--icon text__regular--sm"
+                  href="javascript:void(0)" (click)="$event.stopPropagation();$event.preventDefault();openMediaDialog();">
+                  <mat-icon fontSet="material-icons-outlined custom__icon--md">insert_photo</mat-icon>
+                  <span>{{'Attach-Media' | translate}}</span>
+                  <span *ngIf="selectedNoteMedia.length > 0">({{ selectedNoteMedia.length }})</span>
+                </a>
+              </div>
+              <div class="note-elem__actions" [ngClass]="{'mb-0' : !defaultLayout}" (click)="$event.stopPropagation()">
+                <button mat-button class="ml-auto colored__blue blank-hoverBtn mr-7" (click)="clearInputs(); closeMenu()"
+                  [ngClass]="{'h-25 small_font-size px-5' : !defaultLayout}">{{ 'Cancel' | translate }}</button>
+                <button mat-button (click)="addNote(note);$event.stopPropagation();$event.preventDefault()"
+                  class="colored__blue blank-hoverBtn" [ngClass]="{'h-25 small_font-size px-5' : !defaultLayout}">
+                  {{ 'Save' | translate }}
+                </button>
+              </div>
+            </div>
+          </mat-menu>
+        </div>
+      </div>
+
+      <!-- <div class="post-overview__ticket--row mt-20" fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px">
+        <div class="post-overview__ticket--column custom__inputwrapper" fxFlex="100%">
+          <label class="text__label custom__inputlabel text-capitalize">Page location</label>
+          <div class="d-flex-align-center">
+            <mat-icon class="material-icons-outlined colored__locobuzz">fmd_good</mat-icon>
+            <span class="text__label">SBI Chakala Branch</span>
+            <div class="text__light ml-26">Andheri kurla road, Chakala, Mumbai, Maharastra: 400009</div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+
+    <!-- Profile Details -->
+    <ng-container *ngIf="lable === 'Profile' && defaultLayout">
+      <app-component-loader *ngIf="postProfileLoading()" [loaderType]="loaderTypeEnum.profile"></app-component-loader>
+      <app-post-userprofile [author]="author" *ngIf="
+          author &&
+          postObj.ticketInfo &&
+          author.channelGroup &&
+          postObj.ticketInfo.ticketID && !postProfileLoading()
+        " [upliftAndSentimentScore]="upliftAndSentimentScore" [ticketSumamry]="postObj.ticketInfo"></app-post-userprofile>
+
+        <div class="p-12 pl-17" *ngIf="(postProfileLoading())">
+          <app-component-loader [loaderType]="loaderTypeEnum.customTicketField"></app-component-loader>
+        </div>
+        <ng-template [ngIf]="author && author.channelGroup">
+          <form [formGroup]="personalDetailForm" (ngSubmit)="onSubmit()" class="form-height">
+            <div *ngIf="!postProfileLoading()" class="post-personal post-section">
+              <div *ngIf="customCrmColumns" class="post-section--content">
+                <div *ngFor="let column of customCrmColumns;let zIndex=index" class="custom__inputwrapper">
+                  <ng-template [ngIf]="column.value != undefined">
+                    <mat-form-field appearance="outline" class="material__select"
+                      *ngIf="column.columnDataType!=2 && column.columnDataType!=5">
+                      <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ column.dbColumnName | translate
+                        }}</mat-label>
+                      <input [ngClass]="{'small_font-size' : !defaultLayout}" matInput pattern={{column.regex}} #input
+                        maxlength={{column.maxlength}} [formControlName]="column.dbColumn" [value]="column.value" />
+                      <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="sfdcTicketView"
+                        (cdkCopyToClipboardCopied)="copied('Mention id')" [cdkCopyToClipboard]="input.value"
+                        class="iframe-copy cursor-pointer" matSuffix>content_copy</mat-icon>
+        
+                      <button matSuffix mat-icon-button type="button" class="mt-2"
+                        *ngIf="column?.isMaskingEnabled && permissions?.isMaskingViewOrUpdate">
+                        <img class="post__foot--icon mr-5" (click)="getUnmaskedValue(column);"
+                          [matTooltip]="'Hide ' + column.dbColumnName" matTooltipClass="custom__tooltip-normal"
+                          *ngIf="column?.isShow" src='/assets/images/Masking_Gray.svg' />
+                        <img class="w-20 h-20 mt-3" (click)="getUnmaskedValue(column);"
+                          [matTooltip]="'View ' + column.dbColumnName" matTooltipClass="custom__tooltip-normal"
+                          *ngIf="!column?.isShow" src='/assets/images/Masking_Blue.svg' />
+                      </button>
+        
+                      <mat-hint *ngIf="column.maxlength" align="end">{{input.value.length}} / {{column.maxlength}}
+                      </mat-hint>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="material__select" *ngIf="column.columnDataType==2">
+                      <mat-label>{{ column.dbColumnName }}</mat-label>
+                      <input matInput [formControlName]="column.dbColumn" autocomplete="off" [matDatepicker]="picker"
+                        [value]="column.value">
+                      <mat-hint align="end">DD/MM/YYYY</mat-hint>
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                    <ng-container *ngIf="column.columnDataType==5">
+                      <mat-form-field appearance="outline" class="material__select">
+                        <mat-label>{{column?.dropDownData?.DropDownName}}</mat-label>
+                        <mat-select panelClass="attri-height" [formControlName]="column.dbColumn">
+                          <mat-option *ngFor="let item of column?.dropDownData?.DropDownData;let i=index" [value]="item.Value"
+                            (click)="changeFirstLevelDropdown(column?.dropDownData,i,zIndex)">{{item.Value}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <ng-container
+                        *ngIf="column?.dropDownData?.index >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData.length>0">
+                        <mat-form-field appearance="outline" class="material__select">
+                          <mat-label>{{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownName}}</mat-label>
+                          <mat-select panelClass="attri-height" [formControlName]="column.dbColumn2" [(value)]="column.value2">
+                            <mat-option
+                              *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData;let i=index;"
+                              [value]="item.Value"
+                              (click)="changeSecondLevelDropdown(column?.dropDownData,i,zIndex)">{{item.Value}}</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <ng-container
+                          *ngIf="column?.dropDownData?.indexOne >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData.length>0">
+                          <mat-form-field appearance="outline" class="material__select">
+                            <mat-label>{{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownName}}</mat-label>
+                            <mat-select panelClass="attri-height" [formControlName]="column.dbColumn3"
+                              [(value)]="column.value3">
+                              <mat-option
+                                *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne].DropDownData;let i=index;"
+                                [value]="item.Value"
+                                (click)="changeThirdLevelDropdown(column?.dropDownData,i,zIndex)">{{item.Value}}</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                          <!-- Level 4 -->
+                          <ng-container
+                            *ngIf="column?.dropDownData?.indexTwo >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData?.length">
+                            <mat-form-field appearance="outline" class="material__select">
+                              <mat-label>{{
+                                column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownName
+                                }}</mat-label>
+                              <mat-select [formControlName]="column.dbColumn4" [(value)]="column.value4">
+                                <mat-option
+                                  *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData; let i=index"
+                                  [value]="item.Value" (click)="changeFourthLevelDropdown(column?.dropDownData, i, zIndex)">
+                                  {{ item.Value }}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+        
+                            <!-- Level 5 -->
+                            <ng-container
+                              *ngIf="column?.dropDownData?.indexThree >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData?.length">
+                              <mat-form-field appearance="outline" class="material__select">
+                                <mat-label>{{
+                                  column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownName
+                                  }}</mat-label>
+                                <mat-select [formControlName]="column.dbColumn5" [(value)]="column.value5">
+                                  <mat-option
+                                    *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData; let i=index"
+                                    [value]="item.Value" (click)="changeFifthLevelDropdown(column?.dropDownData, i, zIndex)">
+                                    {{ item.Value }}
+                                  </mat-option>
+                                </mat-select>
+                              </mat-form-field>
+        
+                              <!-- Level 6 -->
+                              <ng-container
+                                *ngIf="column?.dropDownData?.indexFour >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData[column?.dropDownData?.indexFour]?.DropDownData?.length">
+                                <mat-form-field appearance="outline" class="material__select">
+                                  <mat-label>{{
+                                    column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData[column?.dropDownData?.indexFour]?.DropDownName
+                                    }}</mat-label>
+                                  <mat-select [formControlName]="column.dbColumn6" [(value)]="column.value6">
+                                    <mat-option
+                                      *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData[column?.dropDownData?.indexFour]?.DropDownData; let i=index"
+                                      [value]="item.Value">
+                                      {{ item.Value }}
+                                    </mat-option>
+                                  </mat-select>
+                                </mat-form-field>
+                              </ng-container>
+                            </ng-container>
+                          </ng-container>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </ng-template>
+                </div>
+              </div>
+              <div class="post-section--footer">
+                <button [loading]="updateLoader" [ngClass]="{'element__disable': !editPersonalDetailsEnabled}" type="submit"
+                  mat-flat-button color="accent">
+                  {{"Update" | translate}}
+                </button>
+              </div>
+            </div>
+          </form>
+        </ng-template>
+    </ng-container>
+
+    <ng-container *ngIf="lable === 'Profile' && !defaultLayout">
+      <div class="new-ui__post-profile--container">
+        <app-component-loader *ngIf="postProfileLoading()" [loaderType]="loaderTypeEnum.profile"></app-component-loader>
+        <app-post-userprofile [author]="author" *ngIf="
+                      author &&
+                      postObj.ticketInfo &&
+                      author.channelGroup &&
+                      postObj.ticketInfo.ticketID && !postProfileLoading()
+                    " [upliftAndSentimentScore]="upliftAndSentimentScore"
+          [ticketSumamry]="postObj.ticketInfo"></app-post-userprofile>
+        
+        <div class="post-profile__attributes--container">
+          <div class="post-profile__attributes--header">
+            <span>{{'Personal-Details' | translate }}</span>
+            <mat-icon class="material-icons-outlined post-profile__attributes--edit-icon" (click)="editPersonalDetails()" *ngIf="!personalDetailsEdit">edit</mat-icon>
+            <mat-icon *ngIf="personalDetailsEdit" (click)="editPersonalDetails()" class="post-profile__attributes--close-icon">close</mat-icon>
+          </div>
+          <app-component-loader *ngIf="(postProfileLoading())"
+            [loaderType]="loaderTypeEnum.ticketAttributesLoader"></app-component-loader>
+          <ng-template [ngIf]="author && author.channelGroup">
+            <form [formGroup]="personalDetailForm" (ngSubmit)="onSubmit()" class="form-height">
+              <div *ngIf="!postProfileLoading()" class="post-personal post-section">
+                <div *ngIf="customCrmColumns" class="post-section--content">
+                  <div *ngFor="let column of customCrmColumns;let zIndex=index" class="custom__inputwrapper" [ngClass]="{'input-disabled' : !personalDetailsEdit}">
+                    <ng-template [ngIf]="column.value != undefined">
+                      <mat-form-field appearance="outline" class="material__select"
+                        *ngIf="column.columnDataType!=2 && column.columnDataType!=5">
+                        <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ column.dbColumnName | translate
+                          }}</mat-label>
+                        <input [ngClass]="{'small_font-size' : !defaultLayout}" matInput pattern={{column.regex}} #input
+                          maxlength={{column.maxlength}} [formControlName]="column.dbColumn" [value]="column.value" />
+                        <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="sfdcTicketView"
+                          (cdkCopyToClipboardCopied)="copied('Mention id')" [cdkCopyToClipboard]="input.value"
+                          class="iframe-copy cursor-pointer" matSuffix>content_copy</mat-icon>
+          
+                        <button matSuffix mat-icon-button type="button" class="mt-2"
+                          *ngIf="column?.isMaskingEnabled && permissions?.isMaskingViewOrUpdate">
+                          <img class="post__foot--icon mr-5" (click)="getUnmaskedValue(column);"
+                            [matTooltip]="'Hide ' + column.dbColumnName" matTooltipClass="custom__tooltip-normal"
+                            *ngIf="column?.isShow" src='/assets/images/Masking_Gray.svg' />
+                          <img class="w-20 h-20 mt-3" (click)="getUnmaskedValue(column);"
+                            [matTooltip]="'View ' + column.dbColumnName" matTooltipClass="custom__tooltip-normal"
+                            *ngIf="!column?.isShow" src='/assets/images/Masking_Blue.svg' />
+                        </button>
+          
+                        <mat-hint *ngIf="column.maxlength" align="end">{{input.value.length}} / {{column.maxlength}}
+                        </mat-hint>
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="material__select" *ngIf="column.columnDataType==2">
+                        <mat-label>{{ column.dbColumnName }}</mat-label>
+                        <input matInput [formControlName]="column.dbColumn" autocomplete="off" [matDatepicker]="picker"
+                          [value]="column.value">
+                        <mat-hint align="end">DD/MM/YYYY</mat-hint>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                      </mat-form-field>
+                      <ng-container *ngIf="column.columnDataType==5">
+                        <mat-form-field appearance="outline" class="material__select">
+                          <mat-label>{{column?.dropDownData?.DropDownName}}</mat-label>
+                          <mat-select panelClass="attri-height" [formControlName]="column.dbColumn">
+                            <mat-option *ngFor="let item of column?.dropDownData?.DropDownData;let i=index" [value]="item.Value"
+                              (click)="changeFirstLevelDropdown(column?.dropDownData,i,zIndex)">{{item.Value}}</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <ng-container
+                          *ngIf="column?.dropDownData?.index >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData.length>0">
+                          <mat-form-field appearance="outline" class="material__select">
+                            <mat-label>{{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownName}}</mat-label>
+                            <mat-select panelClass="attri-height" [formControlName]="column.dbColumn2" [(value)]="column.value2">
+                              <mat-option
+                                *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData;let i=index;"
+                                [value]="item.Value"
+                                (click)="changeSecondLevelDropdown(column?.dropDownData,i,zIndex)">{{item.Value}}</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                          <ng-container
+                            *ngIf="column?.dropDownData?.indexOne >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData.length>0">
+                            <mat-form-field appearance="outline" class="material__select">
+                              <mat-label>{{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownName}}</mat-label>
+                              <mat-select panelClass="attri-height" [formControlName]="column.dbColumn3"
+                                [(value)]="column.value3">
+                                <mat-option
+                                  *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne].DropDownData;let i=index;"
+                                  [value]="item.Value"
+                                  (click)="changeThirdLevelDropdown(column?.dropDownData,i,zIndex)">{{item.Value}}</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                            <!-- Level 4 -->
+                            <ng-container
+                              *ngIf="column?.dropDownData?.indexTwo >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData?.length">
+                              <mat-form-field appearance="outline" class="material__select">
+                                <mat-label>{{
+                                  column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownName
+                                  }}</mat-label>
+                                <mat-select [formControlName]="column.dbColumn4" [(value)]="column.value4">
+                                  <mat-option
+                                    *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData; let i=index"
+                                    [value]="item.Value" (click)="changeFourthLevelDropdown(column?.dropDownData, i, zIndex)">
+                                    {{ item.Value }}
+                                  </mat-option>
+                                </mat-select>
+                              </mat-form-field>
+          
+                              <!-- Level 5 -->
+                              <ng-container
+                                *ngIf="column?.dropDownData?.indexThree >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData?.length">
+                                <mat-form-field appearance="outline" class="material__select">
+                                  <mat-label>{{
+                                    column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownName
+                                    }}</mat-label>
+                                  <mat-select [formControlName]="column.dbColumn5" [(value)]="column.value5">
+                                    <mat-option
+                                      *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData; let i=index"
+                                      [value]="item.Value" (click)="changeFifthLevelDropdown(column?.dropDownData, i, zIndex)">
+                                      {{ item.Value }}
+                                    </mat-option>
+                                  </mat-select>
+                                </mat-form-field>
+          
+                                <!-- Level 6 -->
+                                <ng-container
+                                  *ngIf="column?.dropDownData?.indexFour >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData[column?.dropDownData?.indexFour]?.DropDownData?.length">
+                                  <mat-form-field appearance="outline" class="material__select">
+                                    <mat-label>{{
+                                      column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData[column?.dropDownData?.indexFour]?.DropDownName
+                                      }}</mat-label>
+                                    <mat-select [formControlName]="column.dbColumn6" [(value)]="column.value6">
+                                      <mat-option
+                                        *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData[column?.dropDownData?.indexFour]?.DropDownData; let i=index"
+                                        [value]="item.Value">
+                                        {{ item.Value }}
+                                      </mat-option>
+                                    </mat-select>
+                                  </mat-form-field>
+                                </ng-container>
+                              </ng-container>
+                            </ng-container>
+          
+                          </ng-container>
+                        </ng-container>
+                      </ng-container>
+                    </ng-template>
+                  </div>
+                </div>
+                <div class="post-section--footer">
+                  <button [loading]="updateLoader" [ngClass]="{'element__disable': !editPersonalDetailsEnabled}" type="submit"
+                    mat-flat-button color="accent" class="btn__update-attributes small_font-size">
+                    {{"Update" | translate}}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </ng-template>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Personal Details -->
+      <div class="p-12 pl-17"
+        *ngIf="(postProfileLoading() && lable === 'Personal Details')">
+        <app-component-loader [loaderType]="loaderTypeEnum.customTicketField"></app-component-loader>
+      </div>
+    <ng-template [ngIf]="author && author.channelGroup">
+      <form [formGroup]="personalDetailForm" (ngSubmit)="onSubmit()" class="form-height">
+        <div *ngIf="lable === 'Personal Details' && !postProfileLoading()" class="post-personal post-section">
+          <div *ngIf="customCrmColumns" class="post-section--content">
+            <div *ngFor="let column of customCrmColumns;let zIndex=index" class="custom__inputwrapper">
+              <ng-template [ngIf]="column.value != undefined">
+                <mat-form-field appearance="outline" class="material__select" *ngIf="column.columnDataType!=2 && column.columnDataType!=5">
+                  <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ column.dbColumnName | translate }}</mat-label>
+                  <input [ngClass]="{'small_font-size' : !defaultLayout}" matInput pattern={{column.regex}} #input maxlength={{column.maxlength}} [formControlName]="column.dbColumn"
+                    [value]="column.value" />
+                  <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="sfdcTicketView" (cdkCopyToClipboardCopied)="copied('Mention id')"
+              [cdkCopyToClipboard]="input.value" class="iframe-copy cursor-pointer" matSuffix>content_copy</mat-icon>
+
+                  <button matSuffix mat-icon-button type="button" class="mt-2" *ngIf="column?.isMaskingEnabled && permissions?.isMaskingViewOrUpdate">
+                    <!-- <mat-icon (click)="getUnmaskedValue(column);" [matTooltip]="column?.isShow ? 'Hide ' + column.dbColumnName : 'View ' + column.dbColumnName"
+                      matTooltipClass="custom__tooltip-normal">{{column?.isShow ? 'visibility_off' : 'visibility'}}
+                    </mat-icon> -->
+                    <img class="post__foot--icon mr-5" (click)="getUnmaskedValue(column);" [matTooltip]="'Hide ' + column.dbColumnName"
+                      matTooltipClass="custom__tooltip-normal" *ngIf="column?.isShow" src='/assets/images/Masking_Gray.svg' />
+                    <img class="w-20 h-20 mt-3" (click)="getUnmaskedValue(column);" [matTooltip]="'View ' + column.dbColumnName"
+                      matTooltipClass="custom__tooltip-normal" *ngIf="!column?.isShow" src='/assets/images/Masking_Blue.svg' />
+                  </button>
+
+                  <mat-hint *ngIf="column.maxlength" align="end">{{input.value.length}} / {{column.maxlength}}
+                  </mat-hint>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="material__select" *ngIf="column.columnDataType==2">
+                  <mat-label>{{ column.dbColumnName }}</mat-label>
+                  <input matInput [formControlName]="column.dbColumn" autocomplete="off" [matDatepicker]="picker" [value]="column.value">
+                  <mat-hint align="end">DD/MM/YYYY</mat-hint>
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <ng-container  *ngIf="column.columnDataType==5">
+                  <mat-form-field appearance="outline" class="material__select" >
+                    <mat-label>{{column?.dropDownData?.DropDownName}}</mat-label>
+                    <mat-select panelClass="attri-height" [formControlName]="column.dbColumn">
+                      <mat-option *ngFor="let item of column?.dropDownData?.DropDownData;let i=index" [value]="item.Value"
+                        (click)="changeFirstLevelDropdown(column?.dropDownData,i,zIndex)">{{item.Value}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <ng-container *ngIf="column?.dropDownData?.index >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData.length>0">
+                      <mat-form-field appearance="outline" class="material__select">
+                        <mat-label>{{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownName}}</mat-label>
+                        <mat-select panelClass="attri-height" [formControlName]="column.dbColumn2" [(value)]="column.value2">
+                          <mat-option *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData;let i=index;"
+                            [value]="item.Value"  (click)="changeSecondLevelDropdown(column?.dropDownData,i,zIndex)">{{item.Value}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <!-- [(ngModel)]="column.dropDownData.DropDownData[column.dropDownData.index].selected" -->
+                      <!-- {{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.selected}} -->
+                      <ng-container *ngIf="column?.dropDownData?.indexOne >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData.length>0">
+                        <mat-form-field appearance="outline" class="material__select">
+                          <mat-label>{{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownName}}</mat-label>
+                          <mat-select panelClass="attri-height" [formControlName]="column.dbColumn3" [(value)]="column.value3">
+                            <mat-option *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne].DropDownData;let i=index;"
+                              [value]="item.Value" (click)="changeThirdLevelDropdown(column?.dropDownData,i,zIndex)">{{item.Value}}</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <!-- Level 4 -->
+                        <ng-container
+                          *ngIf="column?.dropDownData?.indexTwo >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData?.length">
+                          <mat-form-field appearance="outline" class="material__select">
+                            <mat-label>{{
+                              column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownName
+                              }}</mat-label>
+                            <mat-select [formControlName]="column.dbColumn4" [(value)]="column.value4">
+                              <mat-option
+                                *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData; let i=index"
+                                [value]="item.Value" (click)="changeFourthLevelDropdown(column?.dropDownData, i, zIndex)">
+                                {{ item.Value }}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        
+                          <!-- Level 5 -->
+                          <ng-container
+                            *ngIf="column?.dropDownData?.indexThree >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData?.length">
+                            <mat-form-field appearance="outline" class="material__select">
+                              <mat-label>{{
+                                column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownName
+                                }}</mat-label>
+                              <mat-select [formControlName]="column.dbColumn5" [(value)]="column.value5">
+                                <mat-option
+                                  *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData; let i=index"
+                                  [value]="item.Value" (click)="changeFifthLevelDropdown(column?.dropDownData, i, zIndex)">
+                                  {{ item.Value }}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                        
+                            <!-- Level 6 -->
+                            <ng-container
+                              *ngIf="column?.dropDownData?.indexFour >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData[column?.dropDownData?.indexFour]?.DropDownData?.length">
+                              <mat-form-field appearance="outline" class="material__select">
+                                <mat-label>{{
+                                  column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData[column?.dropDownData?.indexFour]?.DropDownName
+                                  }}</mat-label>
+                                <mat-select [formControlName]="column.dbColumn6" [(value)]="column.value6">
+                                  <mat-option
+                                    *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData[column?.dropDownData?.indexFour]?.DropDownData; let i=index"
+                                    [value]="item.Value">
+                                    {{ item.Value }}
+                                  </mat-option>
+                                </mat-select>
+                              </mat-form-field>
+                            </ng-container>
+                          </ng-container>
+                        </ng-container>
+
+                      </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-template>
+            </div>
+          </div>
+          <div class="post-section--footer">
+            <button [loading]="updateLoader" [ngClass]="{'element__disable': !editPersonalDetailsEnabled}" type="submit"
+              mat-flat-button color="accent">
+              {{"Update" | translate}}
+            </button>
+            <!-- <button [loading]="updateLoader" [ngClass]="{'element__disable': !editPersonalDetailsEnabled}" type="submit"
+              mat-flat-button color="accent">
+              Save & Sync
+            </button>
+            <button mat-stroked-button color="accent" class="ml-auto">
+              Cancel
+            </button> -->
+          </div>
+        </div>
+      </form>
+    </ng-template>
+
+    <!-- Timeline -->
+    <ng-container *ngIf="lable === 'Timeline'">
+      <app-component-loader [postCountTotal]="8" [loaderType]="loaderTypeEnum.timeLine" *ngIf="postTimelineLoading"></app-component-loader>
+      <div *ngIf="ticketTimeline && ticketTimeline.ticketIds && !postTimelineLoading" class="post-section">
+        <div class="post-overview__ticket--column custom__inputwrapper sticky-top" style="background: unset;">
+          <label class="text__label custom__inputlabel" [ngClass]="{'small_font-size' : !defaultLayout}">{{"Ticket-ID" | translate}}</label>
+          <mat-form-field color="accent" *ngIf="ticketTimeline" appearance="outline" class="material__select">
+            <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ this.ticketIdLabel }}</mat-label>
+            <mat-select [ngClass]="{'small_font-size' : !defaultLayout}" (selectionChange)="CallTicketTimeLine($event.value)">
+              <mat-option [ngClass]="{'small_font-size' : !defaultLayout}" *ngFor="let item of ticketTimeline.ticketIds" [value]="item">{{ item }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <ul class="post-timeline">
+          <ng-template ngFor let-item [ngForOf]="ticketTimeline.communicationLogs">
+            <app-post-timeline [item]="item"></app-post-timeline>
+          </ng-template>
+        </ul>
+      </div>
+    </ng-container>
+
+    <!-- Ticket Details -->
+    <ng-container *ngIf = "defaultLayout">
+     <div class="p-12 pl-17" *ngIf="(customTicketFieldLoader && lable === 'Ticket Details')">
+        <app-component-loader
+          [loaderType]="loaderTypeEnum.customTicketField"></app-component-loader>
+     </div>
+ 
+
+    <ng-template [ngIf]="ticketAuthor">
+      <form [formGroup]="TicketFieldForm" (ngSubmit)="onTicketSubmit()">
+        <div *ngIf="lable === 'Ticket Details'" class="post-personal post-section">
+          <div *ngIf="customTicketCrmColumns && !customTicketFieldLoader" class="post-section--content">
+            <div *ngFor="let column of customTicketCrmColumns;let zIndex=index" class="custom__inputwrapper mr-4">
+              <ng-template [ngIf]="column.value != undefined">
+                <mat-form-field appearance="outline" class="material__select"
+                  *ngIf="column.columnDataType!=2 && column.columnDataType!=5 && column.columnDataType!=8">
+                  <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ column.dbColumnName | translate }}</mat-label>
+                  <input [ngClass]="{'small_font-size' : !defaultLayout}" matInput pattern={{column.regex}} [matTooltip] = "input.value.length > 50 ? input.value : ''" #input maxlength={{column.maxlength}}
+                    [formControlName]="column.dbColumn" [value]="column.value" />
+                  <mat-hint [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="column.maxlength" align="end">{{input.value.length}} / {{column.maxlength}}
+                  </mat-hint>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="material__select" *ngIf="column.columnDataType==2">
+                  <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ column.dbColumnName }}</mat-label>
+                  <input matInput readonly [formControlName]="column.dbColumn" autocomplete="off" [matDatepicker]="picker"
+                    [value]="column.value">
+                  <mat-hint [ngClass]="{'small_font-size' : !defaultLayout}" align="end">DD/MM/YYYY</mat-hint>
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <ng-container *ngIf="column.columnDataType==5">
+                  <mat-form-field appearance="outline" class="material__select">
+                    <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{column?.dropDownData?.DropDownName}}</mat-label>
+                    <mat-select panelClass="attri-height" [formControlName]="column.dbColumn" (closed)="closeDropDown('Parent')">
+                      <div
+                        class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput account-profile__brandselectwithicon--brandsearchinput-dark" *ngIf="column?.dropDownData?.DropDownData?.length > 10">
+                        <mat-form-field appearance="outline" class="material__select">
+                          <input [ngClass]="{'small_font-size' : !defaultLayout}" autocomplete="off" type="text" placeholder="Search" matInput id="parentSearchText" (input)="updateSearchText('Parent', $event.target.value)"
+                            class="material-icons-outlined" (keydown)="_handleKeydown($event)" />
+                          <button matSuffix mat-icon-button>
+                            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="material-icons-outlined">search</mat-icon>
+                          </button>
+                        </mat-form-field>
+                      </div>
+                      <mat-option  *ngFor="let item of column?.dropDownData?.DropDownData;let i=index" [value]="item.Value" [ngClass]="{'d-none': !item.Value.toLowerCase().includes(searchParent), 'small_font-size' : !defaultLayout}"
+                        (click)="changeTicketFirstLevelDropdown(column?.dropDownData,i,zIndex)">{{item.Value}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <ng-container
+                    *ngIf="column?.dropDownData?.index >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData.length>0">
+                    <mat-form-field appearance="outline" class="material__select">
+                      <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownName}}</mat-label>
+                      <mat-select panelClass="attri-height" [formControlName]="column.dbColumn2" [(value)]="column.value2" (closed)="closeDropDown('Child')">
+                        <div
+                          class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput account-profile__brandselectwithicon--brandsearchinput-dark" *ngIf="column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData?.length > 10">
+                          <mat-form-field appearance="outline" class="material__select">
+                            <input [ngClass]="{'small_font-size' : !defaultLayout}" autocomplete="off" type="text" placeholder="Search" matInput id="childSearchText"
+                              (input)="updateSearchText('Child', $event.target.value)" class="material-icons-outlined"
+                              (keydown)="_handleKeydown($event)" />
+                            <button matSuffix mat-icon-button>
+                              <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="material-icons-outlined">search</mat-icon>
+                            </button>
+                          </mat-form-field>
+                        </div>
+                        <mat-option
+                          *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData;let i=index;"
+                          [value]="item.Value"
+                          (click)="changeTicketSecondLevelDropdown(column?.dropDownData,i,zIndex)" 
+                          [ngClass]="{'d-none': !item.Value.toLowerCase().includes(searchChild), 'small_font-size' : !defaultLayout}">{{item.Value}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <!-- [(ngModel)]="column.dropDownData.DropDownData[column.dropDownData.index].selected" -->
+                    <!-- {{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.selected}} -->
+                    <ng-container
+                      *ngIf="column?.dropDownData?.indexOne >= 0 && column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData.length>0">
+                      <mat-form-field appearance="outline" class="material__select">
+                        <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownName}}</mat-label>
+                        <mat-select panelClass="attri-height" [formControlName]="column.dbColumn3"
+                          [(value)]="column.value3" (closed)="closeDropDown('Sub Child')">
+                          <div
+                            class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput account-profile__brandselectwithicon--brandsearchinput-dark" *ngIf="column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne].DropDownData?.length > 10">
+                            <mat-form-field appearance="outline" class="material__select">
+                              <input [ngClass]="{'small_font-size' : !defaultLayout}" autocomplete="off" type="text" placeholder="Search" matInput id="subChildSearchText"
+                                (input)="updateSearchText('Sub Child', $event.target.value)" class="material-icons-outlined"
+                                (keydown)="_handleKeydown($event)" />
+                              <button matSuffix mat-icon-button>
+                                <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="material-icons-outlined">search</mat-icon>
+                              </button>
+                            </mat-form-field>
+                          </div>
+                          <mat-option
+                            *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne].DropDownData;let i=index;"
+                            [value]="item.Value"
+                            (click)="changeTicketThirdLevelDropdown(column?.dropDownData,i,zIndex)"
+                            [ngClass]="{'d-none': !item.Value.toLowerCase().includes(searchSubChild), 'small_font-size' : !defaultLayout}">{{item.Value}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <ng-container
+                        *ngIf="column?.dropDownData?.indexTwo >= 0 &&
+                        column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData?.length > 0">
+                        <mat-form-field appearance="outline" class="material__select">
+                          <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">
+                            {{
+                            column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]
+                            ?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownName
+                            }}
+                          </mat-label>
+                          <mat-select panelClass="attri-height" [formControlName]="column.dbColumn4" [(value)]="column.value4"
+                            (closed)="closeDropDown('Level 4')">
+                            <div
+                              *ngIf="column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData?.length > 10"
+                              class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput-dark">
+                              <mat-form-field appearance="outline" class="material__select">
+                                <input [ngClass]="{'small_font-size' : !defaultLayout}" autocomplete="off" type="text" placeholder="Search" matInput id="levelFourSearchText"
+                                  (input)="updateSearchText('LevelFour', $event.target.value)" class="material-icons-outlined"
+                                  (keydown)="_handleKeydown($event)" />
+                                <button matSuffix mat-icon-button>
+                                  <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="material-icons-outlined">search</mat-icon>
+                                </button>
+                              </mat-form-field>
+                            </div>
+                            <mat-option *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]
+                              ?.DropDownData[column?.dropDownData?.indexOne]
+                              ?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData; let i=index" [value]="item.Value"
+                              (click)="changeTicketFourthLevelDropdown(column?.dropDownData, i, zIndex)"
+                              [ngClass]="{'d-none': !item.Value.toLowerCase().includes(searchLevelFour), 'small_font-size' : !defaultLayout}">
+                              {{item.Value}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      
+                        <!-- Level 5 -->
+                        <ng-container
+                          *ngIf="column?.dropDownData?.indexThree >= 0 &&
+                          column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]
+                            ?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData?.length > 0">
+                          <mat-form-field appearance="outline" class="material__select">
+                            <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">
+                              {{
+                              column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]
+                              ?.DropDownData[column?.dropDownData?.indexTwo]?.DropDownData[column?.dropDownData?.indexThree]?.DropDownName
+                              }}
+                            </mat-label>
+                            <mat-select panelClass="attri-height" [formControlName]="column.dbColumn5" [(value)]="column.value5"
+                              (closed)="closeDropDown('Level 5')">
+                              <mat-option *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]
+                                ?.DropDownData[column?.dropDownData?.indexOne]
+                                ?.DropDownData[column?.dropDownData?.indexTwo]
+                                ?.DropDownData[column?.dropDownData?.indexThree]?.DropDownData; let i=index" [value]="item.Value"
+                                (click)="changeTicketFifthLevelDropdown(column?.dropDownData, i, zIndex)"
+                                [ngClass]="{'d-none': !item.Value.toLowerCase().includes(searchLevelFive), 'small_font-size' : !defaultLayout}">
+                                {{item.Value}}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                      
+                          <!-- Level 6 -->
+                          <ng-container *ngIf="column?.dropDownData?.indexFour >= 0 &&
+                            column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]
+                              ?.DropDownData[column?.dropDownData?.indexTwo]
+                              ?.DropDownData[column?.dropDownData?.indexThree]
+                              ?.DropDownData[column?.dropDownData?.indexFour]?.DropDownData?.length > 0">
+                            <mat-form-field appearance="outline" class="material__select">
+                              <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">
+                                {{
+                                column?.dropDownData?.DropDownData[column?.dropDownData?.index]?.DropDownData[column?.dropDownData?.indexOne]
+                                ?.DropDownData[column?.dropDownData?.indexTwo]
+                                ?.DropDownData[column?.dropDownData?.indexThree]
+                                ?.DropDownData[column?.dropDownData?.indexFour]?.DropDownName
+                                }}
+                              </mat-label>
+                              <mat-select panelClass="attri-height" [formControlName]="column.dbColumn6" [(value)]="column.value6"
+                                (closed)="closeDropDown('Level 6')">
+                                <mat-option *ngFor="let item of column?.dropDownData?.DropDownData[column?.dropDownData?.index]
+                                  ?.DropDownData[column?.dropDownData?.indexOne]
+                                  ?.DropDownData[column?.dropDownData?.indexTwo]
+                                  ?.DropDownData[column?.dropDownData?.indexThree]
+                                  ?.DropDownData[column?.dropDownData?.indexFour]?.DropDownData; let i=index" [value]="item.Value"
+                                  [ngClass]="{'d-none': !item.Value.toLowerCase().includes(searchLevelSix), 'small_font-size' : !defaultLayout}">
+                                  {{item.Value}}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </ng-container>
+                        </ng-container>
+                      </ng-container>
+
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+                <ng-container>
+                      <mat-form-field  *ngIf="column.columnDataType==8" appearance="outline" class="material__select">
+                        <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{column?.dbColumnName}}</mat-label>
+                        
+                        <mat-select panelClass="attri-height" [formControlName]="column.dbColumn"  [compareWith]="compareValuesParams">
+                          <div
+                            class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput account-profile__brandselectwithicon--brandsearchinput-dark"
+                            *ngIf="column?.dropDownData?.length > 10">
+                            <mat-form-field appearance="outline" class="material__select">
+                              <input [ngClass]="{'small_font-size' : !defaultLayout}" autocomplete="off" type="text" placeholder="Search"
+                                matInput id="parentSearchText" (input)="updateSearchText('Parent', $event.target.value)"
+                                class="material-icons-outlined" (keydown)="_handleKeydown($event)" />
+                              <button matSuffix mat-icon-button>
+                                <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+                                  class="material-icons-outlined">search</mat-icon>
+                              </button>
+                            </mat-form-field>
+                          </div>
+                          <mat-option *ngFor="let item of column?.dropDownData;let i=index" [value]="item"
+                            [ngClass]="{'d-none': !item.value.toLowerCase().includes(searchParent), 'small_font-size' : !defaultLayout}"
+                            >{{item.value}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                </ng-container>
+              </ng-template>
+            </div>
+          </div>
+          <div class="post-section--footer">
+            <button [loading]="updateLoader" [ngClass]="{'element__disable': !editPersonalDetailsEnabled, 'small_font-size' : !defaultLayout}" type="submit"
+              mat-flat-button color="accent">
+              {{'Update' | translate}}
+            </button>
+          </div>
+        </div>
+      </form>
+    </ng-template>
+    </ng-container>
+  </mat-tab>
+</mat-tab-group>

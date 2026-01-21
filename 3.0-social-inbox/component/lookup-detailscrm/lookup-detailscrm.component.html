@@ -1,0 +1,265 @@
+<div class="modal__head">
+    <h3 class="modal__title text-capitalize">{{ 'Look-Up-Details' | translate }}</h3>
+    <span class="modal__action">
+        <mat-icon fontSet="material-icons-outlined" [mat-dialog-close]="false">close</mat-icon>
+    </span>
+</div>
+<div class="modal__body">
+    <div class="lookup-detail__body">
+            <div class="lookup-detail__wrapper ">
+             <div class="lookup-detail__field element__disable">
+                <mat-form-field appearance="outline" class="material__select">
+                    <mat-label class="text-capitalize">{{ 'Email-ID' | translate }}</mat-label>
+                    <input matInput [value]="this.formData?.email" />
+                </mat-form-field>
+            </div>
+            <div class="lookup-detail__field element__disable" style="mix-blend-mode: unset;">
+                <mat-form-field appearance="outline" class="material__select">
+                    <mat-label class="text-capitalize">{{ 'Contact-Number' | translate }}</mat-label>
+                    <input matInput   [value]="this.formData?.contactNumber" />
+                </mat-form-field>
+            </div>
+            <div class="lookup-detail__field element__disable">
+                <mat-form-field appearance="outline" class="material__select">
+                    <mat-label class="text-capitalize">{{ 'Ticket-ID' | translate }}</mat-label>
+                    <input matInput [value]="this.formData?.ticketId" />
+                </mat-form-field>
+            </div>
+            <!-- [ngClass]="{'element__disable': formData?.orderId?.length==1}" -->
+            <div class="lookup-detail__field " [ngClass]="{'element__disable': orderType=='ticketType'}" >
+                <mat-form-field appearance="outline" class="material__select">
+                    <mat-label class="text-capitalize">{{ 'Order-ID' | translate }}</mat-label>
+                    <mat-select [(value)]="selectedOrderID">
+                        <mat-option [value]="oid" *ngFor="let oid of formData?.orderId" (click)="changeCrmDetilsOnOrderID(oid,'order')">
+                            {{oid}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <!-- [ngClass]="{'element__disable': formData?.subOrderId?.length==1}" -->
+            <div class="lookup-detail__field " [ngClass]="{'element__disable': orderType=='ticketType'}">
+                <mat-form-field appearance="outline" class="material__select" >
+                    <mat-label class="text-capitalize">{{ 'Sub-Order-ID' | translate }}</mat-label>
+                <mat-select [(value)]="selectedSubOrderID">
+                    <mat-option [value]="soid" *ngFor="let soid of formData?.subOrderId"  (click)="changeCrmDetilsOnOrderID(soid,'suborder')">
+                        {{soid}}
+                    </mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="lookup-detail__box">
+            <div class="lookup-detail__left" *ngIf="orderType=='orderType'" >
+                <div class="lookup-detail__block ml-0 mr-0">
+                    <div class="lookup-detail__expandable">
+                        <p class="title">{{ 'Order-Detail-of' | translate }}</p>
+                        <span class="detail mr-10" *ngFor="let order of fetchOrderDetailShow?.OrderIds">{{order.Lable}} :<span
+                                class="colored__locobuzz">{{order.Value}}</span></span>
+                    </div>
+                    <ul class="lookup-detail__list mt-12">
+                        <li class="lookup-detail__list--li" *ngFor="let od of fetchOrderDetailShow?.OrderDetails">
+                            <span class="title">{{od.Lable}}</span>:
+                            <span class="name">{{od.Value}} </span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="lookup-detail__block no-bg p-0 ml-0 mr-0">
+                    <mat-accordion class="accordian_headers" #accordion="matAccordion" [multi]="true">
+                <!--[expanded]="isFirst && !excelReportFlag" -->
+                <mat-expansion-panel class="mb-12" *ngIf="fetchOrderDetailShow?.RefundDetails?.length>0 && orderType=='orderType'">
+                    <mat-expansion-panel-header class="filter__accordian--header" [collapsedHeight]="'50px'"
+                        [expandedHeight]="'50px'">
+                        <mat-panel-title>
+                            <div class="lookup-detail__expandable">
+                                <p class="title">{{ 'Refund-Detail-of' | translate }}</p>
+                                <span class="detail mr-10" *ngFor="let order of fetchOrderDetailShow?.OrderIds">{{order.Lable}} :<span
+                                        class="colored__locobuzz">{{order.Value}}</span></span>
+                            </div>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                            <div class="filter__accordian--body" *ngFor="let refund of fetchOrderDetailShow.RefundDetails">
+                                <div class="filter__accordian--group pb-12 pr-12" >
+                                    <ul class="lookup-detail__list">
+                                        <li class="lookup-detail__list--li">
+                                            <span class="title">{{ 'Refund-Mode' | translate }}</span>:
+                                            <span class="name">{{refund.refundMode}}</span>
+                                        </li>
+                                        <li class="lookup-detail__list--li">
+                                            <span class="title">{{ 'Refund-Amt' | translate }}</span>:
+                                            <span class="name">{{refund.refundAmount}}</span>
+                                        </li>
+                                        <li class="lookup-detail__list--li">
+                                            <span class="title">{{ 'Refund-On' | translate }}</span>:
+                                            <span class="name">{{refund.refundedOn}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                    </mat-expansion-panel>
+            <mat-expansion-panel *ngIf="fetchOrderDetailShow?.RpuDetail?.length>0 && orderType=='orderType'" >
+                    <mat-expansion-panel-header class="filter__accordian--header" [collapsedHeight]="'50px'" [expandedHeight]="'50px'">
+                        <mat-panel-title>
+                            <div class="lookup-detail__expandable">
+                                <p class="title">{{ 'RPU-Detail-of' | translate }}</p>
+                                <span class="detail mr-10" *ngFor="let order of fetchOrderDetailShow?.OrderIds">{{order.Lable}} :<span
+                                        class="colored__locobuzz">{{order.Value}}</span></span>
+                            </div>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div class="filter__accordian--body">
+                        <div class="filter__accordian--group pb-12 pr-12">
+                            <table class="lookup-detail__table">
+                                <tr >
+                                    <th class="w-130">{{ 'Current-Status' | translate }}</th>
+                                    <th class="w-180">{{ 'Created-Date' | translate }}</th>
+                                    <th>{{ 'Remarks' | translate }}</th>
+                                </tr>
+                                <tr *ngFor="let rpu of fetchOrderDetailShow?.RpuDetail">
+                                    <td>{{rpu?.statusCode}}</td>
+                                    <td>{{convertEpochDate(rpu?.statusDate)}}</td>
+                                    <td>{{rpu?.remark}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+                </div>
+                 
+            </div>
+            <div class="lookup-detail__right" [ngClass]="{'w-100-p' : orderType !='orderType'}">
+                <div class="lookup-detail__block p-0">
+                    <mat-expansion-panel [expanded]="true">
+                        <mat-expansion-panel-header class="filter__accordian--header" [collapsedHeight]="'50px'" [expandedHeight]="'50px'">
+                            <mat-panel-title *ngIf="foundTicketOnorderId">
+                                <div class="lookup-detail__expandable">
+                                    <p class="title">{{ 'SF-Ticket-of' | translate }}</p>
+                                    <ng-container  *ngIf="ticketLoaderFound">
+                                        <mat-spinner  [diameter]="20" color="accent"></mat-spinner>
+                                    </ng-container >
+                                 
+                                    <span class="detail mr-10">{{ 'Order-ID' | translate }} :<span
+                                            class="colored__locobuzz">{{sfTicketDetails?.orderCode__c}}</span></span>
+                                    <span class="detail">{{ 'Sub-Order-ID' | translate }} :<span
+                                            class="colored__locobuzz">{{sfTicketDetails?.suborderCode__c}}</span></span>
+                                    <span class="create-btn colored__locobuzz">
+                                        <mat-icon (click)="openCreateForm()">add</mat-icon>
+                                        <span class="ml-4" (click)="openCreateForm()">{{ 'Create-New-Ticket' | translate }}</span>
+                                    </span>
+                                </div>
+                            </mat-panel-title>
+                            <mat-panel-title *ngIf="!foundTicketOnorderId">
+                                <div class="lookup-detail__expandable">
+                                    <p class="title">{{ 'SF-Ticket-of' | translate }}</p>
+                                    <ng-container  *ngIf="ticketLoaderFound">
+                                        <mat-spinner  [diameter]="20" color="accent"></mat-spinner>
+                                    </ng-container >
+                                    
+                                    <span class="detail mr-10" *ngFor="let order of fetchOrderDetailShow?.OrderIds">{{order.Lable}} :<span
+                                            class="colored__locobuzz">{{order.Value}}</span></span>
+                                    <span class="create-btn colored__locobuzz">
+                                        <mat-icon  (click)="openCreateForm()">add</mat-icon>
+                                        <span class="ml-4" (click)="openCreateForm()">{{ 'Create-New-Ticket' | translate }}</span>
+                                    </span>
+                                </div>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                    
+                        <div class="filter__accordian--body">
+                            <div class="filter__accordian--group pl-0 pb-12 pr-30"
+                                *ngIf="crmDetailsTicker?.records?.length>0 && foundTicketOnorderId">
+                                <div class="lookup-detail__wrapper pl-0" [formGroup]="updateForm">
+                                    <div class="lookup-detail__area" [ngClass]="{'w-100-p' : orderType =='orderType'}">
+                                        <div [ngClass]="{'ml-0 mr-0 width-49' : orderType =='orderType'}" class="lookup-detail__field field-area">
+                                            <mat-form-field color="accent" appearance="outline" class="material__select material__select" [ngClass]="{'element__disable': crmDetailsTicker?.totalSize==1}">
+                                                <mat-label>{{ 'Ticket-ID' | translate }} ({{crmDetailsTicker?.totalSize}})</mat-label>
+                                                <mat-select [(value)]="selectedTicketId" formControlName="ticketId">
+                                                    <mat-option [value]="item?.CaseNumber" *ngFor="let item of crmDetailsTicker?.records"
+                                                        (click)="dropdownTicketDetils(item)">
+                                                        {{item?.CaseNumber}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div [ngClass]="{'mr-0 width-49' : orderType =='orderType'}" class="lookup-detail__field field-area">
+                                            <mat-form-field color="accent" appearance="outline" class="material__select material__select">
+                                                <mat-label>{{ 'Status' | translate }}</mat-label>
+                                                <mat-select [(value)]="sfTicketDetails.Status" formControlName="status"
+                                                    (selectionChange)="updateDisbleButton($event)">
+                                                    <mat-option [value]="status?.Value" *ngFor="let status of Statuses">
+                                                        {{status.Value}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div [ngClass]="{'ml-0 mr-0 width-49' : orderType =='orderType'}" class="lookup-detail__field field-area">
+                                            <mat-form-field color="accent" appearance="outline" class="material__select material__select">
+                                                <mat-label>{{ 'Forum-Picklist' | translate }}</mat-label>
+                                                <mat-select [(value)]="sfTicketDetails.Forum_Picklist__c" formControlName="forumPickupList"
+                                                    (selectionChange)="updateDisbleButton($event)">
+                                                    <mat-option [value]="forum?.Value" *ngFor="let forum of ForumPicklist">
+                                                        {{forum.Key}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div [ngClass]="{'mr-0 width-49' : orderType =='orderType'}" class="lookup-detail__field field-area">
+                                            <mat-form-field color="accent" appearance="outline" class="material__select material__select">
+                                                <mat-label>{{ 'Escalation-Reason' | translate }}</mat-label>
+                                                <mat-select [(value)]="sfTicketDetails.CEO_Social_Escalation_Reason__c"
+                                                    formControlName="escalationReason" (selectionChange)="updateDisbleButton($event)">
+                                                    <mat-option [value]="escalation?.Value" *ngFor="let escalation of EscalationReason">
+                                                        {{escalation.Key}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="lookup-detail__area" [ngClass]="{'w-100-p' : orderType =='orderType'}">
+                                        <div class="lookup-detail__field w-100-p area-textarea">
+                                            <mat-form-field appearance="outline" class="material__select">
+                                                <mat-label class="text-capitalize">{{ 'Notes' | translate }}</mat-label>
+                                                <textarea matInput class="resize h-100-p" formControlName="notes"></textarea>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="lookup-detail__field">
+                                        <button class="ml-7" mat-flat-button color="accent" (click)="updateFormFields()" [loading]="actionProcessing"
+                                            [ngClass]="{'element__disable': disableUpdatebutton}">{{ 'Update' | translate }}</button>
+                                    </div>
+                                </div>
+                                <ul class="lookup-detail__list pl-0">
+                                    <li class="lookup-detail__list--li" *ngFor="let formT of fetchSfTicketShow">
+                                        <span class="title">{{formT.Lable}}</span>:
+                                        <span class="name">{{formT.Value}} </span>
+                                    </li>
+                                </ul>
+                                <p class="pl-14 mt-12 mb-12 text__label" *ngIf="sfTicketDetails?.Notes?.length>0">{{ 'Note' | translate }}</p>
+                                <table class="lookup-detail__table ml-14 mr-14" *ngIf="sfTicketDetails?.Notes?.length>0">
+                                    <tr>
+                                        <th class="w-180">{{ 'Date' | translate }}</th>
+                                        <th class="w-180">{{ 'Created-By' | translate }}</th>
+                                        <th>{{ 'Description' | translate }}</th>
+                                    </tr>
+                                    <tr *ngFor="let note of sfTicketDetails?.Notes">
+                                        <td>{{convertDate(note?.CreatedDate)}}</td>
+                                        <td>{{note?.CreatedBy?.Name}}</td>
+                                        <td>{{note?.Body}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="block-center h-70" *ngIf="!foundTicketOnorderId && !ticketLoaderFound">
+                            <p>{{ 'No-ticket-found-on-this-order' | translate }}</p>
+                        </div>
+                    </mat-expansion-panel>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+</div>

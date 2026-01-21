@@ -1,0 +1,54 @@
+.nobrand-user {
+  padding: 25px;
+  padding-bottom: 18px;
+  display: flex;
+  &__image {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    & img {
+      border-radius: 50%;
+    }
+    & span {
+      position: absolute;
+      bottom: -1px;
+      right: -2px;
+      width: 24px;
+      height: 23px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      & .mat-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: inherit !important;
+        margin-right: 1px;
+      }
+    }
+  }
+  &__name {
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+    & p {
+      font-weight: 800;
+      font-size: 2rem;
+      font-family: 'Roboto Slab', serif;
+    }
+  }
+}
+.brand-message {
+  padding-left: 25px;
+  & h2 {
+    font-weight: 800;
+    font-size: 2rem;
+    font-family: 'Roboto Slab', serif;
+    margin-bottom: 0px;
+  }
+  & p {
+    font-size: 1.6rem;
+  }
+}

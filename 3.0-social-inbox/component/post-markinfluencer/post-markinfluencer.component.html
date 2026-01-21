@@ -1,0 +1,88 @@
+<div class="modal__head">
+  <h3 class="modal__title" [ngClass]="{'small_font-size': !defaultLayout}">{{'Mark-Influencer' | translate}}</h3>
+  <span class="modal__action">
+    <mat-icon fontSet="material-icons-outlined" [ngClass]="{'small-icon-font-size': !defaultLayout}" [mat-dialog-close]="true">close</mat-icon>
+  </span>
+</div>
+<form>
+  <div class="modal__body">
+    <div class="p-10">
+      <!-- <mat-form-field appearance="outline" class="material__select material__select--adaptive">
+        <mat-label *ngIf="showRemoveInfluncer">Influencer Category</mat-label>
+        <mat-label *ngIf="!showRemoveInfluncer">Select Influencer Category</mat-label> -->
+      <!-- formControlName="assignToName"  -->
+      <!-- <mat-select [(value)]="selectedInfluencer" (selectionChange)="updateInfluencer($event)"> -->
+      <!-- <mat-select-trigger>
+            <mat-icon>how_to_reg</mat-icon>&nbsp;John Doe
+          </mat-select-trigger> -->
+      <!-- <mat-option class="matmenu__item" *ngFor="let item of influencerList" [value]="item.categoryID"
+            ariaLabel="{{ item.category }}"> -->
+      <!-- <mat-icon [ngClass]="{'colored__green':
+                    truw,'colored__grey': false}">fiber_manual_record</mat-icon><mat-icon
+                    [ngClass]="{'colored__yellow':
+                    false,'colored__grey': false}"
+                    fontSet="material-icons-outlined">person</mat-icon> -->
+      <!-- <span>{{ item.category }}</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field> -->
+      <form *ngIf="!clickhouseEnabled" [formGroup]="formGroup">
+        <mat-form-field  appearance="outline">
+          <mat-label [ngClass]="{'small_font-size': !defaultLayout}" *ngIf="showRemoveInfluncer">{{'Influencer-Category' | translate}}</mat-label>
+          <mat-label [ngClass]="{'small_font-size': !defaultLayout}" *ngIf="!showRemoveInfluncer">{{'Select-Influencer-Category' | translate}}</mat-label>
+          <input [ngClass]="{'small_font-size': !defaultLayout}" formControlName="category" matInput type="text" [matAutocomplete]="auto" [ngModel]="selectedInfluencer"
+            [value]="selectedInfluencer" (ngModelChange)="filterData($event.target.value)" />
+          <div class="mat-select-arrow treeDown-arrow"></div>
+          <mat-autocomplete #auto="matAutocomplete" (click)="$event.stopPropagation()">
+            <mat-option [ngClass]="{'small_font-size': !defaultLayout}" *ngFor="let item of filteredOptions" [value]="item.category"
+              (onSelectionChange)="updateInfluencer($event)">
+              {{ item.category}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </form>
+              <mat-form-field *ngIf="clickhouseEnabled" appearance="outline" class="mat-chip__height influencer_mat-chip">
+                <mat-label [ngClass]="{'small_font-size': !defaultLayout}" *ngIf="showRemoveInfluncer">{{'Influencer-Category' | translate}}</mat-label>
+                <mat-label [ngClass]="{'small_font-size': !defaultLayout}" *ngIf="!showRemoveInfluncer">{{'Select-Influencer-Category' | translate}}</mat-label>
+                <mat-chip-grid #influencerChipListRef class="chiplist-height__select">
+                  <ng-container>
+                    <mat-chip-row [selectable]="true" [ngClass]="{'small_font-size': !defaultLayout}" *ngFor="let item of influencerChipList" [removable]="removable">{{item.influencerCategoryName }}
+                      <mat-icon [ngClass]="{'small-icon-font-size': !defaultLayout}" matChipRemove (click)="removeInfluencer(item)">cancel</mat-icon>
+                    </mat-chip-row>
+                  </ng-container>
+                  <input matInput type="text" [ngClass]="{'small_font-size': !defaultLayout}" #inputRef [matAutocomplete]="auto" [formControl]="searchInfluencerChipControl"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputFor]="influencerChipListRef" />
+                </mat-chip-grid>
+                <mat-autocomplete [displayWith]="displayFn" #auto="matAutocomplete" (click)="$event.stopPropagation()">           
+                  <mat-option [ngClass]="{'small_font-size': !defaultLayout}" *ngIf="(influencerSearchList | async).length>1 " (click)="$event.stopPropagation()"
+                    [value]="">
+                    <div (click)="selectAllInfluencer(checkAllRef);$event.stopPropagation()">
+                      <mat-checkbox [ngClass]="{'small_font-size': !defaultLayout}" (click)="$event.stopPropagation()" #checkAllRef (change)="influencerChangeSelectAllEvent($event)"
+                        [checked]="(influencerSearchList | async).length===influencerChipList?.length"></mat-checkbox> {{'Select-All' | translate}}
+                    </div>
+                  </mat-option>
+
+                  <mat-option [ngClass]="{'small_font-size': !defaultLayout}" *ngFor="let item of influencerSearchList | async" (click)="$event.stopPropagation()" [value]="item.categoryID"
+                  >
+                  <div (click)="selectInfluencerEvent(item,inputRef);$event.stopPropagation()">
+                  <mat-checkbox [ngClass]="{'small_font-size': !defaultLayout}" (click)="$event.stopPropagation()" (change)="influencerChange($event,item)"
+                    [checked]="incluencerChipCheckboxList.includes(item.categoryID)"></mat-checkbox> {{ item.category}}
+                    </div>
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-icon class="ml-auto" [ngClass]="{'small_font-size': !defaultLayout}" matSuffix>keyboard_arrow_down</mat-icon>
+              </mat-form-field>
+    </div>
+  </div>
+  <div class="modal__foot">
+    <div class="ml-auto">
+      <button class="mr-8 colored__red" [ngClass]="{'small_font-size': !defaultLayout}" *ngIf="showRemoveInfluncer" mat-stroked-button (click)="clickhouseEnabled?updateInfluencerCategoryClickhouse(true) :inActiveInfluencer()">
+        {{'Remove-Influencer' | translate}}
+      </button>
+      <button [disabled]="!influencer" [loading]="influencerLoader" [ngClass]="{'small_font-size': !defaultLayout}" type="submit" mat-flat-button color="accent" (click)="clickhouseEnabled?updateInfluencerCategoryClickhouse(false) :updateAPI()">
+        {{ influencerLabel | translate }}
+      </button>
+    </div>
+
+  </div>
+</form>

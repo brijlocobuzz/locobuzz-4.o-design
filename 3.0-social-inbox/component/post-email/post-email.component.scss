@@ -1,0 +1,26 @@
+.post-reply {
+  &__head {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+
+    &--title {
+      font-weight: 600;
+    }
+
+    &--action {
+      margin-left: auto;
+      cursor: pointer;
+    }
+  }
+
+  &__body {
+    padding: 15px 20px;
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+  }
+}

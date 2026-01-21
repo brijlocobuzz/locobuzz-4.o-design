@@ -1,0 +1,65 @@
+<div class="modal__head">
+  <h3 class="modal__title">{{'Quote-Tweet' | translate}}</h3>
+  <span class="modal__action">
+    <mat-icon fontSet="material-icons-outlined" [mat-dialog-close]="true">close</mat-icon>
+  </span>
+</div>
+<div class="modal__body p-15">
+  <div class="quotetweet">
+    <div class="quotetweet__inputarea">
+      <div class="quotetweet__head">
+        <img onError="this.src='assets/images/agentimages/sample-image.svg'" class="custom__icon profile__img mr-10"
+          [src]="currentHandle.profilepic" />
+        <textarea [(ngModel)]="quotetweettext" class="quotetweet__input" placeholder="{{'Write-your-message-here' | translate}}"
+          (input)="InputChanges($event)" maxlength="280"></textarea>
+      </div>
+      <div class="quotetweet__body">
+        <app-post-minimal [postData]="userOneViewDTO[0]" [quoteTweet]="true"></app-post-minimal>
+      </div>
+      <div class="quotetweet__actions">
+        <a href="javascript:void(0)" class="quotetweet__actions--item btn__hover" [matMenuTriggerFor]="emojiMenu">
+          <mat-icon fontSet="material-icons-outlined custom__icon--lg">sentiment_satisfied_alt</mat-icon>
+        </a>
+        <mat-menu #emojiMenu="matMenu" class="custom__matmenu" xPosition="after" yPosition="above">
+          <div (click)="$event.stopPropagation(); $event.preventDefault()">
+            <emoji-mart [darkMode]="false" [enableSearch]="false" [emojisToShowFilter]="filteredEmojis"
+              [set]="'twitter'"  (emojiSelect)="selectEmoji($event)"
+              [hideObsolete]="true" [showPreview]="false"></emoji-mart>
+          </div>
+        </mat-menu>
+        <a href="javascript:void(0)" class="quotetweet__actions--item btn__hover" (click)="openMediaDialog()">
+          <mat-icon fontSet="material-icons-outlined custom__icon--lg">image</mat-icon>
+        </a>
+        <span class="quotetweet__info text__light--sm ml-auto">{{ currentLength }} {{'character-remaining' | translate}}</span>
+      </div>
+      <div *ngIf="mediaSelected$ | async as MediaSelected" class="textarea-featured__foot--item--media">
+        <ng-template ngFor let-ugc [ngForOf]="MediaSelected">
+          <span *ngIf="ugc.mediaType == 2" class="textarea-featured__foot--item--icon">
+            <img class="media__img--icon" [src]="ugc.mediaPath" alt="" />
+            <mat-icon class="delete__img--icon" (click)="removeSelectedMedia(ugc)">delete_outline</mat-icon>
+          </span>
+          <span *ngIf="ugc.mediaType == 3" class="textarea-featured__foot--item--icon">
+            <video controls class="media__img--icon">
+              <source [src]="ugc.mediaPath" data-autoplay="false" type="video/m4v" />
+              <source [src]="ugc.mediaPath" data-autoplay="false" type="video/mp4" />
+              <source [src]="ugc.mediaPath" data-autoplay="false" type="video/mpeg" />
+              <source [src]="ugc.mediaPath" data-autoplay="false" type="video/x-msvideo" />
+              <source [src]="ugc.mediaPath" data-autoplay="false" type="video/x-ms-wmv" />
+              <source [src]="ugc.mediaPath" data-autoplay="false" type="video/avi" />
+            </video>
+            <mat-icon class="delete__img--icon" (click)="removeSelectedMedia(ugc)">delete_outline</mat-icon>
+            <mat-icon class="play__img--icon" (click)="removeSelectedMedia(ugc)">play_circle_outline</mat-icon>
+          </span>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal__foot">
+  <button type="button" class="ml-auto mr-10" color="accent" mat-stroked-button [mat-dialog-close]="true">
+    {{'Cancel' | translate}}
+  </button>
+  <button mat-flat-button [loading]="qouteSending" color="accent" (click)="tweetRetweet()" type="button">
+    {{'Retweet' | translate}}
+  </button>
+</div>

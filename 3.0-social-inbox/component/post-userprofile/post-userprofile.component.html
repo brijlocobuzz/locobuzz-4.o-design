@@ -1,0 +1,877 @@
+<div *ngIf="defaultLayout" class="position-relative">
+  <app-component-loader *ngIf="profileLoading" [loaderType]="loaderTypeEnum.profile"></app-component-loader>
+  <ng-container *ngIf="customAuthorDetails && !profileLoading">
+    <div *ngIf="customAuthorDetails && customAuthorDetails.channelGroup" class="post-profile">
+      <div class="post-profile__info">
+        <div class="post-profile__info--profile">
+          <div class="post-profile__info--profileimg">
+            <ng-container *ngIf="userProfileImg == 'initials'; else showImage">
+              <span [ngClass]="{'small_font-size' : !defaultLayout}" class="initials">{{ initials }}</span>
+            </ng-container>
+            <ng-template #showImage>
+              <img class="img__fluid" onerror="this.src='assets/images/agentimages/sample-image.svg'" [src]="userProfileImg" />
+            </ng-template>
+          </div>
+          <div class="post-profile__info--profilecontent">
+            <ng-template [ngIf]="
+                customAuthorDetails.channelGroup == channelGroupEnum.Email ||
+                customAuthorDetails.channelGroup == channelGroupEnum.WhatsApp ||
+                customAuthorDetails.channelGroup == channelGroupEnum.GoogleMyReview ||
+                customAuthorDetails.channelGroup == channelGroupEnum.Quora
+              " [ngIfElse]="ProfileLink">
+              <span [ngClass]="{'small_font-size' : !defaultLayout}" class="post-profile__info--profilename">{{
+                customAuthorDetails.authorName?customAuthorDetails.authorName:('Anonymous' | translate)
+                }}</span>
+            </ng-template>
+            <ng-template #ProfileLink>
+              <a [ngClass]="{'small_font-size' : !defaultLayout}" [href]="customAuthorDetails.profileUrl" target="_blank" class="post-profile__info--profilename">{{
+                customAuthorDetails.authorName?customAuthorDetails.authorName:('Anonymous' | translate) }}</a>
+            </ng-template>
+
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="customAuthorDetails.screenName" class="post-profile__info--profilehandle">{{
+              customAuthorDetails.screenName?customAuthorDetails.screenName:('Anonymous' | translate)
+              }}</span>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="customAuthorDetails.location" class="post-profile__info--profilehandle">
+              <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="custom__icon--md mr-2 colored__red">place</mat-icon>
+              {{ customAuthorDetails.location }}
+            </span>
+          </div>
+          <div class="post-profile__info--profileactions" >
+            <button mat-icon-button class="btn__hover" (click)="openEnrichView()" *ngIf="showActions">
+              <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" fontSet="material-icons-outlined" >portrait</mat-icon>
+            </button>
+            <mat-menu #brandSelect="matMenu" class="likeUnlike">
+              <div (click)="$event.stopPropagation()">
+                <!-- <ng-template matMenuContent let-type="type">
+                  <div class="px-10 pb-10 bb__light-grey">
+                    <span class="text__label">{{ type }}</span>
+                  </div>
+                  <button mat-menu-item *ngFor="let item of this.handleNames" (click)="setSocialHandle(item)">
+                    <div class="d-flex-items-center likeUnlikeBlock">
+                      <span class="likeUnlikeBlock--check" [ngClass]="{active: item.isactive}">
+                        <mat-icon  *ngIf="item.isactive" role="img" class="mat-icon notranslate material-icons"
+                          aria-hidden="true" data-mat-icon-type="font">check_circle</mat-icon>
+                      </span>
+                      <img class="mr-4 img w-20" [src]="item.profilepic" alt="Brand Image" />
+                      <span>{{ item.handleName }}</span>
+                    </div>
+                  </button>
+                  <div class="d-flex-items-center p-10 bt__light-grey">
+                    <a class="ml-auto colored__locobuzz" (click)="submitActionHandle()">Submit</a>
+                  </div>
+                </ng-template> -->
+                <ng-template matMenuContent let-type="type">
+                 <div class="p-10 bb__light-grey">
+                    <span [ngClass]="{'small_font-size' : !defaultLayout}" class="text__label">{{ type | translate }}</span>
+                  </div>
+                  <div *ngIf="followBlockMuteandleList.length>0" class="p-10 pb-0">
+                    <span [ngClass]="{'small_font-size' : !defaultLayout}" class="text__label">{{type=='Follow/Unfollow handles'? ('Follow' | translate) : type=='Mute/Unmute handles'? ('Mute' | translate):('Block' | translate)}} {{ 'Handles' | translate }}</span>
+                  </div>
+                 <button mat-menu-item *ngFor="let item of this.followBlockMuteandleList" (click)="setSocialHandle(item,1,type)">
+                    <div class="d-flex-items-center likeUnlikeBlock">
+                      <span class="likeUnlikeBlock--check" [ngClass]="{active: item.isactive}">
+                        <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="item.isactive" role="img" class="mat-icon notranslate material-icons"
+                          aria-hidden="true" data-mat-icon-type="font">check_circle</mat-icon>
+                      </span>
+                      <img [ngClass]="{'small-image-width' : !defaultLayout}" class="mr-4 img w-20" [src]="item.profilepic" alt="Brand Image" />
+                      <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ item.handleName }}</span>
+                    </div>
+                  </button>
+                  <div *ngIf="unFollowUnBlockUnMuteHandleList.length>0" class="p-10 pt-5" [ngClass]="{'pb-0': followBlockMuteandleList.length>0}" >
+                    <span class="text__label" [ngClass]="{'small_font-size' : !defaultLayout}">{{type=='Follow/Unfollow handles'?('Unfollow' | translate):type=='Mute/Unmute handles'?('Unmute' | translate):('Unblock' | translate)}} {{ 'Handles' | translate }}</span>
+                  </div>
+                  <button mat-menu-item *ngFor="let item of this.unFollowUnBlockUnMuteHandleList" (click)="setSocialHandle(item,2,type)">
+                    <div class="d-flex-items-center likeUnlikeBlock">
+                      <span class="likeUnlikeBlock--check" [ngClass]="{active: item.isactive}">
+                        <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="item.isactive" role="img" class="mat-icon notranslate material-icons"
+                          aria-hidden="true" data-mat-icon-type="font">check_circle</mat-icon>
+                      </span>
+                      <img [ngClass]="{'small-image-width' : !defaultLayout}" class="mr-4 img w-20" [src]="item.profilepic" alt="Brand Image" />
+                      <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ item.handleName }}</span>
+                    </div>
+                  </button>
+                  <div class="d-flex-items-center p-10 bt__light-grey" *ngIf="submitButtonName">
+                    <a [ngClass]="{'small_font-size' : !defaultLayout}" (click)="submitActionOnTwitter()" class="ml-auto colored__locobuzz">{{submitButtonName}} {{ 'Handle' | translate }}</a>
+                  </div>
+                  </ng-template>
+              </div>
+            </mat-menu>
+            <!-- <app-social-handle [handleNames]="this.handleNames" (submitSocialHandleEvent)="submitActionHandle($event)"></app-social-handle> -->
+            <div *ngIf="
+                author &&
+                currentUser.data.user.role !==
+                  userRoleEnum.ReadOnlySupervisorAgent
+              " class="custom__dropdown ml-4">
+              <button *ngIf="(author.isBrandFollowing!=null || author.isMuted!=null || author.isBlocked!=null) && (postObj.channelGroup == channelGroupEnum.Twitter || postObj.channelGroup == channelGroupEnum.Facebook) && (blockUnblockFlag || followUnfollowFlag || muteUnmuteFlag)"
+                mat-icon-button class="btn__hover">
+                <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" fontSet="material-icons-outlined">more_vert</mat-icon>
+              </button>
+              <ul class="custom__dropdown--list">
+                <li class="g-5" *ngIf="author && author.channelGroup === 1 && followUnfollowFlag" mat-menu-item>
+                  <mat-icon class="mr-0" [ngClass]="{'small-icon-font-size' : !defaultLayout}">follow_the_signs</mat-icon>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="author.isBrandFollowing && author.channelGroup===channelGroupEnum.Twitter" #followUnfollowMenuTrigger="matMenuTrigger"
+                    [matMenuTriggerFor]="brandSelect" [matMenuTriggerData]="{ type: 'Follow/Unfollow handles' }" (click)="
+                      GetBrandAccountInformation('follow');setAuthorFlag(
+                        getAuthorAction.FollowUnFollow,
+                        author.isBrandFollowing
+                      )
+                    ">{{'Follow-Unfollow' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" #unfollow *ngIf="author.isBrandFollowing && author.channelGroup!==channelGroupEnum.Twitter"
+                    (click)="
+                    authorActionFlag=author.isBrandFollowing;followUnfollowAuthor(selectedHandle)
+                    ">{{'UnFollow' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="!author.isBrandFollowing && author.channelGroup===channelGroupEnum.Twitter" #followUnfollowMenuTrigger="matMenuTrigger"
+                    [matMenuTriggerFor]="brandSelect" [matMenuTriggerData]="{ type: 'Follow/Unfollow handles' }" (click)="
+                      GetBrandAccountInformation('follow');setAuthorFlag(
+                        getAuthorAction.FollowUnFollow,
+                        author.isBrandFollowing
+                      )
+                    ">{{'Follow-Unfollow' | translate}}</span> <span [ngClass]="{'small_font-size' : !defaultLayout}" #follow
+                    *ngIf="!author.isBrandFollowing  && author.channelGroup!==channelGroupEnum.Twitter" (click)="
+                    authorActionFlag=author.isBrandFollowing;followUnfollowAuthor(selectedHandle)
+                    ">{{'Follow' | translate}}</span>
+                </li>
+                <!-- <li mat-menu-item>
+                  <mat-icon>hide_source</mat-icon>
+                  <span>Hide</span>
+                </li> -->
+                <li class="g-5" *ngIf="author && author.channelGroup === 1 && muteUnmuteFlag" mat-menu-item>
+                  <mat-icon class="mr-0" [ngClass]="{'small-icon-font-size' : !defaultLayout}">do_not_disturb_on_total_silence</mat-icon>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="author.isMuted && author.channelGroup===channelGroupEnum.Twitter" #followUnfollowMenuTrigger="matMenuTrigger"
+                    [matMenuTriggerFor]="brandSelect" [matMenuTriggerData]="{ type: 'Mute/Unmute handles' }" (click)="
+                      GetBrandAccountInformation('mute');setAuthorFlag(getAuthorAction.MuteUnMute, author.isMuted)
+                    ">{{'Mute-Unmute' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" #UnMute *ngIf="author.isMuted && author.channelGroup!==channelGroupEnum.Twitter" (click)="
+                    authorActionFlag=author.isMuted;muteUnmuteAuthor(selectedHandle)
+                    ">{{'UnMute' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="!author.isMuted && author.channelGroup===channelGroupEnum.Twitter " #followUnfollowMenuTrigger="matMenuTrigger"
+                    [matMenuTriggerFor]="brandSelect" [matMenuTriggerData]="{ type: 'Mute/Unmute handles' }" (click)="
+                      GetBrandAccountInformation('mute');setAuthorFlag(getAuthorAction.MuteUnMute, author.isMuted)
+                    ">{{'Mute-Unmute' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" #Mute *ngIf="!author.isMuted && author.channelGroup!==channelGroupEnum.Twitter" (click)="
+                    authorActionFlag=author.isMuted;muteUnmuteAuthor(selectedHandle)
+                    ">{{'Mute' | translate}}</span>
+                </li>
+                <li class="g-5" *ngIf="
+                    author &&
+                    (author.channelGroup === 1 || author.channelGroup === 2) && blockUnblockFlag
+                  " mat-menu-item>
+                  <mat-icon class="mr-0" [ngClass]="{'small-icon-font-size' : !defaultLayout}">block</mat-icon>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="author.isBlocked && author.channelGroup===channelGroupEnum.Twitter" #followUnfollowMenuTrigger="matMenuTrigger"
+                    [matMenuTriggerFor]="brandSelect" [matMenuTriggerData]="{ type: 'Block/UnBlock handles' }" (click)="
+                     GetBrandAccountInformation('block');setAuthorFlag(
+                        getAuthorAction.BlockUnBlock,
+                        author.isBlocked
+                      )
+                    ">{{'Block-UnBlock' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" #UnBlock *ngIf="author.isBlocked && author.channelGroup!==channelGroupEnum.Twitter" (click)="
+                    authorActionFlag=author.isBlocked;blockUnblockUserWithPopup(selectedHandle)
+                    ">{{'UnBlock' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="!author.isBlocked && author.channelGroup===channelGroupEnum.Twitter " #followUnfollowMenuTrigger="matMenuTrigger"
+                    [matMenuTriggerFor]="brandSelect" [matMenuTriggerData]="{ type: 'Block/UnBlock handles' }" (click)="
+                      GetBrandAccountInformation('block');setAuthorFlag(
+                        getAuthorAction.BlockUnBlock,
+                        author.isBlocked
+                      )
+                    ">{{'Block-UnBlock' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" #Block *ngIf="!author.isBlocked && author.channelGroup!==channelGroupEnum.Twitter" (click)="
+                    authorActionFlag=author.isBlocked;blockUnblockUserWithPopup(selectedHandle)
+                    ">{{'Block' | translate}}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="post-profile__info--profilesummary mb-3">
+          <div *ngIf="customAuthorDetails.gender && customAuthorDetails.gender != -1">
+            <label [ngClass]="{'small_font-size' : !defaultLayout}" class="text-semibold">{{ 'Gender' | translate }}: </label>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" class="text__light colored__blue">{{
+              customAuthorDetails.gender
+              }}</span>
+          </div>
+          <div *ngIf="customAuthorDetails.age">
+            <label [ngClass]="{'small_font-size' : !defaultLayout}" class="text-semibold">{{ 'Age' | translate }}: </label>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" class="text__light ml-7">{{ customAuthorDetails.age }}</span>
+          </div>
+          <div *ngIf="customAuthorDetails.influencer; else addmarkinfluencer">
+            <label [ngClass]="{'small_font-size' : !defaultLayout}" class="text-semibold">{{ 'Influencer' | translate }}: </label>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" class="text__light ml-7">{{ customAuthorDetails.influencer }}</span>
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="markInfluencerEnabled" (click)="markInfluencer()" class="icon" fontSet="material-icons-outlined">edit</mat-icon>
+          </div>
+          <ng-template #addmarkinfluencer>
+            <div fxFlex="100%">
+            <label class="text-semibold" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Influencer' | translate }}: </label>
+            <span class="text__light ml-7" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Add-Influencer' | translate }}</span>
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="markInfluencerEnabled" (click)="markInfluencer()" class="icon" fontSet="material-icons-outlined">edit</mat-icon>
+          </div>
+          </ng-template>
+        </div>
+      </div>
+      <div class="post-profile__score">
+        <div class="post-profile__score--item align-items__baseline">
+          <div class="post-profile__score--label">
+            <div class="post-profile__score--labelmain d-flex-items-center" [ngClass]="{'small_font-size' : !defaultLayout}"><span >{{ 'Sentiment-Uplift-Score' | translate }}</span> <img [ngClass]="{'small-image-width' : !defaultLayout}" src="assets/images/account/info-button-grey.svg" class="w-16 h-16 border-radius-100 ml-7" matTooltip="{{'AI-based-measure-of-sentiment' | translate}}"
+                            matTooltipClass="custom__tooltip-normal" /></div>
+            <span class="post-profile__score--labelsub" *ngIf="customAuthorDetails.sentimentUpliftScore != -1">
+              <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Last-Updated-on' | translate }}
+                {{
+                customAuthorDetails.lastNpsUpliftUpdatedDate
+                | datetimeFormatter: 'DD MMM, YYYY'
+                }}</span>
+              <mat-icon class="post-profile__score--replay" [ngClass]="{'icon__rotate' : refereshData, 'small-icon-size' : !defaultLayout}" (click)="refereshData = true;getSentimentUpliftAndNPSScore()">refresh
+              </mat-icon>
+            </span>
+          </div>
+          <span [ngClass]="{'small_font-size' : !defaultLayout}" class="post-profile__score--value colored__yellow--dark">{{
+            customAuthorDetails.sentimentUpliftScore?customAuthorDetails.sentimentUpliftScore:NA
+            }}</span>
+        </div>
+        <div class="post-profile__score--item mb-0">
+          <ng-template [ngIf]="
+              customAuthorDetails.channelGroup == channelGroupEnum.Facebook ||
+              customAuthorDetails.channelGroup == channelGroupEnum.Twitter||
+              customAuthorDetails.channelGroup == channelGroupEnum.Voice
+            ">
+            <div class="post-profile__score--label">
+              <span [ngClass]="{'small_font-size' : !defaultLayout}" class="post-profile__score--labelmain">{{ 'NPS-Score' | translate }}</span>
+              <span class="post-profile__score--labelsub" *ngIf="customAuthorDetails.npsScrore != -1">
+                <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Last-Updated-on' | translate }}
+                  {{
+                  customAuthorDetails.lastNpsUpdatedDate
+                  | datetimeFormatter: 'DD MMM, YYYY'
+                  }}</span>
+                <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}"class="post-profile__score--replay" (click)="getSentimentUpliftAndNPSScore()">replay
+                </mat-icon>
+              </span>
+            </div>
+            <span class="post-profile__score--value colored__green" *ngIf="customAuthorDetails.npsScrore != -1">{{
+              customAuthorDetails.npsScrore }}</span>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" class="post-profile__score--value colored__grey" *ngIf="customAuthorDetails.npsScrore == -1">{{ 'NA' | translate }}</span>
+            <ng-template *ngIf="customAuthorDetails.npsScrore == -1">
+              <span [ngClass]="{'small_font-size' : !defaultLayout}" class="LastUpdatedNPSScoreText">{{ 'No-feedback-yet' | translate }}</span>
+            </ng-template>
+          </ng-template>
+        </div>
+
+        <div class="post-profile__score--item">
+          <ng-template [ngIf]="
+              customAuthorDetails.channelGroup == channelGroupEnum.Facebook ||
+              customAuthorDetails.channelGroup == channelGroupEnum.Twitter||
+              customAuthorDetails.channelGroup == channelGroupEnum.Voice
+            ">
+            <div class="post-profile__score--labelsub">
+              <ng-template [ngIf]="showNps && !customAuthorDetails.isNpsOn">
+                <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="colored__yellow--dark">help_outline</mat-icon>
+                <span [ngClass]="{'small_font-size' : !defaultLayout}" class="LastUpdatedNPSScoreText">{{ 'Turn-on-NPS-feedback-settings' | translate }}</span>
+              </ng-template>
+              <ng-template [ngIf]="customAuthorDetails.npsScore == -1">
+                <span [ngClass]="{'small_font-size' : !defaultLayout}" class="LastUpdatedNPSScoreText">{{ 'No-feedback-yet' | translate }}</span>
+              </ng-template>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <mat-expansion-panel class="box__shadow--none expansion--panel post-profile__info--body" [expanded]="true">
+      <mat-expansion-panel-header [collapsedHeight]="'40px'" [expandedHeight]="'40px'" class="accordian_headers">
+        <mat-panel-title [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Profile' | translate }}</mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-container *ngIf="
+          (customAuthorDetails.phoneNumber &&
+            customAuthorDetails.phoneNumber !== '') ||
+          customAuthorDetails.email
+        ">
+        <div *ngIf="customAuthorDetails && customAuthorDetails.channelGroup" class="post-profile__info--profilecontact">
+          <div *ngIf="
+              customAuthorDetails.phoneNumber &&
+              customAuthorDetails.phoneNumber !== ''
+            " class="post-profile__info--profilecontactitem">
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" (click)="makeCall()" class="post-profile__info--profilecontacticon cursor-pointer" fontSet="material-icons-outlined">call</mat-icon>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ customAuthorDetails.phoneNumber }}</span>
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="post-profile__info--profilecopy" (cdkCopyToClipboardCopied)="copied('Phone number')"
+              [cdkCopyToClipboard]="customAuthorDetails.phoneNumber" fontSet="material-icons-outlined">content_copy
+            </mat-icon>
+          </div>
+          <div *ngIf="customAuthorDetails.email" class="post-profile__info--profilecontactitem">
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="post-profile__info--profilecontacticon" fontSet="material-icons-outlined">alternate_email
+            </mat-icon>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ customAuthorDetails.email }}</span>
+            <span (click)="copyMessage(customAuthorDetails.email)">
+              <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="post-profile__info--profilecopy" (cdkCopyToClipboardCopied)="copied('Email')"
+                [cdkCopyToClipboard]="customAuthorDetails.email" fontSet="material-icons-outlined">content_copy
+              </mat-icon>
+            </span>
+          </div>
+        </div>
+      </ng-container>
+
+      <div *ngIf="
+          customAuthorDetails && customAuthorDetails.connectedUsers.length > 0
+        " class="post-section post-section--scroll">
+        <ul class="post-profile__info--social">
+          <ng-template ngFor let-user [ngForOf]="customAuthorDetails.connectedUsers">
+            <li class="post-profile__info--socialitem">
+              <img [ngClass]="{'small-image-width' : !defaultLayout}" class="post-profile__info--socialimage" [src]="user.channelImage"
+                onError="this.src='assets/images/agentimages/sample-image.svg'" alt="twitter icon /" />
+              <span [ngClass]="{'small_font-size' : !defaultLayout}" class="post-profile__info--userinfo">{{ user.name
+                }}<span *ngIf="user.screenName">({{ user.screenName }})</span></span>
+              <button *ngIf="user.showRemoveIcon" (click)="openUnlinkProfile(user)" matSuffix mat-icon-button
+                class="ml-auto">
+                <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" fontSet="material-icons-outlined" class="unlink-profile colored__red--dark" [matTooltip]="'Unlink-Profile' | translate"
+                  matTooltipClass="custom-tooltip__normal">remove_circle_outline</mat-icon>
+              </button>
+            </li>
+            <ng-container *ngIf="user.following && customAuthorDetails.channelGroup != channelGroupEnum.AppStoreReviews">
+              <li class="post-profile__info--socialstats" [ngClass]="{'small_font-size' : !defaultLayout}">
+                <span>{{ 'Followers' | translate }}: &nbsp; </span>
+                <span class="text__dark--sm text-semibold" [ngClass]="{'small_font-size' : !defaultLayout}">
+                  {{ user.followers }}</span>
+              </li>
+              <li class="post-profile__info--socialstats" [ngClass]="{'small_font-size' : !defaultLayout}">
+                <span>{{ 'Following' | translate }}: &nbsp; </span>
+                <span class="text__dark--sm text-semibold" [ngClass]="{'small_font-size' : !defaultLayout}">
+                  {{ user.following }}</span>
+              </li>
+              <li class="post-profile__info--socialstats" [ngClass]="{'small_font-size' : !defaultLayout}">
+                <span>{{ 'Tweets' | translate }}: &nbsp; </span><span class="text__dark--sm text-semibold">
+                  {{ user.tweets }}</span>
+              </li>
+            </ng-container>
+          </ng-template>
+          <li *ngIf="
+              currentUser.data.user.role !== userRoleEnum.ReadOnlySupervisorAgent
+            " class="post-profile__info--socialitem cursor-pointer" (click)="openAssociateDialog()">
+            <mat-icon class="post-profile__info--socialimage post-profile__info--add s-20">add</mat-icon>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" class="colored__blue">{{ 'Add-Channel' | translate }}</span>
+          </li>
+          <!-- <li
+              *ngFor="
+                let each of profileInfo[lable]['postSection']['socialstats']
+              "
+              class="post-profile__info--socialstats"
+            >
+              <span>{{ each["type"] }} - </span
+              ><span class="text__dark--sm text-semibold">
+                {{ each["value"] }}</span
+              >
+            </li> -->
+        </ul>
+      </div>
+      <div *ngIf="customAuthorDetails && customAuthorDetails.channelGroup" class="post-section">
+        <div *ngIf="customAuthorDetails.Bio" class="post-profile__info--bio">
+          <span [ngClass]="{'small_font-size' : !defaultLayout}" class="post-section__title">{{ 'Bio' | translate }}</span>
+          <p [ngClass]="{'small_font-size' : !defaultLayout}">{{ customAuthorDetails.Bio }}</p>
+        </div>
+        <div class="post-profile__info--traits">
+          <span [ngClass]="{'small_font-size' : !defaultLayout}" class="post-section__title">{{ 'Traits' | translate }}</span>
+          <mat-form-field class="
+              custom-calendar add-trait-field
+              outline--none
+              material__select material__select--adaptive
+            " appearance="outline">
+            <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Add-Trait' | translate }}</mat-label>
+            <mat-chip-grid #chipList class="custom__pill chipList-trait">
+              <mat-chip-row [ngClass]="{'small_font-size' : !defaultLayout}" *ngFor="let trait of customAuthorDetails.traits" class="custom__pill--item border__light-grey"
+                [selectable]="selectable" [removable]="removable" (removed)="removeTrait(trait)">
+                {{ trait.name }}
+                <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" matChipRemove *ngIf="removable">cancel</mat-icon>
+              </mat-chip-row>
+              <input [ngClass]="{'small_font-size' : !defaultLayout}" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 (matChipInputTokenEnd)="addTrait($event)" class="pb-6" />
+            </mat-chip-grid>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-expansion-panel>
+    <mat-expansion-panel class="box__shadow--none expansion--panel post-profile__info--body">
+      <mat-expansion-panel-header [collapsedHeight]="'40px'" [expandedHeight]="'40px'" class="accordian_headers">
+        <mat-panel-title [ngClass]="{'small_font-size' : !defaultLayout}">{{'CRM-Details' | translate}}</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="post-crm post-section">
+        <ul *ngIf="CrmDetails.length>0">
+          <li *ngFor="let crm of CrmDetails" class="post-crm--item" [ngClass]="{'small_font-size' : !defaultLayout}">
+            <span class="post-crm--label">{{ crm.id }} : </span>
+            <span class="post-crm--value">{{ crm.value }}</span>
+          </li>
+        </ul>
+        <ul *ngIf="CrmDetails.length==0">
+          <li class="post-crm--item Text-center" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'CRM-Details-not-found' | translate }}</li>
+        </ul>
+      </div>
+    </mat-expansion-panel>
+  </ng-container>
+
+</div>
+
+<div *ngIf="!defaultLayout" class="position-relative new-ui__post-profile">
+  <app-component-loader *ngIf="profileLoading" [loaderType]="loaderTypeEnum.profile"></app-component-loader>
+  <ng-container *ngIf="customAuthorDetails && !profileLoading">
+    <div *ngIf="customAuthorDetails && customAuthorDetails.channelGroup" class="post-profile">
+      <div class="post-profile__info">
+        <div class="post-profile__info--profile">
+          <div class="post-profile__info--profileimg">
+            <ng-container *ngIf="userProfileImg == 'initials'; else showImage">
+              <span [ngClass]="{'small_font-size' : !defaultLayout}" class="initials">{{ initials }}</span>
+            </ng-container>
+            <ng-template #showImage>
+              <img class="img__fluid" onerror="this.src='assets/images/agentimages/sample-image.svg'"
+                [src]="userProfileImg" />
+            </ng-template>
+          </div>
+          <div class="post-profile__info--profilecontent">
+            <ng-template [ngIf]="
+                customAuthorDetails.channelGroup == channelGroupEnum.Email ||
+                customAuthorDetails.channelGroup == channelGroupEnum.WhatsApp ||
+                customAuthorDetails.channelGroup == channelGroupEnum.GoogleMyReview ||
+                customAuthorDetails.channelGroup == channelGroupEnum.Quora
+              " [ngIfElse]="ProfileLink">
+              <span [ngClass]="{'small_font-size' : !defaultLayout}" class="post-profile__info--profilename">{{
+                customAuthorDetails.authorName?customAuthorDetails.authorName:('Anonymous' | translate)
+                }}</span>
+            </ng-template>
+            <ng-template #ProfileLink>
+              <a [ngClass]="{'small_font-size' : !defaultLayout}" [href]="customAuthorDetails.profileUrl"
+                target="_blank" class="post-profile__info--profilename">{{
+                customAuthorDetails.authorName?customAuthorDetails.authorName:('Anonymous' | translate) }}</a>
+            </ng-template>
+
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="customAuthorDetails.screenName"
+              class="post-profile__info--profilehandle">{{
+              customAuthorDetails.screenName?customAuthorDetails.screenName:('Anonymous' | translate)
+              }}</span>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" *ngIf="customAuthorDetails.location"
+              class="post-profile__info--profilehandle">
+              <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+                class="custom__icon--md mr-2 colored__red">place</mat-icon>
+              {{ customAuthorDetails.location }}
+            </span>
+          </div>
+
+          <div class="post-profile__info--profilevalue" *ngIf="customAuthorDetails && customAuthorDetails.connectedUsers.length > 0">
+            <ng-template ngFor let-user [ngForOf]="customAuthorDetails.connectedUsers">
+              <ng-container *ngIf="user.following && customAuthorDetails.channelGroup != channelGroupEnum.AppStoreReviews">
+                <div class="value__container">
+                  <p class="value__count">{{ user.followers }}</p>
+                  <p class="value__text">{{ 'Followers' | translate }}</p>
+                </div>
+                <div class="value__container">
+                  <p class="value__count">{{ user.following }}</p>
+                  <p class="value__text">{{ 'Following' | translate }}</p>
+                </div>
+                <div class="value__container">
+                  <p class="value__count">{{ user.tweets }}</p>
+                  <p class="value__text">{{ 'Tweets' | translate }}</p>
+                </div>
+              </ng-container>
+            </ng-template>
+          </div>
+          <div class="post-profile__info--profileactions">
+            <button mat-icon-button class="btn__hover" (click)="openEnrichView()" *ngIf="showActions">
+              <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+                fontSet="material-icons-outlined">portrait</mat-icon>
+            </button>
+            <mat-menu #brandSelect="matMenu" class="likeUnlike">
+              <div (click)="$event.stopPropagation()">
+                <!-- <ng-template matMenuContent let-type="type">
+                  <div class="px-10 pb-10 bb__light-grey">
+                    <span class="text__label">{{ type }}</span>
+                  </div>
+                  <button mat-menu-item *ngFor="let item of this.handleNames" (click)="setSocialHandle(item)">
+                    <div class="d-flex-items-center likeUnlikeBlock">
+                      <span class="likeUnlikeBlock--check" [ngClass]="{active: item.isactive}">
+                        <mat-icon  *ngIf="item.isactive" role="img" class="mat-icon notranslate material-icons"
+                          aria-hidden="true" data-mat-icon-type="font">check_circle</mat-icon>
+                      </span>
+                      <img class="mr-4 img w-20" [src]="item.profilepic" alt="Brand Image" />
+                      <span>{{ item.handleName }}</span>
+                    </div>
+                  </button>
+                  <div class="d-flex-items-center p-10 bt__light-grey">
+                    <a class="ml-auto colored__locobuzz" (click)="submitActionHandle()">Submit</a>
+                  </div>
+                </ng-template> -->
+                <ng-template matMenuContent let-type="type">
+                  <div class="p-10 bb__light-grey">
+                    <span [ngClass]="{'small_font-size' : !defaultLayout}" class="text__label">{{ type | translate
+                      }}</span>
+                  </div>
+                  <div *ngIf="followBlockMuteandleList.length>0" class="p-10 pb-0">
+                    <span [ngClass]="{'small_font-size' : !defaultLayout}" class="text__label">{{type=='Follow/Unfollow
+                      handles'? ('Follow' | translate) : type=='Mute/Unmute handles'? ('Mute' | translate):('Block' |
+                      translate)}} {{ 'Handles' | translate }}</span>
+                  </div>
+                  <button mat-menu-item *ngFor="let item of this.followBlockMuteandleList"
+                    (click)="setSocialHandle(item,1,type)">
+                    <div class="d-flex-items-center likeUnlikeBlock">
+                      <span class="likeUnlikeBlock--check" [ngClass]="{active: item.isactive}">
+                        <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="item.isactive" role="img"
+                          class="mat-icon notranslate material-icons" aria-hidden="true"
+                          data-mat-icon-type="font">check_circle</mat-icon>
+                      </span>
+                      <img [ngClass]="{'small-image-width' : !defaultLayout}" class="mr-4 img w-20"
+                        [src]="item.profilepic" alt="Brand Image" />
+                      <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ item.handleName }}</span>
+                    </div>
+                  </button>
+                  <div *ngIf="unFollowUnBlockUnMuteHandleList.length>0" class="p-10 pt-5"
+                    [ngClass]="{'pb-0': followBlockMuteandleList.length>0}">
+                    <span class="text__label" [ngClass]="{'small_font-size' : !defaultLayout}">{{type=='Follow/Unfollow
+                      handles'?('Unfollow' | translate):type=='Mute/Unmute handles'?('Unmute' | translate):('Unblock' |
+                      translate)}} {{ 'Handles' | translate }}</span>
+                  </div>
+                  <button mat-menu-item *ngFor="let item of this.unFollowUnBlockUnMuteHandleList"
+                    (click)="setSocialHandle(item,2,type)">
+                    <div class="d-flex-items-center likeUnlikeBlock">
+                      <span class="likeUnlikeBlock--check" [ngClass]="{active: item.isactive}">
+                        <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="item.isactive" role="img"
+                          class="mat-icon notranslate material-icons" aria-hidden="true"
+                          data-mat-icon-type="font">check_circle</mat-icon>
+                      </span>
+                      <img [ngClass]="{'small-image-width' : !defaultLayout}" class="mr-4 img w-20"
+                        [src]="item.profilepic" alt="Brand Image" />
+                      <span [ngClass]="{'small_font-size' : !defaultLayout}">{{ item.handleName }}</span>
+                    </div>
+                  </button>
+                  <div class="d-flex-items-center p-10 bt__light-grey" *ngIf="submitButtonName">
+                    <a [ngClass]="{'small_font-size' : !defaultLayout}" (click)="submitActionOnTwitter()"
+                      class="ml-auto colored__locobuzz">{{submitButtonName}} {{ 'Handle' | translate }}</a>
+                  </div>
+                </ng-template>
+              </div>
+            </mat-menu>
+            <!-- <app-social-handle [handleNames]="this.handleNames" (submitSocialHandleEvent)="submitActionHandle($event)"></app-social-handle> -->
+            <div *ngIf="
+                author &&
+                currentUser.data.user.role !==
+                  userRoleEnum.ReadOnlySupervisorAgent
+              " class="custom__dropdown ml-4">
+              <button
+                *ngIf="(author.isBrandFollowing!=null || author.isMuted!=null || author.isBlocked!=null) && (postObj.channelGroup == channelGroupEnum.Twitter || postObj.channelGroup == channelGroupEnum.Facebook) && (blockUnblockFlag || followUnfollowFlag || muteUnmuteFlag)"
+                mat-icon-button class="btn__hover">
+                <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+                  fontSet="material-icons-outlined">more_vert</mat-icon>
+              </button>
+              <ul class="custom__dropdown--list">
+                <li class="g-5" *ngIf="author && author.channelGroup === 1 && followUnfollowFlag" mat-menu-item>
+                  <mat-icon class="mr-0"
+                    [ngClass]="{'small-icon-font-size' : !defaultLayout}">follow_the_signs</mat-icon>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}"
+                    *ngIf="author.isBrandFollowing && author.channelGroup===channelGroupEnum.Twitter"
+                    #followUnfollowMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="brandSelect"
+                    [matMenuTriggerData]="{ type: 'Follow/Unfollow handles' }" (click)="
+                      GetBrandAccountInformation('follow');setAuthorFlag(
+                        getAuthorAction.FollowUnFollow,
+                        author.isBrandFollowing
+                      )
+                    ">{{'Follow-Unfollow' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" #unfollow
+                    *ngIf="author.isBrandFollowing && author.channelGroup!==channelGroupEnum.Twitter" (click)="
+                    authorActionFlag=author.isBrandFollowing;followUnfollowAuthor(selectedHandle)
+                    ">{{'UnFollow' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}"
+                    *ngIf="!author.isBrandFollowing && author.channelGroup===channelGroupEnum.Twitter"
+                    #followUnfollowMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="brandSelect"
+                    [matMenuTriggerData]="{ type: 'Follow/Unfollow handles' }" (click)="
+                      GetBrandAccountInformation('follow');setAuthorFlag(
+                        getAuthorAction.FollowUnFollow,
+                        author.isBrandFollowing
+                      )
+                    ">{{'Follow-Unfollow' | translate}}</span> <span [ngClass]="{'small_font-size' : !defaultLayout}"
+                    #follow *ngIf="!author.isBrandFollowing  && author.channelGroup!==channelGroupEnum.Twitter" (click)="
+                    authorActionFlag=author.isBrandFollowing;followUnfollowAuthor(selectedHandle)
+                    ">{{'Follow' | translate}}</span>
+                </li>
+                <!-- <li mat-menu-item>
+                  <mat-icon>hide_source</mat-icon>
+                  <span>Hide</span>
+                </li> -->
+                <li class="g-5" *ngIf="author && author.channelGroup === 1 && muteUnmuteFlag" mat-menu-item>
+                  <mat-icon class="mr-0"
+                    [ngClass]="{'small-icon-font-size' : !defaultLayout}">do_not_disturb_on_total_silence</mat-icon>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}"
+                    *ngIf="author.isMuted && author.channelGroup===channelGroupEnum.Twitter"
+                    #followUnfollowMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="brandSelect"
+                    [matMenuTriggerData]="{ type: 'Mute/Unmute handles' }" (click)="
+                      GetBrandAccountInformation('mute');setAuthorFlag(getAuthorAction.MuteUnMute, author.isMuted)
+                    ">{{'Mute-Unmute' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" #UnMute
+                    *ngIf="author.isMuted && author.channelGroup!==channelGroupEnum.Twitter" (click)="
+                    authorActionFlag=author.isMuted;muteUnmuteAuthor(selectedHandle)
+                    ">{{'UnMute' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}"
+                    *ngIf="!author.isMuted && author.channelGroup===channelGroupEnum.Twitter "
+                    #followUnfollowMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="brandSelect"
+                    [matMenuTriggerData]="{ type: 'Mute/Unmute handles' }" (click)="
+                      GetBrandAccountInformation('mute');setAuthorFlag(getAuthorAction.MuteUnMute, author.isMuted)
+                    ">{{'Mute-Unmute' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" #Mute
+                    *ngIf="!author.isMuted && author.channelGroup!==channelGroupEnum.Twitter" (click)="
+                    authorActionFlag=author.isMuted;muteUnmuteAuthor(selectedHandle)
+                    ">{{'Mute' | translate}}</span>
+                </li>
+                <li class="g-5" *ngIf="
+                    author &&
+                    (author.channelGroup === 1 || author.channelGroup === 2) && blockUnblockFlag
+                  " mat-menu-item>
+                  <mat-icon class="mr-0" [ngClass]="{'small-icon-font-size' : !defaultLayout}">block</mat-icon>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}"
+                    *ngIf="author.isBlocked && author.channelGroup===channelGroupEnum.Twitter"
+                    #followUnfollowMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="brandSelect"
+                    [matMenuTriggerData]="{ type: 'Block/UnBlock handles' }" (click)="
+                     GetBrandAccountInformation('block');setAuthorFlag(
+                        getAuthorAction.BlockUnBlock,
+                        author.isBlocked
+                      )
+                    ">{{'Block-UnBlock' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" #UnBlock
+                    *ngIf="author.isBlocked && author.channelGroup!==channelGroupEnum.Twitter" (click)="
+                    authorActionFlag=author.isBlocked;blockUnblockUserWithPopup(selectedHandle)
+                    ">{{'UnBlock' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}"
+                    *ngIf="!author.isBlocked && author.channelGroup===channelGroupEnum.Twitter "
+                    #followUnfollowMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="brandSelect"
+                    [matMenuTriggerData]="{ type: 'Block/UnBlock handles' }" (click)="
+                      GetBrandAccountInformation('block');setAuthorFlag(
+                        getAuthorAction.BlockUnBlock,
+                        author.isBlocked
+                      )
+                    ">{{'Block-UnBlock' | translate}}</span>
+                  <span [ngClass]="{'small_font-size' : !defaultLayout}" #Block
+                    *ngIf="!author.isBlocked && author.channelGroup!==channelGroupEnum.Twitter" (click)="
+                    authorActionFlag=author.isBlocked;blockUnblockUserWithPopup(selectedHandle)
+                    ">{{'Block' | translate}}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="post-profile__info--profilesummary mb-3">
+          <div class="post-profile__info--profilesummary-pill" *ngIf="customAuthorDetails.influencer; else addmarkinfluencer">
+            <label [ngClass]="{'small_font-size' : !defaultLayout}" class="text-semibold 1">{{ 'Influencer' | translate
+              }}: </label>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" class="text__light">{{
+              customAuthorDetails.influencer }}</span>
+            <mat-icon [ngClass]="{'small-icon-font-size ml-0' : !defaultLayout}" *ngIf="markInfluencerEnabled"
+              (click)="markInfluencer()" class="icon" fontSet="material-icons-outlined">edit</mat-icon>
+          </div>
+          <ng-template #addmarkinfluencer>
+            <div fxFlex="100%">
+              <label class="text-semibold 2" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Influencer' | translate
+                }}: </label>
+              <span class="text__light" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Add-Influencer' |
+                translate }}</span>
+              <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" *ngIf="markInfluencerEnabled"
+                (click)="markInfluencer()" class="icon" fontSet="material-icons-outlined">edit</mat-icon>
+            </div>
+          </ng-template>
+          <div class="post-profile__info--profilesummary-pill" *ngIf="customAuthorDetails.gender && customAuthorDetails.gender != -1">
+            <label [ngClass]="{'small_font-size' : !defaultLayout}" class="text-semibold">{{ 'Gender' | translate }}:
+            </label>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" class="text__light colored__blue">{{
+              customAuthorDetails.gender
+              }}</span>
+          </div>
+          <div class="post-profile__info--profilesummary-pill" *ngIf="customAuthorDetails.age">
+            <label [ngClass]="{'small_font-size' : !defaultLayout}" class="text-semibold">{{ 'Age' | translate }}:
+            </label>
+            <span [ngClass]="{'small_font-size' : !defaultLayout}" class="text__light">{{ customAuthorDetails.age
+              }}</span>
+          </div>
+          <div *ngIf="customAuthorDetails.Bio" class="post-profile__info--profilesummary-pill">
+            <label [ngClass]="{'small_font-size' : !defaultLayout}" class="post-section__title">{{ 'Bio' | translate
+              }}:</label>
+            <p [ngClass]="{'small_font-size' : !defaultLayout}"
+              [matTooltip]="customAuthorDetails.Bio?.length > 7 ? customAuthorDetails.Bio : ''" matTooltipPosition="above"
+              matTooltipClass="custom__tooltip-normal">
+              {{ customAuthorDetails.Bio?.length > 7 ? (customAuthorDetails.Bio | slice:0:7) + '...' : customAuthorDetails.Bio }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="new-ui__profile--social-channels" *ngIf="customAuthorDetails && customAuthorDetails.connectedUsers.length > 0">
+      <div class="new-ui__profile--social-channels__header">
+        <p>Social Channels</p>
+      </div>
+      <div class="new-ui__profile--social-channels__body">
+        <ng-template ngFor let-user [ngForOf]="customAuthorDetails.connectedUsers">
+          <img [ngClass]="{'small-image-width' : !defaultLayout}" class="post-profile__info--socialimage"
+            [src]="user.channelImage" onError="this.src='assets/images/agentimages/sample-image.svg'" alt="twitter icon /" />
+          <!-- <span [ngClass]="{'small_font-size' : !defaultLayout}" class="post-profile__info--userinfo">{{ user.name
+                        }}<span *ngIf="user.screenName">({{ user.screenName }})</span></span> -->
+          <button *ngIf="user.showRemoveIcon" (click)="openUnlinkProfile(user)" matSuffix mat-icon-button class="ml-auto">
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" fontSet="material-icons-outlined"
+              class="unlink-profile colored__red--dark" [matTooltip]="'Unlink-Profile' | translate"
+              matTooltipClass="custom-tooltip__normal">remove_circle_outline</mat-icon>
+          </button>
+        </ng-template>
+        <mat-icon *ngIf="currentUser.data.user.role !== userRoleEnum.ReadOnlySupervisorAgent" (click)="openAssociateDialog()"
+          class="post-profile__info--socialimage post-profile__info--add s-20" [matTooltip]="'Add-Channel' | translate" matTooltipPosition="above">add</mat-icon>
+        <!-- <span [ngClass]="{'small_font-size' : !defaultLayout}" class="colored__blue">{{ 'Add-Channel' | translate }}</span> -->
+      </div>
+    </div>
+
+    <ng-container *ngIf="(customAuthorDetails.phoneNumber &&
+                         customAuthorDetails.phoneNumber !== '') ||
+                         customAuthorDetails.email">
+      <div class="new-ui__profile-contact" *ngIf="customAuthorDetails && customAuthorDetails.channelGroup">
+        <div class="post-profile__info--profilecontact-header">
+          <p class="post-profile__info--profilecontact-header-text">{{'contact-deatils' | translate}}</p>
+        </div>
+
+        <div class="post-profile__info--profilecontact">
+          <div *ngIf="customAuthorDetails.phoneNumber && customAuthorDetails.phoneNumber !== ''" class="post-profile__info--profilecontactitem">
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" (click)="makeCall()"
+              class="new-ui__profile-contact__icon" fontSet="material-icons-outlined">call</mat-icon>
+            <span class="new-ui__profile-contact__text" [ngClass]="{'small_font-size' : !defaultLayout}">{{ customAuthorDetails.phoneNumber }}</span>
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="new-ui__profile-contact__icon"
+              (cdkCopyToClipboardCopied)="copied('Phone number')" [cdkCopyToClipboard]="customAuthorDetails.phoneNumber"
+              fontSet="material-icons-outlined">content_copy
+            </mat-icon>
+          </div>
+          <div *ngIf="customAuthorDetails.email" class="post-profile__info--profilecontactitem">
+            <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="new-ui__profile-contact__icon"
+              fontSet="material-icons-outlined">alternate_email
+            </mat-icon>
+            <span class="new-ui__profile-contact__text" [ngClass]="{'small_font-size' : !defaultLayout}">{{ customAuthorDetails.email }}</span>
+            <span (click)="copyMessage(customAuthorDetails.email)">
+              <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="new-ui__profile-contact__icon"
+                (cdkCopyToClipboardCopied)="copied('Email')" [cdkCopyToClipboard]="customAuthorDetails.email"
+                fontSet="material-icons-outlined">content_copy
+              </mat-icon>
+            </span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <div class="new-ui__profile--more-info">
+      <div class="new-ui__profile--more-info__header">
+        <p class="new-ui__profile--more-info__header--text">{{'More-Details' | translate}}</p>
+        <mat-icon class="material-icons-outlined new-ui__profile--more-info__header--icon">edit</mat-icon>
+      </div>
+
+      <div class="post-profile__score">
+        <div class="post-profile__score--item">
+          <div class="post-profile__score--label">
+            <div class="post-profile__score--labelmain d-flex-items-center" [ngClass]="{'small_font-size' : !defaultLayout}">
+              <p>{{ 'Sentiment-Uplift-Score' | translate }}</p>
+              <img [ngClass]="{'small-image-width' : !defaultLayout}" src="assets/images/account/info-button-grey.svg"
+                class="w-10 h-10 border-radius-100" matTooltip="{{'AI-based-measure-of-sentiment' | translate}}"
+                matTooltipClass="custom__tooltip-normal" />
+            </div>
+            <span class="post-profile__score--labelsub" *ngIf="customAuthorDetails.sentimentUpliftScore != -1">
+              <p [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Last-Updated-on' | translate }}
+                {{
+                customAuthorDetails.lastNpsUpliftUpdatedDate
+                | datetimeFormatter: 'DD MMM, YYYY'
+                }}</p>
+              <mat-icon class="post-profile__score--replay"
+                [ngClass]="{'icon__rotate' : refereshData, 'small-icon-size' : !defaultLayout}"
+                (click)="refereshData = true;getSentimentUpliftAndNPSScore()">refresh
+              </mat-icon>
+            </span>
+          </div>
+          <span [ngClass]="{'small_font-size' : !defaultLayout}" class="post-profile__score--value colored__yellow--dark">{{
+            customAuthorDetails.sentimentUpliftScore?customAuthorDetails.sentimentUpliftScore:NA
+            }}</span>
+        </div>
+        <div class="post-profile__score--item">
+          <ng-template [ngIf]="customAuthorDetails.channelGroup == channelGroupEnum.Facebook ||
+                                                 customAuthorDetails.channelGroup == channelGroupEnum.Twitter||
+                                                 customAuthorDetails.channelGroup == channelGroupEnum.Voice">
+            <div class="post-profile__score--label">
+              <p [ngClass]="{'small_font-size' : !defaultLayout}" class="post-profile__score--labelmain">{{
+                'NPS-Score' | translate }}</p>
+              <span class="post-profile__score--labelsub" *ngIf="customAuthorDetails.npsScrore != -1">
+                <p [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Last-Updated-on' | translate }}
+                  {{
+                  customAuthorDetails.lastNpsUpdatedDate
+                  | datetimeFormatter: 'DD MMM, YYYY'
+                  }}</p>
+                <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="post-profile__score--replay"
+                  (click)="getSentimentUpliftAndNPSScore()">replay
+                </mat-icon>
+              </span>
+            </div>
+            <p class="post-profile__score--value colored__green" *ngIf="customAuthorDetails.npsScrore != -1">{{
+              customAuthorDetails.npsScrore }}</p>
+            <p [ngClass]="{'small_font-size' : !defaultLayout}" class="post-profile__score--value colored__grey"
+              *ngIf="customAuthorDetails.npsScrore == -1">{{ 'NA' | translate }}</p>
+            <ng-template *ngIf="customAuthorDetails.npsScrore == -1">
+              <p [ngClass]="{'small_font-size' : !defaultLayout}" class="LastUpdatedNPSScoreText">{{
+                'No-feedback-yet' | translate }}</p>
+            </ng-template>
+          </ng-template>
+        </div>
+        <ng-template [ngIf]="customAuthorDetails.channelGroup == channelGroupEnum.Facebook ||
+                             customAuthorDetails.channelGroup == channelGroupEnum.Twitter||
+                             customAuthorDetails.channelGroup == channelGroupEnum.Voice">
+          <div class="post-profile__score--item w-100-p">
+            <div class="post-profile__score--labelsub">
+              <ng-template [ngIf]="showNps && !customAuthorDetails.isNpsOn">
+                <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}"
+                  class="colored__yellow--dark">help_outline</mat-icon>
+                <span [ngClass]="{'small_font-size' : !defaultLayout}" class="LastUpdatedNPSScoreText">{{
+                  'Turn-on-NPS-feedback-settings' | translate }}</span>
+              </ng-template>
+              <ng-template [ngIf]="customAuthorDetails.npsScore == -1">
+                <span [ngClass]="{'small_font-size' : !defaultLayout}" class="LastUpdatedNPSScoreText">{{
+                  'No-feedback-yet' | translate }}</span>
+              </ng-template>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <div class="new-ui__profile--traits" *ngIf="customAuthorDetails && customAuthorDetails.channelGroup">
+      <div class="new-ui__profile--traits__header" [ngClass]="{'border-bottom__light-grey' : addTraitEnabled}">
+        <p>{{ 'Traits' | translate }}</p>
+        <mat-icon class="new-ui__profile--traits__header--add-icon" *ngIf="!addTraitEnabled" (click)="showAddTrait()">add</mat-icon>
+        <mat-icon class="new-ui__profile--traits__header--close-icon" *ngIf="addTraitEnabled"
+          (click)="showAddTrait()">close</mat-icon>
+      </div>
+      <div class="new-ui__profile--traits__body" [class.expanded]="addTraitEnabled">
+        <mat-form-field class="
+                      custom-calendar add-trait-field
+                      outline--none
+                      material__select material__select--adaptive
+                    " appearance="outline">
+          <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Add-Trait' | translate }}</mat-label>
+          <mat-chip-grid #chipList class="custom__pill chipList-trait">
+            <mat-chip-row [ngClass]="{'small_font-size' : !defaultLayout}" *ngFor="let trait of customAuthorDetails.traits"
+              class="custom__pill--item border__light-grey" [selectable]="selectable" [removable]="removable"
+              (removed)="removeTrait(trait)">
+              {{ trait.name }}
+              <mat-icon [ngClass]="{'small-icon-font-size' : !defaultLayout}" matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip-row>
+            <input [ngClass]="{'small_font-size' : !defaultLayout}" [matChipInputFor]="chipList"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="addTrait($event)" class="pb-6" />
+          </mat-chip-grid>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <mat-expansion-panel class="box__shadow--none expansion--panel post-profile__info--body">
+      <mat-expansion-panel-header [collapsedHeight]="'40px'" [expandedHeight]="'40px'" class="accordian_headers">
+        <mat-panel-title [ngClass]="{'small_font-size' : !defaultLayout}">{{'CRM-Details' |
+          translate}}</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="post-crm post-section">
+        <ul *ngIf="CrmDetails.length>0">
+          <li *ngFor="let crm of CrmDetails" class="post-crm--item" [ngClass]="{'small_font-size' : !defaultLayout}">
+            <span class="post-crm--label">{{ crm.id }} : </span>
+            <span class="post-crm--value">{{ crm.value }}</span>
+          </li>
+        </ul>
+        <ul *ngIf="CrmDetails.length==0">
+          <li class="post-crm--item Text-center" [ngClass]="{'small_font-size' : !defaultLayout}">{{
+            'CRM-Details-not-found' | translate }}</li>
+        </ul>
+      </div>
+    </mat-expansion-panel>
+    
+  </ng-container>
+</div>

@@ -1,0 +1,153 @@
+<!-- <div class="post__list">
+    <div class="post__list--info" *ngIf="TicketList?.length > 0">
+        <span class="post__list--count">{{ticketsFound}} tickets Found</span>
+        <div class="post__list--pagination" *ngIf="ticketsFound">
+            <mat-paginator showFirstLastButtons appLocobuzzPaginator [length]="ticketsFound"
+              [pageSize]="10"
+              [pageSizeOptions]="[5, 10, 25, 100]"
+              (page)="OnPageChange($event)">
+            </mat-paginator>
+        </div>
+    </div>
+    <button mat-raised-button color="accent" class="post__new--btn btn__round btn__shadow">
+        <mat-icon>
+            arrow_upward
+        </mat-icon>
+        New Data Found
+    </button> -->
+<!-- <ng-container *ngIf="TicketList?.length > 0 && currentPostType == postTypeEnum.Tickets && !postloader">
+        <app-post *ngFor="let ticket of TicketList" [postData]="ticket" [pageType]="'ticket'" [fromCall]="1" (postSelectEvent)="toggleBulkSelect($event)"></app-post>
+    </ng-container>
+    <ng-container *ngIf="MentionList?.length > 0 && currentPostType == postTypeEnum.Mentions && !postloader">
+        <app-post *ngFor="let ticket of MentionList" [postData]="ticket" [pageType]="'mention'" [fromCall]="1" (postSelectEvent)="toggleBulkSelect($event)"></app-post>
+    </ng-container> -->
+<!-- <ng-template ngFor let-tab [ngForOf]="defaultTabs"> -->
+<!-- <app-socialbox [postDetailData] = "postDetailData"></app-socialbox> -->
+<!-- <app-post *ngFor="let ticket of TicketList" [postData]="ticket" [pageType]="'ticket'" [fromCall]="1" (postSelectEvent)="toggleBulkSelect($event)"></app-post> -->
+<!-- </ng-template> -->
+<!-- <div class="page__wrapper">
+  <mat-tab-group #contenttabgroup
+  class="main-tab-group mt-2 post-openTab"
+  [selectedIndex]="selectedTabIndex"
+  animationDuration="0ms"
+
+>
+  <mat-tab *ngFor="let tab of tabs; let tabIndex = index">
+
+    <mat-toolbar *ngIf="showToolbar" class="header__toolbar">
+      <app-post-options *ngIf="tab.tabHide" [postDetailTab]="tab" class="d-flex-items-center"></app-post-options>
+    </mat-toolbar>
+    <div class="tab__content">
+      <app-tabcontent [tab]="tab"></app-tabcontent>
+    </div>
+
+  </mat-tab>
+</mat-tab-group>
+</div> -->
+
+<div class="page__wrapper">
+  <div *ngFor="let tab of tabs; let tabIndex = index">
+    <div [hidden]="selectedTabIndex !== tabIndex">
+      <div [hidden]="!showToolbar" [ngClass]="{listening_account: signalAIFlag, 'height-unset' : !defaultLayout}" class="header__toolbar">
+        <app-post-options [hidden]="!tab.tabHide" [tabIndex]="tabIndex" [postDetailTab]="tab" class="d-flex-items-center pl-12 post-option"
+          [ngClass]="{'mt-6 pr-32' : defaultLayout}">
+        </app-post-options>
+      </div>
+      <div class="keywords__toggle--up" (click)="expandPills()" *ngIf="expandIcon">
+        <mat-icon>expand_more</mat-icon>
+      </div>
+      <ng-container *ngIf="responsivePillsShow">
+        <app-common-filter-pill (expandLessMore)="expandLessMoreEvent($event)" [@fadeInOut] [hidden]="!tab.tabHide"
+          [postDetailTab]="tab"></app-common-filter-pill>
+      </ng-container>
+         
+      <!-- <div class="keywords">
+        <div class="keywords__list">
+          <ul>
+            <li>
+              <span class="keywords__label text__label">
+                  Category:
+              </span>
+              <span class="keywords__name">
+                brand mention
+              </span>
+              <span class="keywords__more colored__locobuzz">
+                +3
+              </span>
+              <span class="keywords__close">
+                <mat-icon fontSet="material-icons-outlined">cancel</mat-icon>
+              </span>
+            </li>
+            <li>
+              <span class="keywords__label text__label">
+                  channel:
+              </span>
+              <span class="keywords__name">
+                facebook
+              </span>
+              <span class="keywords__more colored__locobuzz">
+                +1
+              </span>
+              <span class="keywords__close">
+                <mat-icon fontSet="material-icons-outlined">cancel</mat-icon>
+              </span>
+            </li>
+            <li>
+              <span class="keywords__label text__label">
+                  priority:
+              </span>
+              <span class="keywords__name">
+                <span class="colored__red--dark">urgent, </span>
+                <span class="colored__red">high, </span>
+                <span class="colored__yellow--dark">Medium </span>
+              </span>
+              <span class="keywords__close">
+                <mat-icon fontSet="material-icons-outlined">cancel</mat-icon>
+              </span>
+            </li>
+            <li>
+              <span class="keywords__label text__label">
+                  keywords(6)
+              </span>
+              <span class="keywords__close">
+                <mat-icon fontSet="material-icons-outlined">cancel</mat-icon>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div> -->
+      <div class="tab__content">
+        <app-tabcontent [tab]="tab"></app-tabcontent>
+        <!-- <app-notification-alert class="notify"></app-notification-alert> -->
+      </div>
+    </div>
+  </div>
+</div>
+<ng-container *ngIf="chatbotStatus">
+  <!-- chatbotStatus -->
+  <app-chatbot [status]="chatbotStatus" [brandList]="brandList" [filterStartEpoch]='filterStartEpoch'
+    [filterEndEpoch]="filterEndEpoch" [botEnableChatbot]="chatEnableChatbot" [botEnableWhatsapp]="chatEnableWhatsapp"
+    [botEnableMessenger]="chatEnableMessenger" [botEnableInstagram]="chatEnableInstagram" [botEnableGMB]="chatEnableGMB" [botEnableTelegram]="chatEnableTelegram"></app-chatbot>
+</ng-container>
+<ng-container *ngIf="emailExpandView">
+  <div class="cdk-overlay-container d-block">
+    <div *ngIf="minimizeEmailView" class="cdk-overlay-backdrop cdk-overlay-dark-backdrop cdk-overlay-backdrop-showing"></div>
+    <div class="cdk-global-overlay-wrapper" dir="ltr" style="justify-content: center; align-items: center;">
+      <div class="cdk-overlay-pane"
+        style="max-width: 80vw; pointer-events: auto; position: static;">
+        <app-post-replybot></app-post-replybot>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<!-- <ng-container *ngIf="postloader" >
+        <app-post-loader></app-post-loader>
+        <app-post-loader></app-post-loader>
+        <app-post-loader></app-post-loader>
+    </ng-container>
+
+
+
+</div>
+<app-post-bulk-actions class="primary shown" [postCount]="selectedPostList.length" (bulkActionEvent)="postBulkAction($event)"  *ngIf="bulkActionpanelStatus"></app-post-bulk-actions> -->

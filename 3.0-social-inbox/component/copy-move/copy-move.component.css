@@ -1,0 +1,86 @@
+.action {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 58%;
+}
+
+.action > .action__1 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.action > .action__1 > .mat-mdc-radio-group {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.action > .action__2 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.action > .action__2 p {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 100%;
+  flex: 1 100%;
+}
+
+.action > .action__2 > img {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+}
+
+.action > .action__2 > span {
+  margin-left: 10px;
+}
+
+.target__brand {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical !important;
+  -webkit-box-direction: normal !important;
+  -ms-flex-direction: column !important;
+  flex-direction: column !important;
+  width: 60%;
+}
+
+/* TODO(mdc-migration): The following rule targets internal classes of option that may no longer apply for the MDC version. */
+/* TODO(mdc-migration): The following rule targets internal classes of option that may no longer apply for the MDC version. */
+/* TODO(mdc-migration): The following rule targets internal classes of option that may no longer apply for the MDC version. */
+.target__brand > .mat-option-text {
+  text-transform: capitalize;
+}
+
+.target__brand > p {
+  background-color: #fffbed;
+  border: 1px solid var(--color-yellow);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.brand_selected_logo {
+  width: 15px;
+  height: 15px;
+  vertical-align: middle;
+}

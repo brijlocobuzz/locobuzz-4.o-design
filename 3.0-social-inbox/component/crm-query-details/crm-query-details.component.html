@@ -1,0 +1,137 @@
+    <app-component-loader *ngIf="isLoading" [postCountTotal]="2" [loaderType]="loaderTypeEnum.post"></app-component-loader>
+
+<div *ngIf="mentionList && !isLoading">
+  <div class="post" *ngFor="let crmdetail of mentionList">
+    <app-post
+      class="post__crm"
+      [postData]="crmdetail"
+      [openReply]="crmdetail.tagID"
+      [fromCall]="1"
+      [pageType]="1"
+      [crmFlag]="true"
+    ></app-post>
+    <div
+      class="post__foot--wrapper post__foot--bottom"
+      *ngIf="crmdetail.srDetails"
+    >
+      <div class="post__foot--bottom--data">
+        <ul>
+          <li>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Request-Type' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Query' | translate }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.panCard">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Pan-Card' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.panCard }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.product">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Product' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.product }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.customer">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Customer' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.customer }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.disposition">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Disposition' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.disposition }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.subDisposition">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Sub-Disposition' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.subDisposition }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.leadStatus">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Lead-Status' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.leadStatus }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.leadStage">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Lead-Stage' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.leadStage }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.leadSubStage">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Lead-Substage' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.leadSubStage }}</span>
+          </li>
+
+          <li *ngIf="crmdetail.srDetails.currentOwner">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Current-Owner' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.currentOwner }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.owner">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Owner' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.owner }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.losLeadID">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'LosLeadID' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.losLeadID }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.ucic">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'UCIC' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.ucic }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.productGroup">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Product-Group' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.productGroup }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.queryType">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Query-Type' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.queryType }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.mobileNumber">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Mobile-Number' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.mobileNumber }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.srID">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'SRID' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.srID }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.subType">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Sub-Type' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.subType }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.subCategoryType">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Sub-Category' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.subCategoryType }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.category">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Category' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.category }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.city">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'City' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.city }}</span>
+          </li>
+
+          <li *ngIf="crmdetail.srDetails.state">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'State' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.state }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.severity">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Severity' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.severity }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.country">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Country' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.country }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.storeLocation">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Store-Location' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.storeLocation }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.functionalArea">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Functional-Area' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.functionalArea }}</span>
+          </li>
+          <li *ngIf="crmdetail.srDetails.domainArea">
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ 'Domain-Area' | translate }}</span>
+            <span [ngClass]="{'small_font-size': !defaultLayout}">{{ crmdetail.srDetails.domainArea }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+  <div *ngIf="!mentionList && !isLoading" class="noDataFound block-center">
+    <mat-icon [ngClass]="{'small-icon-font-size': !defaultLayout}">error_outline</mat-icon>
+    <p [ngClass]="{'small_font-size': !defaultLayout}">{{ 'No-Data-Found' | translate }}</p>
+  </div>

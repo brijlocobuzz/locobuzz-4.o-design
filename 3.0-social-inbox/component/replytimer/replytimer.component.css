@@ -1,0 +1,19 @@
+.days__reply {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.days__reply--icon {
+  color: var(--color-white);
+  text-align: center;
+}
+
+.days__reply--icon .mat-icon {
+  font-size: 15px !important;
+  border-radius: 50%;
+  background: var(--color-red-dark);
+}
+
+.days__reply--text {
+  color: var(--color-red-dark);
+}

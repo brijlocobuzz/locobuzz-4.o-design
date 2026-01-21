@@ -1,0 +1,944 @@
+{
+  "_meta": {
+    "models": {
+      "posts": "Published or scheduled content sent to social media channels. Each post can be associated with products or locations, go through approval workflows, and track engagement metrics.",
+      "pages": "Specific social media pages where posts are published (e.g., your Instagram account, Facebook page, Twitter profile).",
+      "productProfiles": "Products that posts can promote or reference, allowing you to track which content drives product awareness.",
+      "locationProfiles": "Physical store or office locations that posts can highlight, useful for local marketing campaigns.",
+      "users": "Team members who create, approve, or publish posts.",
+      "tasks": "Approval workflow items attached to posts that need review before publishing.",
+      "comments": "Individual comments left by the audience on your posts, enriched with sentiment analysis.",
+      "campaigns": "Marketing campaigns that posts can be tagged to for performance tracking.",
+      "themes": "Content themes that organize posts by topic or creative approach.",
+      "objectives": "Business objectives that posts support (awareness, engagement, conversions, etc.)."
+    },
+    "relationships": [
+      "Each Post is published to a specific Page (Instagram, Facebook, etc.)",
+      "Posts can be associated with one or more Product Profiles to track product promotion",
+      "Posts can be associated with a Location Profile for local marketing",
+      "Posts are created by a User and may be assigned to another User for approval",
+      "Posts can have Tasks for approval workflows before publishing",
+      "Posts have Comments from the audience with sentiment analysis",
+      "Posts are tagged with Campaigns, Themes, and Objectives for organization",
+      "Each Post has Metrics tracking impressions, engagement, clicks, and other performance data"
+    ]
+  },
+  "posts": [
+    {
+      "id": "post-001",
+      "content": "☕ Introducing our new Seasonal Spice Latte! Made with organic espresso and house-made spice blend. Available now through the end of winter. Come taste the warmth! #CoffeeLovers #SeasonalSpecial",
+      "mediaUrl": "https://images.example.com/seasonal-spice-latte.jpg",
+      "mediaType": "image",
+      "postType": "carousel",
+      "pageId": "page-instagram",
+      "status": "published",
+      "publishedAt": "2025-01-15T08:30:00Z",
+      "scheduledFor": null,
+      "createdBy": "user-001",
+      "approvedBy": "user-002",
+      "productProfileIds": ["product-001"],
+      "locationProfileId": null,
+      "campaignId": "campaign-001",
+      "themeId": "theme-001",
+      "objectiveId": "objective-001",
+      "isBoosted": true,
+      "hashtags": ["#CoffeeLovers", "#SeasonalSpecial"],
+      "language": "en",
+      "editHistory": [
+        {
+          "editedAt": "2025-01-14T15:20:00Z",
+          "editedBy": "user-001",
+          "changes": "Updated copy to emphasize 'house-made' blend"
+        }
+      ]
+    },
+    {
+      "id": "post-002",
+      "content": "🎉 Big news! Our Downtown Seattle flagship store just won 'Best Coffee Shop 2025' by Seattle Metro Magazine. Thank you to our amazing community for your support! ❤️",
+      "mediaUrl": "https://images.example.com/award-announcement.jpg",
+      "mediaType": "image",
+      "postType": "text",
+      "pageId": "page-facebook",
+      "status": "published",
+      "publishedAt": "2025-01-10T14:00:00Z",
+      "scheduledFor": null,
+      "createdBy": "user-003",
+      "approvedBy": "user-002",
+      "productProfileIds": [],
+      "locationProfileId": "location-001",
+      "campaignId": "campaign-002",
+      "themeId": "theme-002",
+      "objectiveId": "objective-002",
+      "isBoosted": false,
+      "hashtags": [],
+      "language": "en",
+      "editHistory": []
+    },
+    {
+      "id": "post-003",
+      "content": "Behind the scenes at our roastery ☕ Watch how we craft the perfect roast from bean selection to final quality check. Link in bio for the full video!",
+      "mediaUrl": "https://videos.example.com/roasting-process.mp4",
+      "mediaType": "video",
+      "postType": "reel",
+      "pageId": "page-instagram",
+      "status": "published",
+      "publishedAt": "2025-01-08T16:45:00Z",
+      "scheduledFor": null,
+      "createdBy": "user-004",
+      "approvedBy": "user-002",
+      "productProfileIds": ["product-002", "product-003"],
+      "locationProfileId": null,
+      "campaignId": "campaign-003",
+      "themeId": "theme-003",
+      "objectiveId": "objective-003",
+      "isBoosted": true,
+      "hashtags": ["#CoffeeRoasting", "#BehindTheScenes", "#CraftCoffee"],
+      "language": "en",
+      "editHistory": []
+    },
+    {
+      "id": "post-004",
+      "content": "Join us for our monthly Coffee Tasting event this Saturday at 2 PM. Learn about different brewing methods, taste 5 unique single-origin coffees, and meet our head roaster. Seats limited - RSVP link in bio!",
+      "mediaUrl": "https://images.example.com/tasting-event.jpg",
+      "mediaType": "image",
+      "postType": "text",
+      "pageId": "page-linkedin",
+      "status": "published",
+      "publishedAt": "2025-01-05T10:00:00Z",
+      "scheduledFor": null,
+      "createdBy": "user-001",
+      "approvedBy": "user-002",
+      "productProfileIds": [],
+      "locationProfileId": "location-001",
+      "campaignId": "campaign-004",
+      "themeId": "theme-004",
+      "objectiveId": "objective-002",
+      "isBoosted": false,
+      "hashtags": ["#CoffeeTasting", "#CoffeeEducation"],
+      "language": "en",
+      "editHistory": []
+    },
+    {
+      "id": "post-005",
+      "content": "New at our Portland location: Fresh pastries from local bakery @SweetStreetBakery! Pair them with any drink this week and get 15% off. 🥐☕",
+      "mediaUrl": "https://images.example.com/pastries-partnership.jpg",
+      "mediaType": "image",
+      "postType": "text",
+      "pageId": "page-instagram",
+      "status": "published",
+      "publishedAt": "2025-01-03T09:15:00Z",
+      "scheduledFor": null,
+      "createdBy": "user-003",
+      "approvedBy": "user-002",
+      "productProfileIds": ["product-004"],
+      "locationProfileId": "location-002",
+      "campaignId": "campaign-005",
+      "themeId": "theme-001",
+      "objectiveId": "objective-001",
+      "isBoosted": true,
+      "hashtags": ["#LocalPartnership", "#FreshBaked"],
+      "language": "en",
+      "editHistory": []
+    },
+    {
+      "id": "post-006",
+      "content": "☕ Monday motivation: 'Life is too short for bad coffee.' What's your go-to Monday morning order? Comment below! 👇",
+      "mediaUrl": null,
+      "mediaType": null,
+      "postType": "text",
+      "pageId": "page-twitter",
+      "status": "published",
+      "publishedAt": "2024-12-30T07:00:00Z",
+      "scheduledFor": null,
+      "createdBy": "user-004",
+      "approvedBy": null,
+      "productProfileIds": [],
+      "locationProfileId": null,
+      "campaignId": null,
+      "themeId": "theme-005",
+      "objectiveId": "objective-002",
+      "isBoosted": false,
+      "hashtags": ["#MondayMotivation", "#CoffeeQuotes"],
+      "language": "en",
+      "editHistory": []
+    },
+    {
+      "id": "post-007",
+      "content": "Exciting news coming next week! 👀 Any guesses what we're launching? Drop your predictions in the comments!",
+      "mediaUrl": "https://images.example.com/teaser-blur.jpg",
+      "mediaType": "image",
+      "postType": "story",
+      "pageId": "page-instagram",
+      "status": "scheduled",
+      "publishedAt": null,
+      "scheduledFor": "2025-02-01T12:00:00Z",
+      "createdBy": "user-001",
+      "approvedBy": "user-002",
+      "productProfileIds": [],
+      "locationProfileId": null,
+      "campaignId": "campaign-006",
+      "themeId": "theme-006",
+      "objectiveId": "objective-003",
+      "isBoosted": false,
+      "hashtags": ["#ComingSoon", "#StayTuned"],
+      "language": "en",
+      "editHistory": [],
+      "draftStatus": "approved",
+      "approvalWorkflow": {
+        "state": "approved",
+        "submittedAt": "2025-01-28T10:00:00Z",
+        "submittedBy": "user-001",
+        "reviewedAt": "2025-01-28T14:30:00Z",
+        "reviewedBy": "user-002",
+        "notes": "Approved for Feb 1st launch teaser"
+      }
+    },
+    {
+      "id": "post-008",
+      "content": "Valentine's Day Special ❤️☕ Surprise your loved one with our gift boxes featuring premium coffee blends and artisan chocolates. Pre-order now for Feb 14th delivery!",
+      "mediaUrl": "https://images.example.com/valentines-gift-box.jpg",
+      "mediaType": "image",
+      "postType": "carousel",
+      "pageId": "page-facebook",
+      "status": "scheduled",
+      "publishedAt": null,
+      "scheduledFor": "2025-02-05T15:00:00Z",
+      "createdBy": "user-003",
+      "approvedBy": null,
+      "productProfileIds": ["product-005"],
+      "locationProfileId": null,
+      "campaignId": "campaign-007",
+      "themeId": "theme-001",
+      "objectiveId": "objective-001",
+      "isBoosted": true,
+      "hashtags": ["#ValentinesDay", "#GiftIdeas", "#CoffeeLover"],
+      "language": "en",
+      "editHistory": [],
+      "draftStatus": "in_review",
+      "approvalWorkflow": {
+        "state": "in_review",
+        "submittedAt": "2025-01-30T09:00:00Z",
+        "submittedBy": "user-003",
+        "reviewedAt": null,
+        "reviewedBy": null,
+        "notes": "Waiting for marketing director approval"
+      }
+    },
+    {
+      "id": "post-009",
+      "content": "We're hiring! Join our team as a Barista Trainer at our flagship location. Love coffee? Love teaching? This could be your dream job. Apply via link in bio.",
+      "mediaUrl": "https://images.example.com/hiring-announcement.jpg",
+      "mediaType": "image",
+      "postType": "text",
+      "pageId": "page-linkedin",
+      "status": "draft",
+      "publishedAt": null,
+      "scheduledFor": "2025-02-10T11:00:00Z",
+      "createdBy": "user-004",
+      "approvedBy": null,
+      "productProfileIds": [],
+      "locationProfileId": "location-001",
+      "campaignId": null,
+      "themeId": "theme-007",
+      "objectiveId": "objective-004",
+      "isBoosted": false,
+      "hashtags": ["#NowHiring", "#CoffeeCareers", "#JoinOurTeam"],
+      "language": "en",
+      "editHistory": [],
+      "draftStatus": "draft",
+      "approvalWorkflow": {
+        "state": "draft",
+        "submittedAt": null,
+        "submittedBy": null,
+        "reviewedAt": null,
+        "reviewedBy": null,
+        "notes": "Draft - need to finalize copy with HR"
+      }
+    },
+    {
+      "id": "post-010",
+      "content": "Our sustainability journey continues! ♻️ We've now eliminated 100,000 single-use cups through our reusable cup program. Thank you for making a difference with every sip.",
+      "mediaUrl": "https://images.example.com/sustainability-milestone.jpg",
+      "mediaType": "image",
+      "postType": "text",
+      "pageId": "page-instagram",
+      "status": "failed",
+      "publishedAt": null,
+      "scheduledFor": "2025-01-28T13:00:00Z",
+      "createdBy": "user-001",
+      "approvedBy": "user-002",
+      "productProfileIds": [],
+      "locationProfileId": null,
+      "campaignId": "campaign-008",
+      "themeId": "theme-008",
+      "objectiveId": "objective-003",
+      "isBoosted": false,
+      "hashtags": ["#Sustainability", "#EcoFriendly", "#ZeroWaste"],
+      "language": "en",
+      "editHistory": [],
+      "draftStatus": "approved",
+      "approvalWorkflow": {
+        "state": "failed",
+        "submittedAt": "2025-01-27T10:00:00Z",
+        "submittedBy": "user-001",
+        "reviewedAt": "2025-01-27T15:00:00Z",
+        "reviewedBy": "user-002",
+        "notes": "Publishing failed - Instagram API error. Need to retry."
+      },
+      "failureReason": "Instagram API returned 403: Rate limit exceeded"
+    }
+  ],
+  "pages": [
+    {
+      "id": "page-instagram",
+      "name": "Brewed Awakenings",
+      "handle": "@brewedawakenings",
+      "channel": "Instagram",
+      "channelId": "channel-instagram",
+      "url": "https://instagram.com/brewedawakenings",
+      "isActive": true
+    },
+    {
+      "id": "page-facebook",
+      "name": "Brewed Awakenings Coffee",
+      "handle": "BrewedAwakeningsCoffee",
+      "channel": "Facebook",
+      "channelId": "channel-facebook",
+      "url": "https://facebook.com/brewedawakeningscoffee",
+      "isActive": true
+    },
+    {
+      "id": "page-twitter",
+      "name": "Brewed Awakenings",
+      "handle": "@brewedcoffee",
+      "channel": "Twitter",
+      "channelId": "channel-twitter",
+      "url": "https://twitter.com/brewedcoffee",
+      "isActive": true
+    },
+    {
+      "id": "page-linkedin",
+      "name": "Brewed Awakenings",
+      "handle": "brewed-awakenings",
+      "channel": "LinkedIn",
+      "channelId": "channel-linkedin",
+      "url": "https://linkedin.com/company/brewed-awakenings",
+      "isActive": true
+    },
+    {
+      "id": "page-google",
+      "name": "Brewed Awakenings - Downtown Seattle",
+      "handle": null,
+      "channel": "Google Business",
+      "channelId": "channel-google",
+      "url": "https://business.google.com/brewedawakenings",
+      "isActive": true
+    }
+  ],
+  "productProfiles": [
+    {
+      "id": "product-001",
+      "name": "Seasonal Spice Latte",
+      "description": "Limited-time seasonal drink with organic espresso and house-made spice blend",
+      "category": "Beverages"
+    },
+    {
+      "id": "product-002",
+      "name": "Premium Single-Origin Beans",
+      "description": "Ethically sourced coffee beans from specific regions",
+      "category": "Retail Coffee"
+    },
+    {
+      "id": "product-003",
+      "name": "House Blend Coffee",
+      "description": "Our signature roast - balanced and smooth",
+      "category": "Retail Coffee"
+    },
+    {
+      "id": "product-004",
+      "name": "Pastry Selection",
+      "description": "Fresh-baked pastries from local bakery partners",
+      "category": "Food"
+    },
+    {
+      "id": "product-005",
+      "name": "Valentine's Gift Box",
+      "description": "Premium coffee blends and artisan chocolates gift set",
+      "category": "Gift Sets"
+    }
+  ],
+  "locationProfiles": [
+    {
+      "id": "location-001",
+      "name": "Downtown Seattle Flagship",
+      "address": "1234 Pike Street, Seattle, WA 98101",
+      "city": "Seattle",
+      "state": "WA",
+      "country": "USA"
+    },
+    {
+      "id": "location-002",
+      "name": "Portland Pearl District",
+      "address": "567 NW 10th Ave, Portland, OR 97209",
+      "city": "Portland",
+      "state": "OR",
+      "country": "USA"
+    }
+  ],
+  "users": [
+    {
+      "id": "user-001",
+      "name": "Sarah Chen",
+      "email": "sarah.chen@brewedawakenings.com",
+      "role": "Social Media Manager",
+      "avatar": "https://avatars.example.com/sarah.jpg"
+    },
+    {
+      "id": "user-002",
+      "name": "Marcus Johnson",
+      "email": "marcus.j@brewedawakenings.com",
+      "role": "Marketing Director",
+      "avatar": "https://avatars.example.com/marcus.jpg"
+    },
+    {
+      "id": "user-003",
+      "name": "Emily Rodriguez",
+      "email": "emily.r@brewedawakenings.com",
+      "role": "Content Creator",
+      "avatar": "https://avatars.example.com/emily.jpg"
+    },
+    {
+      "id": "user-004",
+      "name": "Alex Kim",
+      "email": "alex.kim@brewedawakenings.com",
+      "role": "Community Manager",
+      "avatar": "https://avatars.example.com/alex.jpg"
+    }
+  ],
+  "campaigns": [
+    {
+      "id": "campaign-001",
+      "name": "Winter Seasonal Launch",
+      "startDate": "2025-01-01",
+      "endDate": "2025-03-31"
+    },
+    {
+      "id": "campaign-002",
+      "name": "Local Pride Campaign",
+      "startDate": "2025-01-01",
+      "endDate": "2025-12-31"
+    },
+    {
+      "id": "campaign-003",
+      "name": "Behind the Scenes Series",
+      "startDate": "2024-12-01",
+      "endDate": "2025-02-28"
+    },
+    {
+      "id": "campaign-004",
+      "name": "Coffee Education Events",
+      "startDate": "2025-01-01",
+      "endDate": "2025-12-31"
+    },
+    {
+      "id": "campaign-005",
+      "name": "Local Partnership Promotions",
+      "startDate": "2025-01-01",
+      "endDate": "2025-06-30"
+    },
+    {
+      "id": "campaign-006",
+      "name": "Product Launch Teaser",
+      "startDate": "2025-01-25",
+      "endDate": "2025-02-15"
+    },
+    {
+      "id": "campaign-007",
+      "name": "Valentine's Day 2025",
+      "startDate": "2025-01-20",
+      "endDate": "2025-02-14"
+    },
+    {
+      "id": "campaign-008",
+      "name": "Sustainability Initiatives",
+      "startDate": "2024-06-01",
+      "endDate": "2025-12-31"
+    }
+  ],
+  "themes": [
+    {
+      "id": "theme-001",
+      "name": "Product Promotion",
+      "description": "Posts highlighting specific products or offerings"
+    },
+    {
+      "id": "theme-002",
+      "name": "Community Celebration",
+      "description": "Posts celebrating achievements, awards, and community milestones"
+    },
+    {
+      "id": "theme-003",
+      "name": "Educational Content",
+      "description": "Posts teaching about coffee, brewing, or our processes"
+    },
+    {
+      "id": "theme-004",
+      "name": "Events & Experiences",
+      "description": "Posts promoting in-person events and tastings"
+    },
+    {
+      "id": "theme-005",
+      "name": "Engagement & Community",
+      "description": "Posts designed to spark conversation and interaction"
+    },
+    {
+      "id": "theme-006",
+      "name": "Teasers & Announcements",
+      "description": "Posts building anticipation for launches or news"
+    },
+    {
+      "id": "theme-007",
+      "name": "Recruitment & Culture",
+      "description": "Posts about careers and company culture"
+    },
+    {
+      "id": "theme-008",
+      "name": "Brand Values & Impact",
+      "description": "Posts about sustainability, ethics, and social responsibility"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "objective-001",
+      "name": "Drive Sales",
+      "description": "Increase product purchases and revenue"
+    },
+    {
+      "id": "objective-002",
+      "name": "Build Community",
+      "description": "Increase engagement and foster community connection"
+    },
+    {
+      "id": "objective-003",
+      "name": "Brand Awareness",
+      "description": "Expand reach and brand recognition"
+    },
+    {
+      "id": "objective-004",
+      "name": "Talent Acquisition",
+      "description": "Attract qualified job candidates"
+    }
+  ],
+  "metrics": [
+    {
+      "postId": "post-001",
+      "impressions": 45230,
+      "reach": 38450,
+      "engagements": 3820,
+      "engagementRate": 9.94,
+      "clicks": 425,
+      "clickRate": 0.94,
+      "videoViews": null,
+      "videoWatchTime": null,
+      "saves": 312,
+      "shares": 89,
+      "comments": 156,
+      "likes": 3263,
+      "followerChange": 42,
+      "profileVisits": 128,
+      "benchmark": {
+        "vsLast30Posts": "+23%",
+        "vsChannelMedian": "+45%"
+      },
+      "insights": [
+        "Engagement rate 45% above channel median",
+        "Strong save-to-impression ratio indicates high value content"
+      ]
+    },
+    {
+      "postId": "post-002",
+      "impressions": 62180,
+      "reach": 54320,
+      "engagements": 8940,
+      "engagementRate": 14.39,
+      "clicks": 892,
+      "clickRate": 1.43,
+      "videoViews": null,
+      "videoWatchTime": null,
+      "saves": 234,
+      "shares": 456,
+      "comments": 310,
+      "likes": 7940,
+      "followerChange": 87,
+      "profileVisits": 245,
+      "benchmark": {
+        "vsLast30Posts": "+78%",
+        "vsChannelMedian": "+112%"
+      },
+      "insights": [
+        "Best performing post this month",
+        "High share rate indicates strong emotional resonance"
+      ]
+    },
+    {
+      "postId": "post-003",
+      "impressions": 128450,
+      "reach": 95230,
+      "engagements": 12340,
+      "engagementRate": 9.61,
+      "clicks": 1245,
+      "clickRate": 0.97,
+      "videoViews": 78920,
+      "videoWatchTime": 32450,
+      "saves": 892,
+      "shares": 234,
+      "comments": 445,
+      "likes": 10769,
+      "followerChange": 156,
+      "profileVisits": 567,
+      "benchmark": {
+        "vsLast30Posts": "+34%",
+        "vsChannelMedian": "+28%"
+      },
+      "insights": [
+        "Reels format driving strong reach",
+        "Average watch time: 41 seconds (above platform average)"
+      ]
+    },
+    {
+      "postId": "post-004",
+      "impressions": 8940,
+      "reach": 7820,
+      "engagements": 456,
+      "engagementRate": 5.10,
+      "clicks": 234,
+      "clickRate": 2.62,
+      "videoViews": null,
+      "videoWatchTime": null,
+      "saves": 45,
+      "shares": 23,
+      "comments": 67,
+      "likes": 321,
+      "followerChange": 12,
+      "profileVisits": 89,
+      "benchmark": {
+        "vsLast30Posts": "-12%",
+        "vsChannelMedian": "-8%"
+      },
+      "insights": [
+        "LinkedIn posts typically have lower engagement but higher quality leads",
+        "High CTR indicates strong call-to-action effectiveness"
+      ]
+    },
+    {
+      "postId": "post-005",
+      "impressions": 34560,
+      "reach": 28940,
+      "engagements": 2340,
+      "engagementRate": 6.77,
+      "clicks": 567,
+      "clickRate": 1.64,
+      "videoViews": null,
+      "videoWatchTime": null,
+      "saves": 178,
+      "shares": 92,
+      "comments": 123,
+      "likes": 1947,
+      "followerChange": 34,
+      "profileVisits": 145,
+      "benchmark": {
+        "vsLast30Posts": "+8%",
+        "vsChannelMedian": "+15%"
+      },
+      "insights": [
+        "Promotional posts with partner tags expand reach",
+        "Discount offers driving strong click-through"
+      ]
+    },
+    {
+      "postId": "post-006",
+      "impressions": 12340,
+      "reach": 11230,
+      "engagements": 1892,
+      "engagementRate": 15.33,
+      "clicks": 45,
+      "clickRate": 0.36,
+      "videoViews": null,
+      "videoWatchTime": null,
+      "saves": 12,
+      "shares": 34,
+      "comments": 287,
+      "likes": 1559,
+      "followerChange": 8,
+      "profileVisits": 23,
+      "benchmark": {
+        "vsLast30Posts": "+45%",
+        "vsChannelMedian": "+67%"
+      },
+      "insights": [
+        "Question-based posts drive high comment engagement",
+        "Twitter engagement rate significantly above median"
+      ]
+    }
+  ],
+  "comments": [
+    {
+      "id": "comment-001",
+      "postId": "post-001",
+      "authorName": "Jessica M.",
+      "authorHandle": "@jessicam_seattle",
+      "authorAvatar": "https://avatars.example.com/jessica.jpg",
+      "content": "Just tried this and it's AMAZING! The spice blend is perfect - not too sweet!",
+      "sentiment": "positive",
+      "sentimentScore": 0.92,
+      "createdAt": "2025-01-15T09:45:00Z",
+      "isReplied": true,
+      "needsReply": false,
+      "isModerated": false,
+      "moderationAction": null
+    },
+    {
+      "id": "comment-002",
+      "postId": "post-001",
+      "authorName": "Mike Torres",
+      "authorHandle": "@miketorres",
+      "authorAvatar": "https://avatars.example.com/mike.jpg",
+      "content": "Tried to order this at the Bellevue location but they said they're out of stock. When will you restock?",
+      "sentiment": "neutral",
+      "sentimentScore": 0.05,
+      "createdAt": "2025-01-15T11:20:00Z",
+      "isReplied": false,
+      "needsReply": true,
+      "isModerated": false,
+      "moderationAction": null
+    },
+    {
+      "id": "comment-003",
+      "postId": "post-001",
+      "authorName": "Sarah K",
+      "authorHandle": "@sarahk_coffee",
+      "authorAvatar": "https://avatars.example.com/sarah-k.jpg",
+      "content": "Love supporting local coffee shops! Can't wait to try this 💛",
+      "sentiment": "positive",
+      "sentimentScore": 0.88,
+      "createdAt": "2025-01-15T14:30:00Z",
+      "isReplied": true,
+      "needsReply": false,
+      "isModerated": false,
+      "moderationAction": null
+    },
+    {
+      "id": "comment-004",
+      "postId": "post-002",
+      "authorName": "David Chen",
+      "authorHandle": "@davidchen_sea",
+      "authorAvatar": "https://avatars.example.com/david.jpg",
+      "content": "Well deserved! Best coffee in Seattle hands down. Congrats team! 🎉",
+      "sentiment": "positive",
+      "sentimentScore": 0.95,
+      "createdAt": "2025-01-10T14:30:00Z",
+      "isReplied": true,
+      "needsReply": false,
+      "isModerated": false,
+      "moderationAction": null
+    },
+    {
+      "id": "comment-005",
+      "postId": "post-002",
+      "authorName": "Rachel Green",
+      "authorHandle": "@rachelg",
+      "authorAvatar": "https://avatars.example.com/rachel.jpg",
+      "content": "I've been coming here for 3 years and the quality is always consistent. You earned it!",
+      "sentiment": "positive",
+      "sentimentScore": 0.89,
+      "createdAt": "2025-01-10T15:15:00Z",
+      "isReplied": true,
+      "needsReply": false,
+      "isModerated": false,
+      "moderationAction": null
+    },
+    {
+      "id": "comment-006",
+      "postId": "post-003",
+      "authorName": "Coffee Nerd",
+      "authorHandle": "@coffeenerd_pdx",
+      "authorAvatar": "https://avatars.example.com/nerd.jpg",
+      "content": "This is so cool! What temperature do you roast to for the house blend?",
+      "sentiment": "positive",
+      "sentimentScore": 0.72,
+      "createdAt": "2025-01-08T17:00:00Z",
+      "isReplied": true,
+      "needsReply": false,
+      "isModerated": false,
+      "moderationAction": null
+    },
+    {
+      "id": "comment-007",
+      "postId": "post-003",
+      "authorName": "BeanCounter",
+      "authorHandle": "@beancounter",
+      "authorAvatar": "https://avatars.example.com/bean.jpg",
+      "content": "Love the transparency! More companies should show their process like this.",
+      "sentiment": "positive",
+      "sentimentScore": 0.86,
+      "createdAt": "2025-01-08T18:22:00Z",
+      "isReplied": false,
+      "needsReply": false,
+      "isModerated": false,
+      "moderationAction": null
+    },
+    {
+      "id": "comment-008",
+      "postId": "post-006",
+      "authorName": "Amanda L",
+      "authorHandle": "@amandalovescoffee",
+      "authorAvatar": "https://avatars.example.com/amanda.jpg",
+      "content": "Double shot oat milk latte, every single Monday. Sometimes I add a shot of vanilla if I need extra motivation 😅",
+      "sentiment": "positive",
+      "sentimentScore": 0.68,
+      "createdAt": "2024-12-30T07:15:00Z",
+      "isReplied": false,
+      "needsReply": false,
+      "isModerated": false,
+      "moderationAction": null
+    },
+    {
+      "id": "comment-009",
+      "postId": "post-006",
+      "authorName": "James R",
+      "authorHandle": "@jamesr_coffee",
+      "authorAvatar": "https://avatars.example.com/james.jpg",
+      "content": "Cold brew all day every day. No other way to start the week!",
+      "sentiment": "positive",
+      "sentimentScore": 0.75,
+      "createdAt": "2024-12-30T07:45:00Z",
+      "isReplied": false,
+      "needsReply": false,
+      "isModerated": false,
+      "moderationAction": null
+    },
+    {
+      "id": "comment-010",
+      "postId": "post-005",
+      "authorName": "FoodCritic_PDX",
+      "authorHandle": "@foodcritic_pdx",
+      "authorAvatar": "https://avatars.example.com/critic.jpg",
+      "content": "I was there yesterday and the pastries were stale. Pretty disappointed for the price you're charging.",
+      "sentiment": "negative",
+      "sentimentScore": -0.72,
+      "createdAt": "2025-01-03T11:30:00Z",
+      "isReplied": false,
+      "needsReply": true,
+      "isModerated": false,
+      "moderationAction": null
+    }
+  ],
+  "commentSummaries": [
+    {
+      "postId": "post-001",
+      "totalComments": 156,
+      "analyzedComments": 156,
+      "sentimentBreakdown": {
+        "positive": 142,
+        "neutral": 12,
+        "negative": 2,
+        "positivePercent": 91,
+        "neutralPercent": 8,
+        "negativePercent": 1
+      },
+      "unrepliedCount": 23,
+      "needsReplyCount": 4,
+      "sentimentSpike": null,
+      "lastAnalyzed": "2025-01-15T18:00:00Z"
+    },
+    {
+      "postId": "post-002",
+      "totalComments": 310,
+      "analyzedComments": 310,
+      "sentimentBreakdown": {
+        "positive": 298,
+        "neutral": 11,
+        "negative": 1,
+        "positivePercent": 96,
+        "neutralPercent": 4,
+        "negativePercent": 0
+      },
+      "unrepliedCount": 45,
+      "needsReplyCount": 2,
+      "sentimentSpike": null,
+      "lastAnalyzed": "2025-01-10T20:00:00Z"
+    },
+    {
+      "postId": "post-003",
+      "totalComments": 445,
+      "analyzedComments": 412,
+      "sentimentBreakdown": {
+        "positive": 378,
+        "neutral": 29,
+        "negative": 5,
+        "positivePercent": 92,
+        "neutralPercent": 7,
+        "negativePercent": 1
+      },
+      "unrepliedCount": 89,
+      "needsReplyCount": 12,
+      "sentimentSpike": null,
+      "lastAnalyzed": "2025-01-08T22:00:00Z"
+    },
+    {
+      "postId": "post-004",
+      "totalComments": 67,
+      "analyzedComments": 67,
+      "sentimentBreakdown": {
+        "positive": 45,
+        "neutral": 20,
+        "negative": 2,
+        "positivePercent": 67,
+        "neutralPercent": 30,
+        "negativePercent": 3
+      },
+      "unrepliedCount": 12,
+      "needsReplyCount": 8,
+      "sentimentSpike": null,
+      "lastAnalyzed": "2025-01-05T16:00:00Z"
+    },
+    {
+      "postId": "post-005",
+      "totalComments": 123,
+      "analyzedComments": 123,
+      "sentimentBreakdown": {
+        "positive": 89,
+        "neutral": 21,
+        "negative": 13,
+        "positivePercent": 72,
+        "neutralPercent": 17,
+        "negativePercent": 11
+      },
+      "unrepliedCount": 34,
+      "needsReplyCount": 15,
+      "sentimentSpike": {
+        "type": "negative",
+        "change": "↑ in last 2h",
+        "description": "Negative comments increased from 5% to 11% in last 2 hours"
+      },
+      "lastAnalyzed": "2025-01-03T14:00:00Z"
+    },
+    {
+      "postId": "post-006",
+      "totalComments": 287,
+      "analyzedComments": 287,
+      "sentimentBreakdown": {
+        "positive": 234,
+        "neutral": 48,
+        "negative": 5,
+        "positivePercent": 82,
+        "neutralPercent": 17,
+        "negativePercent": 1
+      },
+      "unrepliedCount": 178,
+      "needsReplyCount": 0,
+      "sentimentSpike": null,
+      "lastAnalyzed": "2024-12-30T12:00:00Z"
+    }
+  ]
+}

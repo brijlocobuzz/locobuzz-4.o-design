@@ -1,0 +1,22 @@
+<div id="direct_close" class="post-reply">
+    <div class="post-reply__body post__reply--block--body p-12">
+         <div class="textarea-featured flex-parent__main">
+            <div class="textarea-featured__body">
+              <textarea [ngClass]="{'small_font-size' : !defaultLayout}" role="textbox" name="textArea" #txrArea [(ngModel)]="textArea"
+                rows="5" class="textarea-featured__input custom-textarea"
+                (ngModelChange)="noteTextChange(txrArea, 'textArea')">
+              </textarea>
+              <app-attach-media class="w-full" [postData]="postData" [postDetailTab]="postDetailTab"></app-attach-media>
+            </div>
+</div>
+</div>
+    <div class="post-reply__foot" >
+<button type="button" [ngClass]="{'small_font-size' : !defaultLayout}" (click)="closePostReply()" mat-stroked-button class="blank-hoverBtn ml-auto mr-8 colored__blue">
+        {{'Cancel' | translate}}
+      </button>
+       <button
+         (click)="directClose()" [ngClass]="{'small_font-size' : !defaultLayout}" type="button" [loading]="buttonLoader" mat-flat-button class="ml-8" color="accent" [disabled]="closeData">
+        {{'Direct-Close' | translate}}
+      </button>
+        </div>
+</div>

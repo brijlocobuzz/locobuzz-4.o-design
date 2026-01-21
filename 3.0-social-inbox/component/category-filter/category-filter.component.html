@@ -1,0 +1,508 @@
+<!-- <strong>Upper Category</strong> -->
+<div class="modal__head" [ngClass]="{'p-10' : !defaultLayout}">
+  <span class="modal__title" [ngClass]="{'medium-font-size' : !defaultLayout || onlyUpperCategory}">
+    <span class="d-flex-items-center g-7">
+       <!-- <span class="upper-cate-icon">
+        <mat-icon class="icon-size" fontSet="material-icons-outlined" *ngIf="!defaultLayout">keyboard_alt</mat-icon>
+      </span> -->
+     {{onlyUpperCategory ? ('Upper-Category' | translate) : ('Category-Mapping' | translate)}}</span>
+    </span>
+  <span class="modal__action">
+    <mat-icon fontSet="material-icons-outlined" [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}" [mat-dialog-close]="false">close</mat-icon>
+  </span>
+</div>
+
+<div class="modal__body" [ngClass]="onlyUpperCategory? 'min-h-auto' : 'modal__body--height'">
+  <div class="modal__body--wrapper">
+    <div class="modal__body--section ticket__category--left" *ngIf="!onlyUpperCategory" [ngClass]="defaultLayout ? 'p-12' : 'p-10'" style="flex: 1;">
+      <div *ngIf="!voipSetup" class="input__wrapper">
+        <mat-form-field appearance="outline" fxFlex="100" class="material__select" [ngClass]="{'ai-layout__dropdown' : !defaultLayout}">
+          <mat-label class="input__label" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Select-Upper-Category' | translate }}</mat-label>
+          <mat-select [(value)]="DefaultSelected" #selectValue [ngClass]="{'small_font-size' : !defaultLayout}" [placeholder]="'Select-upper-category' | translate">
+            <!-- <mat-option [value]="default">Select The Category</mat-option> -->
+            <mat-select-trigger>
+              <span class="d-flex-items-center w-100-p g-5" *ngIf="DefaultSelected">
+                <span class="upper-cate-icon" *ngIf="getCategorysIcons(DefaultSelected)">
+                  <mat-icon class="icon-size mr-0 {{getCategorysSentimentColor(DefaultSelected)}}"
+                    fontSet="material-icons-outlined">{{getCategorysIcons(DefaultSelected)}}</mat-icon>
+                </span>
+                <span style="text-transform: capitalize;">{{DefaultSelected}}</span>
+              </span>
+            </mat-select-trigger>
+            <mat-form-field *ngIf="copyUpperCategories.length > 8" appearance="outline"
+              class="material__select p-0 small_font-size mt-5 pl-8 pr-8" [ngClass]="{'small_font-size': !defaultLayout}">
+              <input type="text" [ngClass]="{'small_font-size': !defaultLayout}" [(ngModel)]="searchCategory" placeholder="{{'Search-Upper-Category' | translate}}" matInput
+                class="material-icons-outlined
+                                                                                                                categorymap__tabs--search-input" (keyup)='searchUpperCategories()' autocomplete="off" />
+              <button matSuffix mat-icon-button (click)='searchUpperCategories()'>
+                <mat-icon [ngClass]="{'small-icon-font-size mt-4': !defaultLayout}" class="material-icons-outlined">search
+                </mat-icon>
+              </button>
+            </mat-form-field>
+            <ng-container *ngFor="let option of upperCategories; let i = index">
+              <div class="uppercategory-ai-mapping" [ngClass]="{'small_font-size': !defaultLayout}" *ngIf="i==0 && option?.isAIBasedUpperCategory && (upperCategories.length > 8 || searchCategory)"><span>{{'AI-Upper-Category' | translate}}</span>
+              </div>
+              <div class="uppercategory-custom-mapping" [ngClass]="{'small_font-size': !defaultLayout}"
+                *ngIf="i != 0 && upperCategories[i-1]?.isAIBasedUpperCategory == true && !option?.isAIBasedUpperCategory"><span>{{'Custom-Upper-Category' | translate}}</span></div>
+              <mat-option (click)="upperSelect(option, true)" [id]="option.id" [value]="option.name"
+                [ngClass]="{'small_font-size h-min-20' : !defaultLayout}">
+                  <span class="d-flex-items-center w-100-p g-5">
+                    <span class="upper-cate-icon" *ngIf="getCategorysIcons(option.name) && option?.isAIBasedUpperCategory">
+                      <mat-icon class="icon-size mr-0 {{getCategorysSentimentColor(option.name)}}"
+                        fontSet="material-icons-outlined">{{getCategorysIcons(option.name)}}</mat-icon>
+                    </span>
+                    <span style="text-transform: capitalize;" [ngClass]="{'small_font-size' : !defaultLayout}">{{option.name | translate}}</span>
+                  </span>
+              </mat-option>
+            </ng-container>
+            <ng-container *ngIf="upperCategories?.length == 0 && !upperCategoryLoader">
+              <mat-option class="uppper-no-data-found" disabled>
+                <span class="d-flex-items-center" [ngClass]="{'small_font-size': !defaultLayout}">
+                  {{searchCategory ? 'Search Not Found' : 'No Data Found'}}
+                </span>
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="category">
+        <div class="category__search">
+          <input class="custom__input" name="search" autocomplete="off" [placeholder]="'Type-to-search' | translate"
+            [(ngModel)]="inputValue" #categorySearch (input)="filter(inputValue)" [ngClass]="{'h-30 small_font-size' : !defaultLayout}" />
+        </div>
+        <div class="category__tree--wrapper" [ngClass]="defaultLayout ? 'category__tree--wrapper--height' : 'p-5 ai-layout__category-filter'">
+          <app-component-loader [postCountTotal]="7" [loaderType]="loaderTypeEnum.checkList" *ngIf="categoryLoader">
+          </app-component-loader>
+          <ng-container *ngIf="dataSource.length > 0 || categoryLoader; else noDataSource">
+            <div class="category__tree" *ngFor="let data of dataSource; let i = index">
+              <div class="category__tree--listitem">
+                <div class="category__tree--group">
+                  <mat-checkbox (change)="onParentClick(checkBox, data, i)" [checked]="checkBox.checked" name="{{ data.category + data.categoryID}}"
+                    #checkBox [ngClass]="{'ai-layout__checkbox' : !defaultLayout}">
+                    {{ data.category }}</mat-checkbox>
+                </div>
+                <mat-radio-group ngModel [ngModelOptions]="{ standalone: true }" #pradio="ngModel" name="{{ data.category + data.categoryID}}"
+                  *ngIf="data.sentiment != null && checkBox._checked" aria-label="Select an option"
+                  (change)="radio(pradio.value, data.category+ data.categoryID, 'parent', data)">
+                  <mat-radio-button class="radio-positive" [ngClass]="{'ai-layout__radio-btn mr-0' : !defaultLayout}" #parentradio value="1">{{ 'Positive' | translate }}</mat-radio-button>
+                  <mat-radio-button class="radio-negative" [ngClass]="{'ai-layout__radio-btn mr-0' : !defaultLayout}" #parentradio value="2">{{ 'Negative' | translate }}</mat-radio-button>
+                  <mat-radio-button class="radio-neutral" [ngClass]="{'ai-layout__radio-btn mr-0' : !defaultLayout}" #parentradio value="0">{{ 'Neutral' | translate }}</mat-radio-button>
+                </mat-radio-group>
+              </div>
+              <div *ngIf="checkBox._checked || categorySearch.value.length>0">
+                <div class="category__tree--nested" [ngClass]="{
+                    'category__tree--nestedlast': data.depatments.length - 1 == i
+                  }" *ngFor="let nestdata of data.depatments; let i = index">
+                  <div #divi class="category__tree--listitem">
+                    <mat-checkbox (change)="
+                        onchildClick(nestdata, nestCheckbox, data, data.category,checkBox)
+                      " name="{{ nestdata.departmentName + nestdata.departmentID }}" [ngClass]="{'ai-layout__checkbox' : !defaultLayout}" [checked]="nestCheckbox.checked" #nestCheckbox>
+                      {{ nestdata.departmentName }}</mat-checkbox>
+                    <mat-radio-group ngModel [ngClass]="{'ai-layout__radio-btn mr-0' : !defaultLayout}" [ngModelOptions]="{ standalone: true }" #nestedRadio="ngModel" name="{{ nestdata.departmentName + nestdata.departmentID}}" *ngIf="
+                        nestdata.departmentSentiment != null &&
+                        nestCheckbox._checked
+                      " aria-label="Select an option" (change)="
+                        radio(
+                          nestedRadio.value,
+                          nestdata.departmentName+ nestdata.departmentID,
+                          'child',
+                          nestdata
+                        )
+                      ">
+                      <mat-radio-button class="radio-positive" [ngClass]="{'ai-layout__radio-btn mr-0' : !defaultLayout}" #subRadio value="1">{{ 'Positive' | translate }}</mat-radio-button>
+                      <mat-radio-button class="radio-negative" [ngClass]="{'ai-layout__radio-btn mr-0' : !defaultLayout}" #subRadio value="2">{{ 'Negative' | translate }}</mat-radio-button>
+                      <mat-radio-button class="radio-neutral" [ngClass]="{'ai-layout__radio-btn mr-0' : !defaultLayout}" #subRadio value="0">{{ 'Neutral' | translate }}</mat-radio-button>
+                    </mat-radio-group>
+                  </div>
+                  <div *ngIf="nestCheckbox._checked || categorySearch.value.length>0">
+                    <div class="category__tree--nested" *ngFor="let subdata of nestdata.subCategories">
+                      <div class="category__tree--listitem">
+                        <mat-checkbox name="{{ subdata.subCategoryName + subdata.subCategoryID}}" [checked]="dnestedCheck.checked" #dnestedCheck [ngClass]="{'ai-layout__checkbox' : !defaultLayout}"
+                          (change)="
+                            ondNestedChildClick(
+                              subdata,
+                              dnestedCheck,
+                              nestdata,
+                              subdata.subCategoryName,
+                              data,
+                              nestCheckbox,
+                              checkBox
+                            )
+                            
+                          ">
+                          {{ subdata.subCategoryName }}
+                        </mat-checkbox>
+                        <mat-radio-group [ngClass]="{'ai-layout__radio-btn mr-0' : !defaultLayout}" ngModel [ngModelOptions]="{ standalone: true }" #dnestedRadio="ngModel" name="{{ subdata.subCategoryName + subdata.subCategoryID }}" *ngIf="
+                            dnestedCheck._checked &&
+                            subdata.subCategorySentiment != null
+                          " aria-label="Select an option" (change)="
+                            radio(
+                              dnestedRadio.value,
+                              subdata.subCategoryName+ subdata.subCategoryID,
+                              'subchild',
+                              subdata
+                            )
+                          ">
+                          <mat-radio-button class="radio-positive" [ngClass]="{'ai-layout__radio-btn mr-0' : !defaultLayout}" #subsubRadios value="1">{{ 'Positive' | translate }}</mat-radio-button>
+                          <mat-radio-button class="radio-negative" [ngClass]="{'ai-layout__radio-btn mr-0' : !defaultLayout}" #subsubRadios value="2">{{ 'Negative' | translate }}</mat-radio-button>
+                          <mat-radio-button class="radio-neutral" [ngClass]="{'ai-layout__radio-btn mr-0' : !defaultLayout}" #subsubRadios value="0">{{ 'Neutral' | translate }}</mat-radio-button>
+                        </mat-radio-group>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <ng-template #noDataSource>
+            <div class="category__tree--wrapper__no-result-found position-absolute text-center">
+              <img src="assets/images/account-profile/no_result_found.svg" />
+              <p class="font-weight-700 mb-6 mt-12" [ngClass]="{'medium-font-size' : !defaultLayout}">{{ 'No-Result-Found' | translate }}</p>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <div class="modal__body--section ticket__category--right p-12 pt-0 dynamic-crm__mapping" *ngIf="!onlyUpperCategory" [ngClass]="{'w-25-p' : !defaultLayout}" style="flex: inherit">
+      <div class="ticket__category">
+        <div class="ticket__category--item">
+          <!-- <mat-tab-group mat-align-tabs="start"> -->
+          <!-- <mat-tab label="Category"> -->
+          <p *ngIf="!voipSetup" class="text__content mb-8 pt-12 font-weight-600" [ngClass]="{'medium-font-size' : !defaultLayout}">
+            {{ 'Selected-Upper-Category' | translate }}
+          </p>
+          <div  *ngIf="!voipSetup"class="category-pill category-pill--NA" [ngClass]="{'h-30 d-flex-items-center width-fit' : !defaultLayout}">
+            <div class="category-pill__item category-pill__item--noItem" *ngIf="selectedUpper == ''">
+              <span class="category-pill__label" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'N-A' | translate }}</span>
+            </div>
+            <div class="category-pill__item position-relative" [ngClass]="defaultLayout ? 'w-240' : 'w-198'" *ngIf="selectedUpper != ''">
+              <span class="category-pill__label label" [ngClass]="{'small_font-size' : !defaultLayout}">{{ selectedUpper }}</span>
+              <span class="category-pill__close" [ngClass]="{'small-icon-font-size' : !defaultLayout}" (click)="removeUpperCate()">
+                <mat-icon>close</mat-icon>
+              </span>
+            </div>
+          </div>
+          <div class="ticket__category--item">
+            <p class="text__content mb-8 font-weight-600" [ngClass]="{'medium-font-size' : !defaultLayout}">{{ 'Selected-Category' | translate }}</p>
+            <div *ngFor="let item of categoryCards" class="category-pill__wrapper">
+              <div *ngIf="item.sentiment != null && item.subCategories.length == 0"
+                class="category-pill position-relative" [ngClass]="defaultLayout ? 'w-250' : 'w-209 h-30 d-flex-items-center'">
+                <div class="category-pill__item">
+                  <span class="category-pill__label label" [ngClass]="{'small_font-size' : !defaultLayout}">{{ item.name }}</span>
+                  <span *ngIf="item.subCategories.length == 0" class="category-pill__sentiment">
+                    -
+                    <span [ngClass]="{ colored__green: item?.sentiment == '1', 'small_font-size' : !defaultLayout }" *ngIf="item?.sentiment == '1'">
+                      {{ 'Positive' | translate }}
+                    </span>
+                    <span [ngClass]="{ colored__red: item?.sentiment == '2', 'small_font-size' : !defaultLayout }" *ngIf="item?.sentiment == '2'">
+                      {{ 'Negative' | translate }}
+                    </span>
+                    <span [ngClass]="{ 'small_font-size' : !defaultLayout, 
+                                  'colored__yellow--dark': item?.sentiment == '0'
+                                }" *ngIf="item?.sentiment == '0'">
+                      {{ 'Neutral' | translate }}
+                    </span>
+                  </span>
+                  <div class="category-pill__close mr-5" [ngClass]="defaultLayout ? 'mt-8' : 'mt-5 small-icon-font-size'" (click)="removeCard(item)">
+                    <mat-icon>close</mat-icon>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngFor="let subitem of item.subCategories" class="category-pill position-relative" [ngClass]="defaultLayout ? 'w-250' : 'w-209 d-flex-items-center'">
+                <div *ngIf="subitem.subSubCategories.length != 0">
+                  <div class="category-pill__item">
+                    <span class="category-pill__label text-semibold label" [ngClass]="{'small_font-size' : !defaultLayout}">{{
+                      item.name
+                      }}</span>
+                    <div class="category-pill__close" [ngClass]="{'small-icon-font-size' : !defaultLayout}" (click)="removeCard(subitem)">
+                      <mat-icon>close</mat-icon>
+                    </div>
+                  </div>
+                  <div *ngIf="subitem.subSubCategories.length != 0">
+                    <span class="category-pill__label text-semibold" [ngClass]="{'small_font-size' : !defaultLayout}">{{
+                      subitem.name
+                      }}
+                      <span *ngIf="subitem.subSubCategories.length == 0" class="category-pill__sentiment">
+                        -
+                        <span [ngClass]="{ colored__green: subitem?.sentiment == '1', 'small_font-size' : !defaultLayout }"
+                          *ngIf="subitem?.sentiment == '1'">
+                          {{ 'Positive' | translate }}
+                        </span>
+                        <span [ngClass]="{ colored__red: subitem?.sentiment == '2', 'small_font-size' : !defaultLayout }" *ngIf="subitem?.sentiment == '2'">
+                          {{ 'Negative' | translate }}
+                        </span>
+                        <span [ngClass]="{ 'small_font-size' : !defaultLayout,
+                                    'colored__yellow--dark': subitem?.sentiment == '0'
+                                  }" *ngIf="subitem?.sentiment == '0'">
+                          {{ 'Neutral' | translate }}
+                        </span>
+                      </span>
+                    </span>
+                  </div>
+                </div>
+
+                <div *ngIf="subitem.subSubCategories.length == 0">
+                  <div class="category-pill__item">
+                    <span class="category-pill__sublabel mb-5 text-semibold label" [ngClass]="{'small_font-size' : !defaultLayout}">{{
+                      item.name
+                      }}</span>
+                    <div class="category-pill__close" [ngClass]="{'small-icon-font-size' : !defaultLayout}" (click)="removeCard(subitem)">
+                      <mat-icon>close</mat-icon>
+                    </div>
+                  </div>
+                  <div class="category-pill__item">
+                    <span class="category-pill__sublabel" [ngClass]="{'small_font-size' : !defaultLayout}">{{
+                      subitem.name
+                      }}
+                      <span class="category-pill__sentiment" *ngIf="subitem.subSubCategories.length == 0">
+                        -
+
+                        <span [ngClass]="{ colored__green: subitem?.sentiment == '1', 'small_font-size' : !defaultLayout }"
+                          *ngIf="subitem?.sentiment == '1'">
+                          {{ 'Positive' | translate }}
+                        </span>
+                        <span [ngClass]="{ colored__red: subitem?.sentiment == '2', 'small_font-size' : !defaultLayout }" *ngIf="subitem?.sentiment == '2'">
+                          {{ 'Negative' | translate }}
+                        </span>
+                        <span [ngClass]="{ 'small_font-size' : !defaultLayout,
+                                    'colored__yellow--dark': subitem?.sentiment == '0'
+                                  }" *ngIf="subitem?.sentiment == '0'">
+                          {{ 'Neutral' | translate }}
+                        </span>
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <div *ngFor="let subsubitem of subitem.subSubCategories">
+                  <span class="category-pill__sublabel" [ngClass]="{'small_font-size' : !defaultLayout}">{{
+                    subsubitem.name
+                    }}</span>
+                  <span class="category-pill__sentiment">
+                    -
+
+                    <span [ngClass]="{ colored__green: subsubitem?.sentiment == '1', 'small_font-size' : !defaultLayout }"
+                      *ngIf="subsubitem?.sentiment == '1'">
+                      {{ 'Positive' | translate }}
+                    </span>
+                    <span [ngClass]="{ colored__red: subsubitem?.sentiment == '2', 'small_font-size' : !defaultLayout }"
+                      *ngIf="subsubitem?.sentiment == '2'">
+                      {{ 'Negative' | translate }}
+                    </span>
+                    <span [ngClass]="{ 'small_font-size' : !defaultLayout,
+                                  'colored__yellow--dark': subsubitem?.sentiment == '0'
+                                }" *ngIf="subsubitem?.sentiment == '0'">
+                      {{ 'Neutral' | translate }}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- </mat-tab> -->
+          <!-- <mat-tab label="Activity Log"> -->
+          <!-- <ul class="post-timeline">
+                <li class="post-timeline__item">
+                  <span
+                    class="post-timeline__label"
+                  ></span>
+                  <span class="text__label">via link in email</span>
+                  <div class="d-flex-items-center">
+                    <mat-icon class="time" fontset="material-icons-outlined">schedule</mat-icon>
+                    <span class="post-timeline__timestamp">
+                    01-August-2022 10:58 AM</span>
+                  </div>
+                </li>
+                <li class="post-timeline__item">
+                  <span class="post-timeline__label"></span>
+                  <span class="text__label"> <span class="text-underline">John Doe</span> Unselected the following categories</span>
+                  <span class="position-relative">( <span class="dot__green"></span> 
+                    <span class="ml-12">Credit Card/Card lost/money deduction</span> ), 
+                  </span><span class="position-relative">
+                    ( <span class="dot__red"></span> <span class="ml-12">Credit Card/New Card/Not Working</span> )
+                  </span>
+                  
+                  <div class="d-flex-items-center">
+                    <mat-icon class="time" fontset="material-icons-outlined">schedule</mat-icon>
+                    <span class="post-timeline__timestamp">
+                    01-August-2022 10:58 AM</span>
+                  </div>
+                </li>
+                <li class="post-timeline__item">
+                  <span class="post-timeline__label"></span>
+                  <span>
+                    <span class="text__label text-underline">John Doe</span> Unselected the following categories
+                  </span>   
+                  <div class="category__tree bg__white pt-10">
+                    <p class="text__label">Selected Category</p>
+                    <div class="category__tree--listitem">
+                      <div class="category__tree--group">
+                        <span class="dot__red--indicator"></span> <span class="pl-20">Credit Card</span>                      </div>
+                    </div>
+                    <div>
+                      <div
+                        class="category__tree--nested">
+                        <div #divi class="category__tree--listitem ml-3">
+                            nested <span class="category-green"> positive</span>
+                        </div>
+                        <div>
+                          <div
+                            class="category__tree--nested subCategories">
+                            <div class="category__tree--listitem ml-3">
+                                sundata
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="category__tree--nested">
+                        <div #divi class="category__tree--listitem ml-3">
+                            nested
+                        </div>
+                      </div>
+                      <div
+                        class="category__tree--nested">
+                        <div #divi class="category__tree--listitem ml-3">
+                            nested <span class="category-red"> negative</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="category__tree bg__white pt-10">
+                    <p class="text__label">Unselected Category</p>
+                    <div class="category__tree--listitem">
+                      <div class="category__tree--group">
+                        <span class="dot__green--indicator"></span> <span class="pl-20">Credit Card</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div
+                        class="category__tree--nested">
+                        <div #divi class="category__tree--listitem ml-3">
+                            nested
+                        </div>
+                        <div>
+                          <div
+                            class="category__tree--nested subCategories">
+                            <div class="category__tree--listitem ml-3">
+                                sundata
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="category__tree--nested">
+                        <div #divi class="category__tree--listitem ml-3">
+                            nested
+                        </div>
+                      </div>
+                      <div
+                        class="category__tree--nested">
+                        <div #divi class="category__tree--listitem ml-3">
+                            nested
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="d-flex-items-center">
+                    <mat-icon class="time" fontset="material-icons-outlined">schedule</mat-icon>
+                    <span class="post-timeline__timestamp">
+                    01-August-2022 10:58 AM</span>
+                  </div>
+                </li>
+              </ul> -->
+
+          <!-- </mat-tab>
+          </mat-tab-group> -->
+
+        </div>
+
+      </div>
+    </div>
+    <ng-container *ngIf="onlyUpperCategory">
+      <ul class="upper-cate-list">
+        <app-component-loader [postCountTotal]="4" [loaderType]="loaderTypeEnum.checkList" *ngIf="upperCategoryLoader">
+        </app-component-loader>
+        <mat-form-field *ngIf = "copyUpperCategories.length > 8" appearance="outline" class="material__select p-0 small_font-size">
+          <input type="text" [(ngModel)]="searchCategory" placeholder="{{'Search-Upper-Category' | translate}}" matInput class="material-icons-outlined
+                                                                                        categorymap__tabs--search-input small_font-size"
+            (keyup)='searchUpperCategories()' autocomplete="off" />
+          <button matSuffix mat-icon-button class="mt-4" (click)='searchUpperCategories()'>
+            <mat-icon class="material-icons-outlined small-icon-font-size">search
+            </mat-icon>
+          </button>
+        </mat-form-field>
+        <ng-container *ngFor="let option of upperCategories; let i = index">
+          <div class="uppercategory-border-top small_font-size" *ngIf="i==0 && option?.isAIBasedUpperCategory && (upperCategories.length > 8 || searchCategory)"><span>{{'AI-Upper-Category' | translate}}</span></div>
+          <div class="uppercategory-border-top small_font-size" *ngIf="i != 0 && upperCategories[i-1]?.isAIBasedUpperCategory == true && !option?.isAIBasedUpperCategory"><span class="custom">{{'Custom-Upper-Category' | translate}}</span></div>
+          <li [ngClass]="{'active': selectedUpper == option?.name}" (click)="upperSelect(option)">
+            <span class="d-flex-items-center w-100-p g-6" [matTooltip]="option.name.length > 30 ? (option.name | translate) : null"
+                  matTooltipClass="custom__tooltip-normal">
+              <span class="small_font-size">{{(option.name | translate) | slice: 0:30}}{{ option?.name?.length
+              > 30 ? '...' : '' }}</span>
+              <span class="upper-cate-icon right-auto ml-auto" *ngIf="getCategorysIcons(option.name) && option?.isAIBasedUpperCategory">
+                <!-- <img class="post__foot--icon" *ngIf="option.name == 'complaint' || option.name == 'Complaint'"
+                  src="assets/images/account/negative.svg" /> -->
+                <mat-icon class="icon-size {{getCategorysSentimentColor(option.name)}}"
+                  fontSet="material-icons-outlined">{{getCategorysIcons(option.name)}}</mat-icon>
+              </span>
+              <!-- <mat-icon *ngIf = "selectedUpper == option?.name" class="s-20 colored__locobuzz ml-auto" fontSet="material-icons-outlined">check</mat-icon> -->
+            </span>
+          </li>
+        </ng-container>
+        <ng-container *ngIf="upperCategories?.length == 0 && !upperCategoryLoader">
+          <li class="uppper-no-data-found mt-20">
+            <span class="d-flex-items-center m-auto small_font-size">
+             {{searchCategory ? 'Search Not Found' : 'No Data Found'}}
+            </span>
+          </li>
+        </ng-container>
+      </ul>
+    </ng-container>
+  </div>
+</div>
+
+<div class="modal__foot modal__foot--tabsize" [ngClass]="defaultLayout ? 'p-12' : 'p-10'">
+  <div class="category__filter no-wrap" *ngIf="!onlyUpperCategory">
+    <div class="modal__foot--item" *ngIf="(categoryType !== 'ticketCategory' && tagretweet) && (!isGroupedView)">
+      <div class="input__wrapper">
+        <mat-checkbox (change)="TaggingRequestParameters($event.checked, 'settagTweet')" [checked]="settagTweet" [ngClass]="{'ai-layout__checkbox' : !defaultLayout}">{{ 'Tag-Tweet-Retweet' | translate }}</mat-checkbox>
+      </div>
+    </div>
+    <div class="modal__foot--item" *ngIf="showsettoticket">
+      <div class="input__wrapper">
+        <mat-checkbox (change)="TaggingRequestParameters($event.checked, 'setToTicket')" [checked]="setToTicket" class="checkbox_align" [ngClass]="{'ai-layout__checkbox' : !defaultLayout}">{{ 'Set-to-ticket-as-well' | translate }}</mat-checkbox>
+      </div>
+    </div>
+    <div class="modal__foot--item" *ngIf="showAllMentionCheckBox">
+      <div class="input__wrapper">
+        <mat-checkbox (change)="
+                TaggingRequestParameters($event.checked, 'setallmentionunderticket')
+              " [checked]="setallmentionunderticket" class="checkbox_align" [ngClass]="{'ai-layout__checkbox' : !defaultLayout}">{{ 'Set-to-all-mentions-under-ticket-Id' | translate }}</mat-checkbox>
+      </div>
+    </div>
+    <!-- <div class="modal__foot--item mr-10">
+      <div class="input__wrapper"
+        matTooltip="Brand mentions will not be considered, this feature is only applicable to the user mentions collected till the time of tagging. Future user mentions will be tagged as per the category map and not based on this."
+        matTooltipClass="custom-tooltip" matTooltipPosition="above">
+        <mat-icon class="cursor-pointer">error_outline</mat-icon>
+      </div>
+    </div> -->
+  </div>
+  <div class="category__filter--button">
+    <div class="modal__foot--item ml-6" *ngIf="!onlyUpperCategory">
+      <button mat-stroked-button color="accent" (click)="clearall()" [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout || onlyUpperCategory}">
+        {{ 'Clear-All' | translate }}
+      </button>
+    </div>
+    <div class="align-center ml-auto">
+      <div class="modal__foot--item d-flex-items-center g-12">
+        <button mat-stroked-button color="accent" [mat-dialog-close]="false" [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout || onlyUpperCategory}">
+          {{ 'Cancel' | translate }}
+        </button>
+        <button *ngIf="postObjData" [loading]="loading" mat-flat-button color="accent" [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout || onlyUpperCategory}"
+          (click)="Submit()">{{ 'Submit' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>

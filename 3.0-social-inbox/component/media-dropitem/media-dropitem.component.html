@@ -1,0 +1,104 @@
+<div class="modal__head" *ngIf="inModal">
+  <h3 class="modal__title font-semibold d-flex-items-center">{{ 'Edit-Image' | translate }}</h3>
+  <span class="modal__action">
+    <mat-icon mat-dialog-close fontSet="material-icons-outlined"
+      >close</mat-icon
+    >
+  </span>
+</div>
+<div class="dropzone__item--wrapper" [ngClass]="{ modal__body: inModal }">
+  <div class="dropzone__item--image">
+    <ng-container *ngIf="onUpload; else staticImage">
+      <ngx-dropzone-image-preview 
+        class="dropzone__item--imagepreview"
+        ngProjectAs="ngx-dropzone-preview"
+        [file]="image"
+        *ngIf="image.mediaType === mediaEnum.IMAGE"
+      ></ngx-dropzone-image-preview>
+      <ngx-dropzone-video-preview class="dropzone__item--videoPreview" ngProjectAs="ngx-dropzone-preview"
+        [file]="image" *ngIf="image.mediaType === mediaEnum.VIDEO">
+      </ngx-dropzone-video-preview>
+       <img  src="assets/images/common/pdf.png"
+              *ngIf="image.mediaType == mediaEnum.PDF"
+              
+            >
+            <img  src="assets/images/common/word.png"
+              *ngIf="image.mediaType == mediaEnum.DOC" 
+            >
+            <img  src="assets/images/common/excel-file.png"
+              *ngIf="image.mediaType == mediaEnum.EXCEL" 
+            >
+
+      <div class="dropzone__item--overlay" (click)="onImageRemoved(image)">
+        <mat-icon fontSet="material-icons-outlined">delete</mat-icon>
+      </div>
+    </ng-container>
+    <ng-template #staticImage>
+      <img *ngIf = "ugcMention.mediaType == mediaEnum.IMAGE" [src]="image" alt="Image" />
+      <ng-container *ngIf="ugcMention.mediaType == mediaEnum.VIDEO || ugcMention.mediaType == mediaEnum.ANIMATEDGIF">
+        <video controls style="width: 220px;">
+          <source [src]="ugcMention.mediaPath" data-autoplay="false" type="video/m4v" />
+          <source [src]="ugcMention.mediaPath" data-autoplay="false" type="video/mp4" />
+          <source [src]="ugcMention.mediaPath" data-autoplay="false" type="video/mpeg" />
+          <source [src]="ugcMention.mediaPath" data-autoplay="false" type="video/x-msvideo" />
+          <source [src]="ugcMention.mediaPath" data-autoplay="false" type="video/x-ms-wmv" />
+          <source [src]="ugcMention.mediaPath" data-autoplay="false" type="video/avi" />
+        </video>
+      </ng-container>
+    </ng-template>
+  </div>
+  <div class="dropzone__item--content">
+    <span class="text__label" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Rate-It' | translate }}</span>
+    <app-star-rating
+      [rating]="ugcMention?.rating || 0"
+      class="mb-8"
+      [id]="file?.name || displayName"
+    ></app-star-rating>
+    <!-- <textarea class="custom__input" placeholder="Post Tags" rows="5"></textarea> -->
+    <div class="dropzone__item--tags">
+      <mat-form-field
+        appearance="outline"
+        class="material__select material__select--adaptive"
+      >
+        <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Post-Tags' | translate }}</mat-label>
+        <mat-chip-grid #chipList>
+          <mat-chip-row *ngFor="let tag of tags" [selectable]="selectable" (removed)="remove(tag)"
+            [removable]="removable" [ngClass]="{'p-0 h-25 mt-4 mb-2' : !defaultLayout}">
+            <p [ngClass]="{'small_font-size' : !defaultLayout}">{{ tag }}</p>
+            <mat-icon matChipRemove *ngIf="removable" [ngClass]="{'small-icon-font-size px-0 d-flex-items-center justify-content__center' : !defaultLayout}">cancel</mat-icon>
+          </mat-chip-row>
+          <input
+            [placeholder]="'New-Tag' | translate"
+            #tagInput [ngClass]="{'small_font-size' : !defaultLayout}"
+            (input)="filterTags($event)"
+            [matAutocomplete]="tagAutocomplete"
+            [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="add($event)"
+          />
+        </mat-chip-grid>
+        <mat-autocomplete
+          #tagAutocomplete="matAutocomplete"
+          (optionSelected)="selectedTag($event)"
+        >
+        <ng-container *ngFor="let tag of filteredtags">
+          <mat-option [ngClass]="{'small_font-size h-25' : !defaultLayout}" *ngIf="tag" [value]="tag">{{
+            tag
+          }}</mat-option>
+        </ng-container>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+<div class="modal__foot" *ngIf="inModal">
+  <button mat-button class="mr-12 ml-auto" mat-dialog-close>{{ 'Cancel' | translate }}</button>
+  <button [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout}"
+    type="button"
+    (click)="UpdateFileToServer()"
+    mat-flat-button
+    color="accent"
+  >
+    {{ 'Save' | translate }}
+  </button>
+</div>

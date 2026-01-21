@@ -1,0 +1,18 @@
+<div class="calling-note__wrapper">
+    <div class="calling-note__wrapper--block">
+        <span>
+            <span *ngIf="brandIVRDesc" class="ml-auto text__label ">{{ 'Selected-IVR-Options' | translate }}</span> 
+            {{brandIVRDesc}}
+        </span>
+        <div class="calling-note__body">
+            <!-- brandIVRDesc {{brandIVRDesc}} -->
+            <!-- <span class="">IVR data</span> -->
+            <textarea #noteTextarea class="textarea-featured__input" (input)="changeInput($event.target.value)" [placeholder]="'Enter-call-note' | translate" [ngClass]="{'element__disable': !this.noteInput}" [disabled]="!this.noteInput"></textarea>
+        </div>
+        <div class="calling-note__foot">
+            <div class="calling-note__foot--button">
+                <button mat-flat-button color="accent" [ngClass]="{'element__disable': noteTextarea?.value?.length==0 || !this.enableNote}" [disabled]="noteTextarea?.value?.length==0 || !this.enableNote" (click)="addNote()">{{ 'Save-Note' | translate }}</button>
+            </div>
+        </div>
+    </div>
+</div>

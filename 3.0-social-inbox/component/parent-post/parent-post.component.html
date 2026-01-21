@@ -1,0 +1,167 @@
+<div class="modal__head">
+  <h3 class="modal__title text__label">{{ postData.channelGroup === channelGroup?.Reddit ? 'View Thread' : ('Parent-Post' | translate) }}</h3>
+  <span class="modal__action">
+    <mat-icon
+      mat-button
+      mat-dialog-close
+      (click)="closeDailog()"
+      fontSet="material-icons-outlined"
+      >close</mat-icon
+    >
+  </span>
+</div>
+<div class="modal__body parentpost__wrapper">
+  <app-parent-post-bulk-actions
+    class="block-center"
+    *ngIf="bulkActionpanelStatus"
+    [pageType]="3"
+    [postData]="firstPost"
+    [mentionListLength]="mentionList.length"
+    [totalCount]="dateRange ? rtTotalMentions :  ftTotalMentions"
+    [mentionType]="dateRange"
+    [createdDate]="createdDate"
+    (bulkActionEvent)="postBulkAction($event)"
+    [groupView]="groupView"
+  ></app-parent-post-bulk-actions>
+   <div *ngIf="mentionList || groupView" class="first">
+ <app-post *ngIf="firstPost"
+        class="post__crm"
+        [parentPostFlag]="true"
+        [parentPostFirstFlag]="true"
+        (postSelectEvent)="toggleBulkSelect($event)"
+        [AllCheckBoxes]="checkAllCheckBox"
+        [postData]="firstPost"
+        [openReply]="false"
+        [pageType]="3"
+        [showParentPostHeader]="true"
+        [hideActionableButton]="true"
+        [mentionOrGroupView]="groupView?2:1"
+      ></app-post>
+      <div *ngIf="(!groupView && mentionList && !groupView)" class="comments-has">
+        {{ totalRecords }} {{Label | translate}}
+        <mat-icon *ngIf="(postData.channelType!==ChannelType.FBPageUser && !clickhouse) || (postData.channelGroup!= ChannelGruop.GoogleMyReview && clickhouse)"
+          fontSet="material-icons-outlined"
+          matTooltip="{{Label=='Comments'?('This-count-includes-threaded-comments' | translate):('This-count-includes-threaded-answer-comment' | translate)}}"
+          matTooltipPosition="right"
+          matTooltipClass="custom__tootip-normal"
+          >info</mat-icon
+        >
+      </div>
+      <mat-paginator showFirstLastButtons *ngIf="(!clickhouse) && totalRecords>20" appLocobuzzPaginator [length]="totalRecords" [pageSize]="20"
+        [pageSizeOptions]="[5, 10,20, 25, 100]" (page)="OnPageChange($event)">
+      </mat-paginator>
+    </div>
+    <div *ngIf="groupView && firstPost" [ngClass]="{'treeDot': !clickhouse && !groupView}" class=" position-relative"
+      >
+      <div  class="d-flex-items-center g-12 pl-20 pb-12">
+        <span (click)="filterBasedOnDuration(true)" [ngClass]="{'active': dateRange}"  class="custom__button--blank active" >
+          <mat-icon *ngIf="dateRange" class="icon mr-4 ml-0" fontSet="material-icons-outlined">done</mat-icon>
+           {{ 'Related-Mentions' | translate }}({{relatedMentionCount | followerNumberFormat}})<mat-icon matTooltip="{{ 'Related-mentions-tooltip' | translate }}" matTooltipPosition="above" class="ml-3 s-16" matTooltipClass="custom__tooltip-normal"  fontSet="material-icons-outlined">info</mat-icon>
+        </span>
+        <span (click)="filterBasedOnDuration(false)" [ngClass]="{'active': !dateRange}" 
+          class="custom__button--blank active" >
+          <mat-icon *ngIf="!dateRange" class="icon mr-4 ml-0" fontSet="material-icons-outlined">done</mat-icon>
+         {{ 'Full-Thread' | translate }}({{totalAllMention | followerNumberFormat}})<mat-icon matTooltip="{{ 'Full-thread-tooltip' | translate }}" matTooltipPosition="above" class="ml-3 s-16" matTooltipClass="custom__tooltip-normal"  fontSet="material-icons-outlined">info</mat-icon>
+        </span>
+        <!-- <span (click)="toogleEvent('replies')" class="custom__button--blank" [ngClass]="{'active' : repliesFlag}">
+          <mat-icon class="icon" fontSet="material-icons-outlined">done</mat-icon>
+          Replies (80)
+        </span> -->
+        <span class="d-flex-items-center ml-auto" style="width: 60%;">
+          <!-- <span class="position-relative cursor-pointer mr-6">
+            <mat-icon fontSet="material-icons-outlined" class="filter-icon font-weight-600 mr-4">search</mat-icon>
+          </span> -->
+                  <div class="post-search">
+                    <div class="post-search__content position-relative pr-0">
+                      <input class="pl-0 w-100-p h-30" [formControl]="inputSearch" type="text" (keyup.enter)="search()"
+                        (input)="searchInput()" [placeholder]="'Search-for-Mention-Id-Author-Content-URL' | translate" />
+                      <span class="position-relative cursor-pointer search-icon mr-6">
+                        <mat-icon fontSet="material-icons-outlined" (click)="search()" class="filter-icon font-weight-600 cursor-pointer">search</mat-icon>
+                      </span>
+                    </div>
+                  </div>
+          <span class="position-relative cursor-pointer" matTooltip="{{ 'Sort-By' | translate }}"
+              matTooltipPosition="above" matTooltipClass="custom-tooltip" [matMenuTriggerFor]="sortmenu">
+            <mat-icon fontSet="material-icons-outlined" class="filter-icon font-weight-600 mr-4">sort</mat-icon>{{sortBy=='Unread'?('Unread-Mentions' | translate):sortBy=='createddate'?('Created-Date' | translate):sortBy=='followers'?('Follower-Count' | translate):('Author-Name' | translate)}} <mat-icon fontSet="material-icons-outlined"
+              class="filter-icon">expand_more</mat-icon>
+          </span>
+        </span>        
+        <mat-menu #sortmenu="matMenu"  class="h-210" xPosition="before">
+          <ul class="sort-dropdown " (click)="$event.stopPropagation()">
+            <li class="sort-dropdown__item">
+              <span class="text__label">{{ 'Sort-By' | translate }}</span>
+              <mat-radio-group (change)="toogleRadioEvent()" [(ngModel)]="sortBy">
+                <div class="sort-dropdown__item--input">
+                  <mat-radio-button value='Unread'>{{ 'Unread-Mentions' | translate }}</mat-radio-button>
+                </div>
+                <div class="sort-dropdown__item--input">
+                  <mat-radio-button value='createddate'>
+                    {{ 'Created-Date' | translate }}
+                  </mat-radio-button>
+                </div>
+                <div *ngIf="postData.channelGroup === channelGroup.Twitter" class="sort-dropdown__item--input">
+                  <mat-radio-button value="followers">
+                    {{ 'Follower-Count' | translate }}
+                  </mat-radio-button>
+                </div>
+                <!-- <div class="sort-dropdown__item--input">
+                  <mat-radio-button value="author">
+                    Author Name</mat-radio-button>
+                </div> -->
+              </mat-radio-group>
+            </li>
+            <li class="sort-dropdown__item">
+              <span class="text__label">{{ 'Sort-Order' | translate }}</span>
+              <mat-radio-group (change)="toogleRadioEvent()" [(ngModel)]="sortOrder" aria-label="Select an option">
+                <div class="sort-dropdown__item--input">
+                  <mat-radio-button value="asc">{{ 'Ascending' | translate }}</mat-radio-button>
+                </div>
+                <div class="sort-dropdown__item--input">
+                  <mat-radio-button value="desc">{{ 'Descending' | translate }}</mat-radio-button>
+                </div>
+              </mat-radio-group>
+            </li>
+          </ul>
+        </mat-menu>
+      </div>
+      </div>
+      <div *ngIf="(clickhouse) && (mentionList || groupView)" class="first d-flex-items-center">
+        <span *ngIf="groupView" class="total-group colored__light--text pl-20">{{dateRange ? rtTotalMentions : ftTotalMentions }} {{ 'Total-Mentions-Found' | translate }} </span>
+      <mat-paginator showFirstLastButtons *ngIf="(dateRange ? rtTotalMentions : ftTotalMentions) >20" appLocobuzzPaginator [length]="(dateRange ? rtTotalMentions : ftTotalMentions)" [pageSize]="20"
+        [pageSizeOptions]="[5, 10,20, 25, 100]" (page)="OnPageChange($event)" class="ml-auto">
+      </mat-paginator>
+      </div>
+  <div *ngIf="mentionList && !parentPostLoading && !commentsLoader" [ngClass]="{'treeDot': !clickhouse && !groupView}" class=" position-relative" [ngClass]="{'pagination' : mentionList?.length>18}">
+    <span *ngIf="mentionList?.length>18" class="treeDot__pagination"></span>
+    <div
+      *ngFor="let crmdetail of mentionList; let i = index; first as isfirst" [ngClass]="{'treeDot__list': !clickhouse}" class=" pl-20"
+    >
+      <app-post
+        class="post__crm"
+        [parentPostFlag]="true"
+        (postSelectEvent)="toggleBulkSelect($event)"
+        [AllCheckBoxes]="checkAllCheckBox"
+        [postData]="crmdetail"
+        [openReply]="false"
+        [pageType]="3"
+                [hideActionableButton]="true"
+                [hideCheckBox]="pageOffset==0 && mentionList?.length==1" 
+                [mentionOrGroupView]="groupView?2:1"
+      ></app-post>
+    </div>
+  </div>
+    <div class="noDataFound block-center mt-5 h-180" *ngIf="(!mentionList && !parentPostLoading) || (groupView && mentionList?.length==0 && !parentPostLoading && !commentsLoader)">
+      <mat-icon>error_outline</mat-icon>
+      <p class="text">{{ 'No-Data-Found' | translate }}</p>
+    </div>
+   <app-component-loader
+    *ngIf="parentPostLoading"
+    [postCountTotal]="3"
+    [loaderType]="loaderTypeEnum.post"
+  ></app-component-loader>
+  <app-component-loader
+    *ngIf="commentsLoader"
+    [postCountTotal]="3"
+    [loaderType]="loaderTypeEnum.post"
+  ></app-component-loader>
+</div>

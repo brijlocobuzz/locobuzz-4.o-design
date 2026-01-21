@@ -1,0 +1,208 @@
+<form [formGroup]="checkoutForm" >
+  <div class="modal__head">
+    <h3 class="modal__title">
+      <mat-icon class="cursor-pointer" mat-dialog-close fontSet="material-icons-outlined">
+        keyboard_backspace
+      </mat-icon>
+      {{ 'Create-New' | translate }} {{ requestTypeTitle }}
+    </h3>
+    <span class="modal__action">
+      <mat-icon mat-button mat-dialog-close fontSet="material-icons-outlined">close</mat-icon>
+    </span>
+  </div>
+  <div class="modal__body">
+    <div class="sr__create">
+      <div class="sr__create__summary">
+        <app-post-userprofile (userProfileLinkEmit)="userProfileLinkEmitRes($event)" [showActions]="false"></app-post-userprofile>
+      </div>
+      <!-- <mat-divider [vertical]="true" class="margin-left__10"></mat-divider> -->
+
+      <div class="sr__create__options">
+        <div *ngIf="tatauniCrmFlag" [formGroup]="tataUniCrmGroup" row-gap="20px" fxLayout="row wrap"
+          fxLayout.xs="column" fxLayout.sm="column" fxLayoutGap="8px">
+          <div fxFlex="32%" fxFlex.sm="100%">
+            <div fxLayout="row" row-gap="20px" fxLayout.xs="column" fxLayoutGap="20px"
+              fxLayoutAlign="flex-start center">
+              <div fxFlex="100%">
+                <mat-form-field fxFlex.sm="100%" appearance="outline" class="
+                          outline--none outline--none
+                          material__select material__select--adaptive
+                        ">
+                  <mat-label>{{ 'Please-select-the-parameters-to-lookup' | translate }}</mat-label>
+                  <mat-select (selectionChange)="changeLookUpType($event.value)" formControlName="type">
+                    <mat-option [value]="1">{{ 'Mobile-Number' | translate }}
+                    </mat-option>
+                    <mat-option [value]="2">{{ 'Email-Address' | translate }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div fxFlex="40%" fxFlex.sm="100%">
+            <div fxLayout="row" row-gap="20px" fxLayout.xs="column" fxLayoutGap="20px"
+              fxLayoutAlign="flex-start center">
+              <div fxFlex="100%">
+                <mat-form-field fxFlex="43%" *ngIf="mobileView" appearance="outline" class="
+                  outline--none outline--none
+                  country-code
+                  ">
+                  <mat-label class="num-label">{{ 'Country-Code' | translate }}</mat-label>
+                  <mat-select formControlName="countrycode">
+                    <mat-option *ngFor="let option of countryCodeList" [value]="option.code">
+                      {{option.country}} <span matSuffix>+{{option.code}}</span>
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field fxFlex="57%" *ngIf="mobileView" appearance="outline" class="
+                                                          outline--none outline--none
+                                                          contact-number
+                                                        ">
+                  <mat-label class="num-label">{{ 'Mobile-Number' | translate }}</mat-label>
+                  <input type="text" formControlName="mobileNumber" matInput />
+                </mat-form-field>
+                <mat-form-field *ngIf="!mobileView" appearance="outline" class="
+                                outline--none outline--none
+                                material__select material__select--adaptive
+                              ">
+                  <mat-label class="num-label">{{ 'Email-Address' | translate }}</mat-label>
+                  <input type="text" formControlName="email" matInput />
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div fxFlex="25%" fxFlex.sm="100%" class="pt-6">
+            <div fxLayout="row" row-gap="20px" fxLayout.xs="column" fxLayoutGap="20px"
+              fxLayoutAlign="flex-start center">
+              <div fxFlex="100%">
+                <button [loading]="tataUniLoader" (click)="submit()" type="button" mat-flat-button color="accent">
+                  {{ 'Submit' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div row-gap="20px" fxLayout="row wrap" fxLayout.xs="column" fxLayout.sm="column" fxLayoutGap="8px">
+          <div fxFlex="32%" fxFlex.sm="100%" [ngStyle]="{
+              'max-width': field.Control === 'textarea' ? '100%' : '32%',
+              flex: field.Control === 'textarea' ? '1 1 100%' : '1 1 32%'
+            }" class="mobile__full__width" [ngClass]="{'element__disable': newMentionFound && field.Label!='Remarks', 'mobile__full__width--uploadfile' : field.Type === 'Media', 'form-textarea' : field.Control === 'textarea' }" *ngFor="let field of fields; let i = index">
+            <div fxLayout="row" row-gap="20px" fxLayout.xs="column" fxLayoutGap="20px" fxLayoutAlign="flex-start center"
+              *ngIf="field.Control === 'textarea'">
+              <div fxFlex="100%" [ngClass]="{ conversation: field.IsReadonly }">
+                <mat-form-field fxFlex="100%" appearance="outline" class="
+                    outline--none
+                    material__select material__select--adaptive
+                  ">
+                  <mat-label [for]="field.Field.toString().toLowerCase()" class="num-label">{{ field.Label }} 
+                  <!-- <span class="colored__red" *ngIf="field?.IsRequired">*</span> -->
+                </mat-label>
+                  
+                  <textarea [id]="field.Field.toString().toLowerCase()"  [maxlength]="txtMaxLength"
+                    [formControlName]="field.Field.toString().toLowerCase()" matInput class="input--height h-100"
+                    [readonly]="field.IsReadonly" [required]="field.IsRequired" #txtArea>
+                  </textarea>
+                        <mat-hint *ngIf="txtMaxLength" align="end">{{txtArea.value.length}} / {{txtMaxLength}}</mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+            <div fxFlex="0 1 calc(70%)" *ngIf="field.Field=='mobile_number' && dreamsolcrmFlag" style="width:40px">
+              <mat-form-field appearance="outline" class="
+                                                                material__select
+                                                                pr-5
+                                                                mb-9
+                                                                profile-input
+                                                              ">
+                <mat-label class="num-label text-capitalize">{{ 'Code' | translate }} <span class="colored__red">*</span></mat-label>
+                <mat-select [(value)]="selectedCountry" (selectionChange)="countryChangeAction($event.value)"
+                  (closed)="closeCountryList()">
+                  <div class="account-profile__brandsearchinput account-profile__brandselectwithicon--brandsearchinput">
+                    <mat-form-field appearance="outline" class="material__select">
+                      <input type="text" [placeholder]="'Search-country-code' | translate" matInput class="
+                                                                                      material-icons-outlined
+                                                                                    "
+                        (input)="searchCountryCode($event.target.value)" autocomplete="off" [formControl]="countryCodeSearchCtrl"
+                        (keydown)="_handleKeydown($event)" />
+                      <mat-icon class="
+                                                                                      material-icons-outlined search-icon position-absolute
+                                                                                    ">search</mat-icon>
+                    </mat-form-field>
+                  </div>
+                  <mat-select-trigger>
+                    <span class="ml-65">+{{selectedCountry?.code}}</span>
+                  </mat-select-trigger>
+                  <mat-option *ngFor="let option of countryCodeList" [value]="option">
+                    {{option.country}} <span matSuffix>+{{option.code}}</span>
+                  </mat-option>
+                  <mat-option class="font-weight-500 mb-12" *ngIf="countryCodeList.length==0" disabled>{{ 'No-match-found' | translate }}</mat-option>
+                </mat-select>
+
+              </mat-form-field>
+            </div>
+            <div *ngIf="field.Type === 'Simple'">
+              <mat-form-field appearance="outline" class="
+                  outline--none outline--none
+                  material__select material__select--adaptive
+                ">
+                <mat-label [for]="field.Field.toString().toLowerCase()" class="num-label">{{ field.Label }}</mat-label>
+                <input #inputRef [id]="field.Field.toString().toLowerCase()" type="string" [maxlength]="field.Max"
+                  [formControlName]="field.Field.toString().toLowerCase()" matInput [required]="field.IsRequired" />
+              </mat-form-field>
+            </div>
+            <div *ngIf="field.Type === 'Media'">
+                <div class="d-flex-items-center">
+                    <span [for]="field.Field.toString().toLowerCase()" class="font-weight-600 mr-18">{{ field.Label }}</span>
+                    <label for="file" class="d-flex-items-center colored__locobuzz cursor-pointer">
+                      <mat-icon fontSet="material-icons-outlined" class="s-20">cloud_upload</mat-icon>
+                      <span class="ml-7">{{ 'Upload-File' | translate }}</span>
+                    </label>
+                    <!-- [id]="field.Field.toString().toLowerCase()" -->
+                    <input #inputRef id="file" type="file" accept="image/x-png,image/jpeg"
+                      (change)="onChange($event)" [required]="field.IsRequired" file-browser
+                      class="d-none" />
+                </div>
+                <div class="upload-file">
+                    <div class="upload-file__item" *ngFor="let img of AttachmentsList">
+                        <div class="upload-file__item--delete bg__white">
+                            <mat-icon fontSet="material-icons-outlined" class="s-18 colored__red--dark" (click)="deleteAttachment(img)">delete</mat-icon>
+                        </div>
+                        <div class="upload-file__item--img">
+                          <img [src]="'data:image/png;base64,' + img.VersionData" />
+                        </div>
+                        <div class="upload-file__item--title colored__white"matTooltip="{{img.Title}}"
+                      matTooltipClass="custom-tooltip" >{{img.Title?.substring(0,12)}}{{img.Title.length>11?'...':''}}</div>
+                    </div>
+                </div>
+            </div>
+            <mat-form-field fxFlex.sm="100%" appearance="outline" class="
+                outline--none outline--none
+                material__select material__select--adaptive
+              " *ngIf="field.Type === 'Complex' && field.Control === 'dropdown'" [ngClass]="{'element__disable': field?.Disable==true && field.Label=='Source' && dreamsolcrmFlag}">
+              <mat-label [for]="field.Field.toString().toLowerCase()">{{
+                field.Label
+                }}</mat-label>
+              <mat-select [id]="field.Field.toString().toLowerCase()"
+                formControlName={{field.Field.toString().toLowerCase()}}
+                (selectionChange)="changefunction($event, field.Field,field)" [required]="field.IsRequired">
+                <ng-container *ngIf="field.Data">
+                  <mat-option *ngFor="let list of field.Data; let i = index" [value]="list.Key">{{ list.Value }}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <app-modal-loader [section]="'post-filter'"></app-modal-loader> -->
+  </div>
+  <!-- <img [src]="base64String" alt="Girl in a jacket" width="50" height="60"> -->
+  <div class="modal__foot">
+    <button mat-stroked-button mat-dialog-close color="primary" class="colored__blue ml-auto mr-15">
+      {{ 'Cancel' | translate }}
+    </button>
+    <button [ngClass]="{'element__disable': disableButton}" mat-raised-button [loading]="actionProcessing"
+      color="accent" type="submit" (click)="onSubmit()">{{ 'Submit' | translate }}</button>
+  </div>
+</form>

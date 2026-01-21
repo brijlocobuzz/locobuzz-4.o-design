@@ -1,0 +1,32 @@
+.post-reply__head {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 15px 20px;
+}
+
+.post-reply__head--title {
+  font-weight: 600;
+}
+
+.post-reply__head--action {
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.post-reply__body {
+  padding: 15px 20px;
+}
+
+.post-reply__foot {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 15px 20px;
+}

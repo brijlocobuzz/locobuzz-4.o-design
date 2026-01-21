@@ -1,0 +1,10 @@
+.user-list {
+  height: 200px;
+  overflow-y: auto;
+
+  &__item {
+    padding: 5px 10px;
+    display: flex;
+    cursor: pointer;
+  }
+}

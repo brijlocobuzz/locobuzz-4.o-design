@@ -1,0 +1,124 @@
+<div class="modal__head">
+  <h3 class="modal__title" [ngClass]="{'medium-font-size' : !defaultLayout}">{{ 'Selected-Canned-Response' | translate }}</h3>
+  <span class="modal__action">
+    <mat-icon fontSet="material-icons-outlined" [ngClass]="{'small-icon-font-size d-flex-items-center justify-content__center' : !defaultLayout}" [mat-dialog-close]="true">close</mat-icon>
+  </span>
+</div>
+<div class="modal__body">
+  <app-component-loader [loaderType]="loaderTypeEnum.lineDiv" *ngIf="cannedResponseLoading"></app-component-loader>
+  <div [ngClass]="defaultLayout ? 'p-16' : 'p-10'" *ngIf="cannedCategoryList.length > 0">
+    <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="16px" class="post-search__options--row"
+      fxLayoutAlign="flex-start center">
+      <div fxFlex="50%">
+        <mat-form-field appearance="outline" class="material__select material__select--adaptive" [ngClass]="{'no-margin' : !defaultLayout, 'element__disable': isMediaValidating}">
+          <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Selected-Response-Category' | translate }}</mat-label>
+          <div class="inputWithClose d-flex-items-center">
+            <input type="text" matInput [matAutocomplete]="auto" [(ngModel)]="selectedCannedCategoryName" (ngModelChange)="onCategoryInputChange($event)"
+              (input)="filterCategories($event.target.value)" [ngClass]="{'small_font-size' : !defaultLayout}" (keydown)="acceptCategoryName($event)">
+              <!-- <mat-icon (click)="selectCannedCategory('');" class="d-flex-items-center justify-content__center iconResize" [ngClass]="{'small-icon-font-size' : !defaultLayout}">close</mat-icon> -->
+          </div>          
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectCannedCategory($event?.option?.value)">
+            <mat-option *ngIf="filteredCannedCategoryList?.length == 0 && !acceptedCategory" [ngClass]="{'small_font-size h-25' : !defaultLayout}" [disabled]="true">{{ 'No-such-response-category-found' | translate }}
+            </mat-option>
+            <mat-option class="matmenu__item" [ngClass]="{'small_font-size h-25' : !defaultLayout}" [matTooltip]="item.responseCategoryName.length > 39 ? item.responseCategoryName : ''" *ngFor="let item of filteredCannedCategoryList" [value]="item.responseCategoryName">
+              <span>{{ item.responseCategoryName }}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div fxFlex="50%">
+        <mat-form-field appearance="outline" class="material__select material__select--adaptive" [ngClass]="{'no-margin' : !defaultLayout, 'element__disable': isMediaValidating}">
+          <mat-label [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Selected-Response-Name' | translate }}</mat-label>
+          <div class="inputWithClose d-flex-items-center">
+            <input type="text" matInput [matAutocomplete]="responseAuto" [ngClass]="{'small_font-size' : !defaultLayout}" [(ngModel)]="selectedCannedResponseName" (ngModelChange)="onResponseInputChange($event)"
+              (input)="filterResponses($event.target.value)" (keydown)="acceptResponseName($event)">
+              <mat-spinner class="ml-8" [diameter]="20" *ngIf="isMediaValidating"></mat-spinner>
+              <!-- <mat-icon (click)="selectCannedResponse('');" [ngClass]="{'small-icon-font-size' : !defaultLayout}" class="d-flex-items-center justify-content__center iconResize">close</mat-icon> -->
+          </div>
+          <mat-autocomplete #responseAuto="matAutocomplete" (optionSelected)="selectCannedResponse($event?.option?.value)">
+            <mat-option *ngIf="noDataAvailable" [disabled]="true" [ngClass]="{'small_font-size h-25' : !defaultLayout}" class="matmenu__item"><span>{{ 'No-data-available-for-this-category' | translate }}</span>
+            </mat-option>
+            <mat-option [ngClass]="{'small_font-size h-25' : !defaultLayout}" *ngIf="filteredCannedResponseList?.length == 0 && !acceptedResponse && !noDataAvailable" [disabled]="true">{{ 'No-such-response-name-found' | translate }}
+            </mat-option>
+            <mat-option class="matmenu__item"
+              [ngClass]="{'small_font-size h-25' : !defaultLayout}" 
+              [value]="item.responseName" [disabled]="item.isDisabled" [ngStyle]="{'opacity': item.isDisabled ? '0.5' : 'unset'}"
+              *ngFor="let item of filteredCannedResponseList">
+              <span [ngClass]="{'small_font-size' : !defaultLayout}"
+                    [matTooltip]="item.isDisabled ? item.disabledReason : item.responseName.length > 39 ? item.responseName : ''"
+                    matTooltipClass="custom-tooltip"
+                    [style.pointer-events]="item.isDisabled ? 'auto' : 'inherit'">
+                {{ item.responseName }}
+              </span>
+            </mat-option>
+          </mat-autocomplete>
+          
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="custom__input--wrapper mt-12" [ngClass]="{'mb-0' : !defaultLayout}">
+      <mat-form-field fxFlex="100%" appearance="outline"
+        class="outline--none material__select material__select--adaptive"
+        [ngClass]="{ 'input-filled': responseText !== '' }">
+        <mat-label for="remarks" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'Response-Preview' | translate }}</mat-label>
+        <textarea matInput class="input--height resize" [ngClass]="{'small_font-size' : !defaultLayout}" [(ngModel)]="responseText"
+          [readonly]="typeFromCannedResponse == 'workflow'?true:false">
+        </textarea>
+      </mat-form-field>
+      <!-- <textarea class="custom__input" placeholder="Response Preview" [value] = "responseText"></textarea> -->
+    </div>
+
+    <div class="custom__input--wrapper mt-12" [ngClass]="{'mb-0' : !defaultLayout}">
+      <div *ngIf="mediaAttachments?.length > 0" class="media__container">
+
+        <p class="w-100-p font-weight-500">
+          {{ mediaAttachments.length === 1
+          ? (mediaAttachments.length + ' attachment')
+          : (mediaAttachments.length + ' attachments') }}
+        </p>
+
+        <div *ngFor="let media of mediaAttachments;let i = index" class="media__main">
+          <img *ngIf="media.mediaType == mediaEnum.IMAGE" [src]="media.url" [alt]="media?.name" class="image media__size" />
+          <img *ngIf="media.mediaType==mediaEnum.PDF" [alt]="media?.name" src="assets/images/account/pdf__icon.svg"
+            class="image media__size">
+          <img *ngIf="media.mediaType==mediaEnum.EXCEL" [alt]="media?.name" src="assets/images/account/excl__icon.svg"
+            class="image media__size">
+          <img *ngIf="media.mediaType==mediaEnum.DOC" [alt]="media?.name" src="assets/images/account/doc__icon.svg"
+            class="image media__size">
+          <div class="media__video--container" *ngIf="media.mediaType == mediaEnum.VIDEO">
+            <video *ngIf="media.mediaType == mediaEnum.VIDEO" class="image media__size">
+              <source [src]="media.url" data-autoplay="false" type="video/m4v" />
+              <source [src]="media.url" data-autoplay="false" type="video/mp4" />
+              <source [src]="media.url" data-autoplay="false" type="video/mpeg" />
+              <source [src]="media.url" data-autoplay="false" type="video/x-msvideo" />
+              <source [src]="media.url" data-autoplay="false" type="video/x-ms-wmv" />
+              <source [src]="media.url" data-autoplay="false" type="video/avi" />
+            </video>
+            <mat-icon class="material-icons-outlined media__video--icon">play_circle</mat-icon>
+          </div>
+          <p [matTooltip]="media?.name?.length > 15 ? media?.name : null" matTooltipClass="custom-tooltip"
+            matTooltipPosition="above" [attr.title]="media?.name?.length > 15 ? media?.name : null">
+            {{ media?.name?.length > 15 ? (media?.name | slice:0:15) + '...' : media?.name }}
+          </p>
+        </div>
+        <p *ngIf="isBulk">For Bulk request media will not attach with replies</p>
+      </div>
+    </div>
+
+  </div>
+  <ng-container *ngIf="!cannedResponseLoading && cannedCategoryList.length==0">
+    <div class="modal__nodata">
+      <p class="text__center" [ngClass]="{'small_font-size' : !defaultLayout}">{{ 'No-Data-Found' | translate }}</p>
+    </div>
+  </ng-container>
+</div>
+<div class="modal__foot" *ngIf="cannedCategoryList.length > 0">
+  <button class="ml-auto colored__blue mr-10" [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout}"
+    mat-stroked-button [mat-dialog-close]="true">
+    {{ 'Cancel' | translate }}
+  </button>
+  <button type="button" (click)="setCannedResponse()" [ngClass]="{'small_font-size h-25 px-5' : !defaultLayout}"
+    mat-flat-button color="accent">
+    {{ 'Select' | translate }}
+  </button>
+</div>
